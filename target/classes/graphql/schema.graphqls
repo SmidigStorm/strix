@@ -1,0 +1,21 @@
+# Root Query type - alle spørringer starter her
+type Query {
+    """
+    En enkel test-query for å verifisere at GraphQL fungerer
+    """
+    hei(navn: String): String!
+    
+    """
+    Henter versjonsinformasjon om systemet
+    """
+    systemInfo: SystemInfo!
+}
+
+"""
+Informasjon om systemet
+"""
+type SystemInfo {
+    versjon: String!
+    navn: String!
+    beskrivelse: String!
+}

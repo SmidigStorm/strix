@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: opptaksystem
+  
+  # GraphQL konfigurasjon
+  graphql:
+    graphiql:
+      enabled: true  # Aktiverer GraphQL Playground
+      path: /graphiql
+    path: /graphql
+    
+  # Database konfigurasjon - starter med H2 in-memory for enkel testing
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  # Flyway for database migrering
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+  
+  # JOOQ konfigurasjon
+  jooq:
+    sql-dialect: H2
+  
+  # H2 Console for å se databasen
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+# Server port
+server:
+  port: 8080

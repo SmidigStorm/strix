@@ -33,9 +33,9 @@
 - **Utviklingsmiljø**: Claude Code i VSCode
 - **Tech stack**: 
   - **API**: GraphQL (domene-drevet design - "slik brukerne snakker om domenet")
-  - **Backend**: Java (rammeverk under vurdering)
+  - **Backend**: Java (Spring Boot)
   - **Frontend**: React (senere - ikke i første fase)
-  - **Database**: PostgreSQL
+  - **Database**: PostgreSQL med JOOQ (typesikker SQL)
   - **Utviklingsstrategi**: GraphQL-først tilnærming, backend først
 
 #### Tekniske vurderinger
@@ -185,3 +185,4 @@ opptaksystem/
 - **Før større endringer**: Diskuter tilnærming først
 - **Ved feil**: Forklar årsak og løsning
 - **Nye konsepter**: Teori først, så implementering
+- **INGEN YAK SHAVING**: Ved problemer - STOPP, diskuter og be om hjelp. Ingen quick fixes som skaper teknisk gjeld
