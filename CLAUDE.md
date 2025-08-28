@@ -176,9 +176,15 @@ opptaksystem/
 
 ### Viktige filer å huske
 - `CLAUDE.md` - Denne filen, prosjektets hukommelse
+- `krav/templates/` - Templates for domenekrav dokumentasjon
 - `krav/*/` - Domenekrav per modul
 - `src/main/resources/graphql/` - GraphQL schemas
 - `application.yml` - Konfigurasjon
+
+### Kravdokumentasjon Templates
+- `krav/templates/user-story-map-template.md` - Template for user story mapping
+- `krav/templates/entity-map-template.md` - Template for entitetsdiagram (Mermaid ER)
+- `krav/templates/example-mapping-template.md` - Template for example mapping per brukerhistorie
 
 ### Arbeidsregler
 - **Start hver sesjon**: Les CLAUDE.md for kontekst
