@@ -27,6 +27,7 @@ fi
 echo "🏃 Starter Spring Boot applikasjonen..."
 echo "   - GraphiQL: http://localhost:8080/graphiql"
 echo "   - H2 Console: http://localhost:8080/h2-console"
+echo "   - Ekstern tilgang: Sett opp port forwarding eller reverse proxy for opptaksapp.smidigakademiet.no"
 echo ""
 echo "⏹️  Trykk Ctrl+C for å stoppe"
 echo ""

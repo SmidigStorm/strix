@@ -13,7 +13,7 @@ type Query {
     """
     Henter alle opptak
     """
-    opptak: [Opptak!]!
+    alleOpptak: [Opptak!]!
     
     """
     Henter et spesifikt opptak basert på ID
@@ -93,7 +93,7 @@ type Opptak {
     aar: Int!
     soknadsfrist: String
     svarfrist: String
-    maxSoknaderPerPerson: Int!
+    maxUtdanningerPerSoknad: Int!
     status: OpptaksStatus!
     opptaksomgang: String
     beskrivelse: String
@@ -154,7 +154,7 @@ input OpprettOpptakInput {
     aar: Int!
     soknadsfrist: String
     svarfrist: String
-    maxSoknaderPerPerson: Int
+    maxUtdanningerPerSoknad: Int
     beskrivelse: String
 }
 

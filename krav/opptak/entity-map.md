@@ -36,7 +36,7 @@ erDiagram
         int aar
         date soknadsfrist
         date svarfrist
-        int maxSoknaderPerPerson
+        int maxUtdanningerPerSoknad
         string status
         string opptaksomgang
         string beskrivelse
