@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Opptaksystem GraphiQL</title>
+    <meta name="robots" content="noindex">
+    <meta name="referrer" content="origin">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            height: 100%;
+            margin: 0;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        #graphiql {
+            height: 100vh;
+        }
+    </style>
+    <!-- GraphiQL CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/graphiql@3.0.6/graphiql.min.css" />
+</head>
+<body>
+    <div id="graphiql">Loading...</div>
+    
+    <!-- React og GraphiQL JavaScript -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/graphiql@3.0.6/graphiql.min.js"></script>
+    
+    <script>
+        // GraphQL fetcher funksjon
+        function graphQLFetcher(graphQLParams) {
+            return fetch('/graphql', {
+                method: 'post',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(graphQLParams),
+                credentials: 'include',
+            }).then(function (response) {
+                return response.text();
+            }).then(function (responseBody) {
+                try {
+                    return JSON.parse(responseBody);
+                } catch (error) {
+                    return responseBody;
+                }
+            });
+        }
+
+        // Default query
+        const defaultQuery = `# Velkommen til Opptaksystem GraphiQL!
+# Prøv å kjøre en query av gangen:
+
+query {
+  hei
+}`;
+
+        // Render GraphiQL
+        const root = ReactDOM.createRoot(document.getElementById('graphiql'));
+        root.render(
+            React.createElement(GraphiQL, {
+                fetcher: graphQLFetcher,
+                defaultQuery: defaultQuery,
+                headerEditorEnabled: true,
+                shouldPersistHeaders: true
+            })
+        );
+    </script>
+</body>
+</html>

@@ -4,10 +4,10 @@ spring:
   
   # GraphQL konfigurasjon
   graphql:
-    graphiql:
-      enabled: true  # Aktiverer GraphQL Playground
-      path: /graphiql
     path: /graphql
+    cors:
+      allowed-origins: "*"
+      allowed-methods: "*"
     
   # Database konfigurasjon - starter med H2 in-memory for enkel testing
   datasource:
