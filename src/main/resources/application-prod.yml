@@ -33,3 +33,7 @@ logging:
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   file:
     name: /var/log/opptaksystem/application.log
+
+app:
+  cors:
+    allowed-origins: https://opptaksapp.smidigakademiet.no,https://www.smidigakademiet.no

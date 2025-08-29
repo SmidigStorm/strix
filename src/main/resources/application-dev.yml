@@ -30,3 +30,7 @@ logging:
     no.utdanning.opptak: DEBUG
     org.flywaydb: INFO
     org.springframework.web: DEBUG
+
+app:
+  cors:
+    allowed-origins: http://localhost:3000,http://localhost:5173,http://localhost:4200
