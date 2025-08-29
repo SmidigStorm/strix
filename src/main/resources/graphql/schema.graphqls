@@ -34,6 +34,11 @@ type Query {
     Henter innlogget brukers informasjon (krever gyldig JWT token)
     """
     meg: Bruker
+    
+    """
+    Henter tilgjengelige test-brukere for mock-autentisering (kun for utvikling)
+    """
+    testBrukere: [TestBruker!]!
 }
 
 """
@@ -268,4 +273,34 @@ type LoginResult {
     Brukerens informasjon
     """
     bruker: Bruker!
+}
+
+"""
+Test-bruker for mock-autentisering (kun for utvikling)
+"""
+type TestBruker {
+    """
+    Email-adressen som brukes for innlogging
+    """
+    email: String!
+    
+    """
+    Visningsnavn for brukeren
+    """
+    navn: String!
+    
+    """
+    Roller brukeren har
+    """
+    roller: [String!]!
+    
+    """
+    Organisasjon brukeren tilhører (hvis noen)
+    """
+    organisasjon: String
+    
+    """
+    Passordet for testing (alltid "test123")
+    """
+    passord: String!
 }
