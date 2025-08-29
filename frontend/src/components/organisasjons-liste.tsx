@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useRole } from '@/contexts/RoleContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -74,6 +76,8 @@ const organisasjonsTypeBadgeVariant: Record<OrganisasjonsType, 'default' | 'seco
 };
 
 export default function OrganisasjonsListe() {
+  const { selectedRole, hasPermission } = useRole();
+  const { token } = useAuth();
   const [organisasjoner, setOrganisasjoner] = useState<Organisasjon[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -97,11 +101,18 @@ export default function OrganisasjonsListe() {
   const fetchOrganisasjoner = async () => {
     try {
       setLoading(true);
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      
+      // Legg til Authorization header hvis bruker er innlogget
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch('/graphql', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({
           query: `
             query GetOrganisasjoner {
@@ -140,11 +151,16 @@ export default function OrganisasjonsListe() {
   // Oppdater eksisterende organisasjon
   const oppdaterOrganisasjon = async () => {
     try {
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch('/graphql', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({
           query: `
             mutation OppdaterOrganisasjon($input: OppdaterOrganisasjonInput!) {
@@ -196,11 +212,16 @@ export default function OrganisasjonsListe() {
   // Opprett ny organisasjon
   const opprettOrganisasjon = async () => {
     try {
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch('/graphql', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({
           query: `
             mutation OpprettOrganisasjon($input: OpprettOrganisasjonInput!) {
@@ -245,11 +266,16 @@ export default function OrganisasjonsListe() {
   // Deaktiver organisasjon
   const deaktiverOrganisasjon = async (id: string) => {
     try {
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch('/graphql', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({
           query: `
             mutation DeaktiverOrganisasjon($id: ID!) {
@@ -335,17 +361,21 @@ export default function OrganisasjonsListe() {
         <div>
           <h1 className="text-3xl font-bold">Organisasjoner</h1>
           <p className="text-muted-foreground">
-            Administrer utdanningsinstitusjoner og organisasjoner
+            {selectedRole === 'Administrator' 
+              ? 'Administrer utdanningsinstitusjoner og organisasjoner' 
+              : `Vis utdanningsinstitusjoner og organisasjoner (${selectedRole})`
+            }
           </p>
         </div>
         
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={resetForm}>
-              <Plus className="h-4 w-4 mr-2" />
-              Ny organisasjon
-            </Button>
-          </DialogTrigger>
+        {hasPermission('CREATE_ORGANISATION') && (
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={resetForm}>
+                <Plus className="h-4 w-4 mr-2" />
+                Ny organisasjon
+              </Button>
+            </DialogTrigger>
           <DialogContent className="sm:max-w-[625px]">
             <form onSubmit={handleSubmit}>
               <DialogHeader>
@@ -483,7 +513,8 @@ export default function OrganisasjonsListe() {
               </DialogFooter>
             </form>
           </DialogContent>
-        </Dialog>
+          </Dialog>
+        )}
       </div>
 
       {error && (
@@ -549,14 +580,16 @@ export default function OrganisasjonsListe() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => startEditOrganisasjon(org)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      {org.aktiv && (
+                      {hasPermission('EDIT_ORGANISATION') && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => startEditOrganisasjon(org)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      )}
+                      {hasPermission('DELETE_ORGANISATION') && org.aktiv && (
                         <Button
                           variant="ghost"
                           size="sm"
@@ -565,6 +598,9 @@ export default function OrganisasjonsListe() {
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
+                      )}
+                      {!hasPermission('EDIT_ORGANISATION') && !hasPermission('DELETE_ORGANISATION') && (
+                        <span className="text-sm text-muted-foreground">Les-tilgang</span>
                       )}
                     </div>
                   </TableCell>
