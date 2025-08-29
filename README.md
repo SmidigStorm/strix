@@ -1,11 +1,16 @@
-# Norsk Opptaksystem
+# Strix - Opptaksystem
 
-Et moderne opptaksystem for norsk utdanning, bygget med Spring Boot og GraphQL.
+Et moderne opptaksystem for norsk utdanning, bygget med Spring Boot, GraphQL og React.
+
+**Live system**: http://opptaksapp.smidigakademiet.no/
+
+![Strix Logo](requirements/design/Hubro%20Color.png)
 
 ## 🚀 Kom i gang
 
 ### Forutsetninger
 - Java 21 eller nyere
+- Node.js 18+ og npm (for frontend utvikling)
 - Git
 
 ### Installasjon
@@ -13,23 +18,49 @@ Et moderne opptaksystem for norsk utdanning, bygget med Spring Boot og GraphQL.
 1. **Klon repositoriet:**
    ```bash
    git clone <repository-url>
-   cd opptaksystem
+   cd strix
    ```
 
-2. **Start applikasjonen:**
+2. **Start backend (development):**
    ```bash
-   ./start.sh
+   cd backend
+   ./start-dev.sh
    ```
    
-   Eller manuelt:
+3. **Start frontend (development):**
    ```bash
-   chmod +x mvnw
-   MAVEN_OPTS="-Dmaven.multiModuleProjectDirectory=$PWD" ./mvnw spring-boot:run
+   cd frontend
+   npm install
+   npm run dev
    ```
 
-3. **Åpne GraphiQL i nettleseren:**
-   - GraphiQL: http://localhost:8080/graphiql
-   - H2 Database Console: http://localhost:8080/h2-console
+4. **Åpne applikasjonen:**
+   - **Frontend**: http://localhost:5173/ (React dev server)
+   - **Backend API**: http://localhost:8080/graphql
+   - **GraphiQL**: http://localhost:8080/graphiql
+   - **H2 Console**: http://localhost:8080/h2-console
+
+### Production Deployment
+
+1. **Bygg frontend:**
+   ```bash
+   cd frontend && npm run build
+   ```
+
+2. **Kopier frontend til backend:**
+   ```bash
+   rm -rf backend/src/main/resources/static/assets/
+   cp -r frontend/dist/* backend/src/main/resources/static/
+   ```
+
+3. **Start production server:**
+   ```bash
+   cd backend
+   sudo ./start-prod.sh  # Krever sudo for port 80
+   ```
+
+4. **Åpne production:**
+   - **Full system**: http://opptaksapp.smidigakademiet.no/
 
 ## 📡 GraphQL API
 
@@ -80,40 +111,72 @@ query {
 ## 🏗️ Prosjektstruktur
 
 ```
-opptaksystem/
-├── src/
-│   ├── main/
-│   │   ├── java/no/utdanning/opptak/
-│   │   │   ├── domain/          # Domeneklasser
-│   │   │   ├── graphql/         # GraphQL resolvers
-│   │   │   ├── service/         # Forretningslogikk
-│   │   │   ├── repository/      # Database-tilgang
-│   │   │   └── config/          # Konfigurasjon
-│   │   └── resources/
-│   │       ├── graphql/         # GraphQL schema-filer
-│   │       └── application.yml  # App-konfigurasjon
-│   └── test/                    # Enhetstester
-├── krav/                        # Domenekrav og dokumentasjon
-├── CLAUDE.md                    # AI-assistert utviklingsnotat
-└── README.md                    # Denne filen
+strix/
+├── CLAUDE.md                   # Prosjektets hukommelse og dokumentasjon
+├── README.md                   # Denne filen
+├── requirements/               # Krav og dokumentasjon
+│   ├── design/                 # Logo og fargepalett
+│   └── krav/                   # Domenekrav og templates
+├── frontend/                   # React + Vite + TailwindCSS
+│   ├── src/
+│   │   ├── components/         # UI komponenter
+│   │   │   ├── app-sidebar.tsx # Hovednavigasjon
+│   │   │   ├── dashboard.tsx   # Dashboard
+│   │   │   └── ui/            # shadcn/ui komponenter
+│   │   └── lib/               # Utilities
+│   ├── public/owl-logo.png    # Logo og favicon
+│   └── package.json           # Frontend avhengigheter
+└── backend/                   # Spring Boot + GraphQL
+    ├── src/main/
+    │   ├── java/no/utdanning/opptak/
+    │   │   ├── controller/    # Web controllers (Frontend & GraphiQL)
+    │   │   ├── domain/        # Domeneklasser
+    │   │   ├── graphql/       # GraphQL resolvers
+    │   │   ├── service/       # Forretningslogikk
+    │   │   ├── repository/    # Database-tilgang
+    │   │   └── config/        # Konfigurasjon
+    │   └── resources/
+    │       ├── static/        # Produksjons frontend filer
+    │       ├── graphql/       # GraphQL schemas
+    │       └── db/migration/  # Database migrations
+    ├── data/                  # H2 database filer (produksjon)
+    ├── start-dev.sh          # Development startup
+    ├── start-prod.sh         # Production startup
+    └── pom.xml               # Maven konfigurasjon
 ```
 
 ## 🛠️ Utvikling
 
-### Kommandoer
+### Backend Kommandoer (fra backend/ mappen)
 
-- **Start applikasjon:** `./start.sh`
+- **Start development:** `./start-dev.sh` (H2 in-memory, port 8080)
+- **Start production:** `sudo ./start-prod.sh` (H2 file-based, port 80)
 - **Kjør tester:** `./mvnw test`
 - **Bygg prosjekt:** `./mvnw clean install`
+- **Kodeformatering:** `./mvnw spotless:apply`
+- **Kodekvalitet:** `./mvnw checkstyle:check`
 - **Stopp applikasjon:** `Ctrl+C`
+
+### Frontend Kommandoer (fra frontend/ mappen)
+
+- **Start dev server:** `npm run dev` (http://localhost:5173/)
+- **Bygg for produksjon:** `npm run build`
+- **Forhåndsvis build:** `npm run preview`
+- **Lint kode:** `npm run lint`
 
 ### Database
 
-Systemet bruker H2 in-memory database for utvikling:
-- **URL:** `jdbc:h2:mem:testdb`
+**Development** (H2 in-memory):
+- **URL:** `jdbc:h2:mem:devdb`
 - **Bruker:** `sa`
 - **Passord:** (tomt)
 - **Console:** http://localhost:8080/h2-console
+
+**Production** (H2 file-based):
+- **URL:** `jdbc:h2:file:./data/opptaksystem`
+- **Bruker:** `sa`
+- **Passord:** (tomt)
+- **Fil:** `backend/data/opptaksystem.mv.db`
 
 ### Autentisering og Test-brukere
 
@@ -142,13 +205,29 @@ Systemet bruker JWT tokens for autentisering. I utviklingsmiljø har vi følgend
 
 ## 📚 Teknisk Stack
 
-- **Backend:** Spring Boot 3.2.0
-- **API:** GraphQL
-- **Database:** H2 (utvikling), PostgreSQL (produksjon)
-- **Database-tilgang:** JOOQ
+### Backend
+- **Framework:** Spring Boot 3.2.0
+- **API:** GraphQL med Spring GraphQL
+- **Database:** H2 (både utvikling og produksjon)
 - **Migrering:** Flyway
 - **Java:** 21
 - **Build:** Maven
+- **Kodekvalitet:** Spotless + Google Java Format + Checkstyle
+- **Sikkerhet:** JWT tokens
+
+### Frontend
+- **Framework:** React 19.1.1 med TypeScript
+- **Build:** Vite 7.1.3
+- **Styling:** TailwindCSS v4
+- **UI Library:** shadcn/ui
+- **Ikoner:** Lucide React
+- **Deployment:** Statiske filer servert av Spring Boot
+
+### Produksjon
+- **Server:** Spring Boot (embedded Tomcat)
+- **Port:** 80 (krever sudo)
+- **URL:** http://opptaksapp.smidigakademiet.no/
+- **CORS:** Konfigurert for produksjon og utvikling
 
 ## 🎯 Utviklingsmetodikk
 
@@ -165,18 +244,34 @@ Se `CLAUDE.md` for full dokumentasjon av utviklingsmetodikk.
 Systemet er organisert i 5 hovedmoduler:
 
 1. **Regelverk** - Administrerer opptaksregler og kriterier
-2. **Opptak** - Håndterer opptaksrunder og -prosesser
+2. **Opptak** - Håndterer opptaksrunder og -prosesser  
 3. **Søknadsregistrering** - Registrering av søknader
 4. **Søknadsbehandling** - Behandling og vurdering av søknader
 5. **Plasstildeling** - Tildeling av studieplasser
 
+**Frontend navigasjon** viser 3 hovedkategorier:
+- **Opptak** - Oversikt over opptaksrunder
+- **Organisasjon** - Administrasjon av organisasjoner
+- **Utdanning** - Håndtering av utdanningstilbud
+
+**GraphiQL** er tilgjengelig via sidebar-lenke for API-testing.
+
 ## 🤝 Bidra
 
-1. Les `CLAUDE.md` for detaljert utviklingsmetodikk
+1. Les `CLAUDE.md` for detaljert utviklingsmetodikk og prosjektets hukommelse
 2. Følg Domain-Driven Design prinsipper
 3. Skriv tester for ny funksjonalitet
 4. Bruk norsk språk i kode og dokumentasjon
-5. Commit ofte med beskrivende meldinger
+5. Kjør `./mvnw spotless:apply` for kodeformatering før commit
+6. Commit ofte med beskrivende norske meldinger
+7. Test både frontend og backend før deploy
+
+### Utviklingsflyt
+
+1. **Backend utvikling:** Start med `./start-dev.sh`, bruk GraphiQL for testing
+2. **Frontend utvikling:** Start med `npm run dev`, hot reload aktivt
+3. **Full testing:** Bygg frontend og test i produksjonsmodus
+4. **Deploy:** Følg deployment-prosessen i CLAUDE.md
 
 ## 📄 Lisens
 
