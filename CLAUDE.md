@@ -1,6 +1,7 @@
-# Norsk Opptaksystem - Prosjekt Kunnskapsbase
+# Strix - Opptakssystem Prosjekt Kunnskapsbase
 
 ## Prosjektoversikt
+- **Navn**: Strix (norsk navn for hubro/owl)
 - **Formål**: Opptaksystem for norsk utdanning
 - **Utviklingstilnærming**: Enkel, AI-assistert utvikling
 - **Språk**: Norsk (hele systemet)
@@ -22,6 +23,8 @@
    - Søknadsbehandling
    - Plasstildeling
 
+   **Forenklet navigasjon**: I frontend vises foreløpig kun 3 hovedkategorier (Opptak, Organisasjon, Utdanning) som organiserer de 5 modulene.
+
 #### Systemkrav
 - **Utdanningsnivå**: Generisk system for alle nivåer
 - **Opptakstyper**: Både lokale og nasjonale opptak
@@ -33,52 +36,50 @@
 - **Utviklingsmiljø**: Claude Code i VSCode
 - **Tech stack**: 
   - **API**: GraphQL (domene-drevet design - "slik brukerne snakker om domenet")
-  - **Backend**: Java (Spring Boot)
-  - **Frontend**: React (senere - ikke i første fase)
+  - **Backend**: Java (Spring Boot) 
+  - **Frontend**: React + Vite + TailwindCSS + shadcn/ui ✅ IMPLEMENTERT
   - **Database**: PostgreSQL med JOOQ (typesikker SQL)
-  - **Utviklingsstrategi**: GraphQL-først tilnærming, backend først
+  - **Utviklingsstrategi**: Fullstack utvikling med moderne frontend
 
 #### Tekniske vurderinger
 - **Quarkus vs Spring Boot**: Valgte Spring Boot pga bedre dokumentasjon og større community for nybegynnere
 - **Java-rammeverk**: Spring Boot (besluttet)
 
-## Prosjektstruktur (Spring Boot + GraphQL)
+## Prosjektstruktur (2025-08-29 - Refaktorert)
 
-### Foreslått mappestruktur:
+### Atual mappestruktur (ren organisering):
 ```
-opptaksystem/
-├── krav/                       # Domenekrav og dokumentasjon
-│   ├── regelverk/              # Modul: Regelverk
-│   │   ├── user-stories.md
-│   │   ├── entity-map.md
-│   │   └── example-mappings/
-│   ├── opptak/                 # Modul: Opptak
-│   │   ├── user-stories.md
-│   │   ├── entity-map.md
-│   │   └── example-mappings/
-│   ├── soknadsregistrering/    # Modul: Søknadsregistrering
-│   │   ├── user-stories.md
-│   │   ├── entity-map.md
-│   │   └── example-mappings/
-│   ├── soknadsbehandling/      # Modul: Søknadsbehandling
-│   │   ├── user-stories.md
-│   │   ├── entity-map.md
-│   │   └── example-mappings/
-│   └── plasstildeling/         # Modul: Plasstildeling
-│       ├── user-stories.md
-│       ├── entity-map.md
-│       └── example-mappings/
-├── src/main/java/no/utdanning/opptak/
-│   ├── domain/                 # Domeneklasser (Søker, Opptak, etc.)
-│   ├── graphql/                # GraphQL resolvers og datatyper
-│   ├── service/                # Forretningslogikk
-│   ├── repository/             # Database-tilgang
-│   └── config/                 # Konfigurasjon
-├── src/main/resources/
-│   ├── graphql/                # GraphQL schema-filer (.graphqls)
-│   └── application.yml         # App-konfigurasjon
-├── CLAUDE.md                   # AI-assistert utviklingsnotat
-└── pom.xml / build.gradle
+strix/
+├── requirements/               # Alle krav og dokumentasjon
+│   ├── design/                 # Design og fargepalett (Hubro/owl logo)
+│   └── krav/                   # Domenekrav og templates
+│       ├── opptak/             # Modul: Opptak
+│       ├── templates/          # Maler for domenekrav
+│       └── tilgangsstyring/    # Roller og tilgang
+├── frontend/                   # React + Vite + TailwindCSS + shadcn/ui
+│   ├── src/
+│   │   ├── components/         # UI komponenter
+│   │   │   ├── app-sidebar.tsx # Hovednavigasjon
+│   │   │   ├── dashboard.tsx   # Dashboard med statistikk
+│   │   │   └── ui/            # shadcn/ui komponenter
+│   │   ├── hooks/             # React hooks
+│   │   └── lib/               # Utilities
+│   ├── public/                # Statiske filer (owl logo)
+│   └── package.json           # Frontend avhengigheter
+└── backend/                   # Spring Boot + GraphQL backend
+    ├── .mvn/                  # Maven wrapper
+    ├── src/main/java/no/utdanning/opptak/
+    │   ├── domain/            # Domeneklasser
+    │   ├── graphql/           # GraphQL resolvers
+    │   ├── service/           # Forretningslogikk
+    │   ├── repository/        # Database-tilgang
+    │   └── config/            # Konfigurasjon
+    ├── src/main/resources/
+    │   ├── graphql/           # GraphQL schemas
+    │   └── db/migration/      # Database migrations
+    ├── data/                  # Database filer
+    ├── start-*.sh             # Startup scripts
+    └── pom.xml                # Maven konfigurasjon
 ```
 
 ## Utviklingsmetodikk (Besluttet)
@@ -153,6 +154,40 @@ opptaksystem/
 - **Performance**: Optimalisere senere (ikke prematur optimalisering)
 - **Caching**: Vurderes ved behov
 
+## Frontend Implementasjon (2025-08-29)
+
+### Teknisk Stack
+- **Framework**: React 19.1.1 med TypeScript
+- **Build tool**: Vite 7.1.3 for rask utvikling
+- **Styling**: TailwindCSS v4 med tilpasset fargepalett
+- **UI Library**: shadcn/ui for konsistente komponenter
+- **Ikon**: Lucide React ikoner
+
+### Design System
+- **Navn**: Strix (viser owl-logo i stedet for emoji)
+- **Fargepalett** (fra `requirements/design/design.md`):
+  - Primary: `#1F261E` (mørk grønn/charcoal)
+  - Accent: `#F2C53D` (gul/gull)  
+  - Secondary: `#F27C38` (oransje)
+  - Background: `#F2F2F2` (lys grå)
+  - Light accent: `#F2E3B3` (lys krem/beige)
+- **Logo**: Hubro/owl bilde fra requirements/design/
+
+### Arkitektur
+- **Layout**: Professional admin dashboard med sidebar
+- **Navigation**: 3 hovedmoduler (Opptak, Organisasjon, Utdanning)
+- **Responsiv**: Mobilvennlig med collapse sidebar
+- **Komponenter**: 
+  - `app-sidebar.tsx` - Hovednavigasjon med rolle-switcher
+  - `dashboard.tsx` - Statistikk og KPI-kort
+  - Gjenbrukbare shadcn/ui komponenter
+
+### Utvikling
+- **Dev server**: http://localhost:5173/ (Vite)
+- **Hot reload**: Automatisk oppdatering under utvikling
+- **TypeScript**: Strikt type-sjekking aktivert
+- **Import alias**: `@/` peker til `src/` mappen
+
 ## Claude Code Samarbeidsregler
 
 ### Kodekvalitet - Java/Spring Boot
@@ -162,6 +197,8 @@ opptaksystem/
 - **Testing**: JUnit 5 + Mockito for enhetstester
 
 ### Kommandoer for kvalitetssikring
+
+#### Backend (fra backend/ mappen)
 - **Build**: `./mvnw clean install`
 - **Test**: `./mvnw test`
 - **Spesifikk test**: `./mvnw test -Dtest=KlasseNavn`
@@ -170,6 +207,12 @@ opptaksystem/
 - **GraphQL Playground**: 
   - Dev: http://localhost:8080/graphiql
   - Prod: http://opptaksapp.smidigakademiet.no/graphiql
+
+#### Frontend (fra frontend/ mappen)
+- **Start dev server**: `npm run dev` (http://localhost:5173/)
+- **Build**: `npm run build`
+- **Test build**: `npm run preview`
+- **Lint**: `npm run lint`
 
 **Maven wrapper fix**: 
 - ✅ FIKSET: La til `-Dmaven.multiModuleProjectDirectory=$APP_HOME` i mvnw
@@ -184,15 +227,18 @@ opptaksystem/
 
 ### Viktige filer å huske
 - `CLAUDE.md` - Denne filen, prosjektets hukommelse
-- `krav/templates/` - Templates for domenekrav dokumentasjon
-- `krav/*/` - Domenekrav per modul
-- `src/main/resources/graphql/` - GraphQL schemas
-- `application.yml` - Konfigurasjon
+- `requirements/krav/templates/` - Templates for domenekrav dokumentasjon
+- `requirements/krav/*/` - Domenekrav per modul
+- `requirements/design/` - Logo og fargepalett
+- `backend/src/main/resources/graphql/` - GraphQL schemas
+- `backend/src/main/resources/application.yml` - Backend konfigurasjon
+- `frontend/src/components/` - React komponenter
+- `frontend/package.json` - Frontend avhengigheter
 
-### Kravdokumentasjon Templates
-- `krav/templates/user-story-map-template.md` - Template for user story mapping
-- `krav/templates/entity-map-template.md` - Template for entitetsdiagram (Mermaid ER)
-- `krav/templates/example-mapping-template.md` - Template for example mapping per brukerhistorie
+### Kravdokumentasjon Templates (requirements/krav/templates/)
+- `user-story-map-template.md` - Template for user story mapping
+- `entity-map-template.md` - Template for entitetsdiagram (Mermaid ER)
+- `example-mapping-template.md` - Template for example mapping per brukerhistorie
 
 ### Arbeidsregler
 - **Start hver sesjon**: Les CLAUDE.md for kontekst
