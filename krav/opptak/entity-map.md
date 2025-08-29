@@ -17,7 +17,7 @@ Konkrete utdanningstilbud med spesifikke detaljer om studienivå, varighet og in
 ### OPPTAK
 Koordinerte opptaksperioder hvor utdanninger samles og søkere kan søke på flere utdanninger samtidig.
 
-**Nøkkelfelter:** navn, type, år, søknadsfrister, maksAntallUtdanninger, tillaterAndreOrganisasjoner
+**Nøkkelfelter:** navn, type, år, søknadsfrister, maksAntallUtdanninger
 **Eksempler:** "Samordnet opptak H25", "FSU V26", "NTNU Lokalt opptak", "NTNU-UiO Felles opptak"
 
 ## Entitetsdiagram
@@ -26,6 +26,7 @@ Koordinerte opptaksperioder hvor utdanninger samles og søkere kan søke på fle
 erDiagram
     ORGANISASJON ||--o{ UTDANNING : "eier"
     ORGANISASJON ||--o{ OPPTAK : "administrerer"
+    ORGANISASJON }o--o{ OPPTAK : "har_tilgang_til"
     UTDANNING }o--o{ OPPTAK : "tilbys_i"
 ```
 
@@ -44,10 +45,19 @@ erDiagram
 - Eksempel: NTNU administrerer "NTNU Lokalt opptak H25"
 - Eksempel: SO (Samordnet Opptak) administrerer "Samordnet opptak H25"
 
+### Organisasjon HAR_TILGANG_TIL Opptak
+**Kardinalitet**: Mange-til-mange (M:N)
+**Implementasjon**: Koblingstabell `OPPTAK_TILGANG`
+- En organisasjon kan ha tilgang til flere opptak
+- Et opptak kan gi tilgang til flere organisasjoner
+- Administrator bestemmer eksplisitt hvilke organisasjoner som får tilgang
+- Eksempel: SO gir NTNU, UiO og UiB tilgang til "Samordnet opptak H25"
+- Eksempel: NTNU gir UiO tilgang til "NTNU-UiO Felles opptak H25"
+
 **Tilgangsstyring:**
-- Administrator-organisasjonen har full kontroll over opptaket
-- Administrator kan tillate andre organisasjoner å legge til sine utdanninger
-- Når tillatt, kan andre organisasjoners opptaksledere legge til egne utdanninger
+- Administrator-organisasjonen har alltid full tilgang
+- Andre organisasjoner må eksplisitt gis tilgang av administrator
+- Organisasjoner med tilgang kan kun legge til sine egne utdanninger
 
 ### Utdanning TILBYS_I Opptak  
 **Kardinalitet**: Mange-til-mange (M:N)
@@ -63,6 +73,6 @@ erDiagram
 
 **Tilgangskontroll:**
 - Organisasjoner kan bare legge til sine egne utdanninger
-- Unntak: Administrator-organisasjonen kan legge til alle utdanninger
-- Andre organisasjoner kan kun legge til hvis opptak tillater det
+- Administrator-organisasjonen kan legge til alle utdanninger
+- Andre organisasjoner må ha eksplisitt tilgang gitt av administrator
 
