@@ -106,8 +106,8 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="flex items-center gap-2 px-2 py-1">
-              <div className="w-8 h-8 rounded-full overflow-hidden bg-white flex-shrink-0">
+            <div className="flex items-center gap-3 px-2 py-1">
+              <div className="w-10 h-10 rounded-full overflow-hidden bg-white flex-shrink-0">
                 <img 
                   src="/owl-logo.png" 
                   alt="Strix Logo" 
@@ -115,7 +115,7 @@ export function AppSidebar() {
                 />
               </div>
               <div className="min-w-0">
-                <h1 className="text-xs font-medium truncate">Strix</h1>
+                <h1 className="text-sm font-medium truncate">Strix</h1>
                 <p className="text-xs text-muted-foreground truncate">Opptak</p>
               </div>
             </div>
