@@ -1,5 +1,7 @@
 # Maven
 target/
+target-dev/
+target-prod/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -32,7 +34,10 @@ logs/
 *.tmp
 *.temp
 
-# H2 Database files (development)
+# H2 Database files
 *.db
 *.trace.db
 *.lock.db
+
+# Production database folder
+data/

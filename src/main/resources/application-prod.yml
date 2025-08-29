@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/opptaksystem;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  
+  h2:
+    console:
+      enabled: false
+  
+  flyway:
+    locations: classpath:db/migration
+    clean-disabled: true
+  
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+
+server:
+  port: 80
+
+logging:
+  level:
+    org.springframework.graphql: INFO
+    no.utdanning.opptak: INFO
+    org.flywaydb: INFO
+    org.springframework.web: WARN
+    org.springframework.security: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: /var/log/opptaksystem/application.log

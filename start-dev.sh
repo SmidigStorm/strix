@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Norsk Opptaksystem - Start Script
-# Enkelt script for å starte Spring Boot applikasjonen
+# Norsk Opptaksystem - Development Start Script
+# For lokal utvikling med H2 database
 
-echo "🚀 Starter Norsk Opptaksystem..."
+echo "🚀 Starter Norsk Opptaksystem (DEVELOPMENT MODE)..."
 echo ""
 
 # Sjekk at Java er installert
@@ -23,14 +23,18 @@ if [ ! -x "./mvnw" ]; then
     chmod +x mvnw
 fi
 
-# Start applikasjonen
-echo "🏃 Starter Spring Boot applikasjonen..."
+# Development informasjon
+echo "🛠️  DEVELOPMENT MODE AKTIVERT"
+echo "   - Database: H2 in-memory"
+echo "   - Port: 8080"
+echo "   - Profil: development"
+echo ""
+echo "📱 Tilgjengelige endepunkt:"
 echo "   - GraphiQL: http://localhost:8080/graphiql"
 echo "   - H2 Console: http://localhost:8080/h2-console"
-echo "   - Ekstern tilgang: Sett opp port forwarding eller reverse proxy for opptaksapp.smidigakademiet.no"
 echo ""
 echo "⏹️  Trykk Ctrl+C for å stoppe"
 echo ""
 
-# Starter applikasjonen (Maven wrapper er nå fikset)
-./mvnw spring-boot:run
+# Starter med development profil og separate build-mappe
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev -Dmaven.build.directory=target-dev

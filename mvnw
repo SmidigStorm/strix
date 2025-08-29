@@ -43,7 +43,7 @@ cd "$SAVED" >/dev/null
 
 APP_NAME="Maven"
 APP_BASE_NAME=`basename "$0"`
-DEFAULT_JVM_OPTS=""
+DEFAULT_JVM_OPTS="-Dmaven.multiModuleProjectDirectory=$APP_HOME"
 
 # Use the maximum available, or set MAX_FD != -1 to use that value.
 MAX_FD="maximum"

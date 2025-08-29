@@ -164,8 +164,16 @@ opptaksystem/
 ### Kommandoer for kvalitetssikring
 - **Build**: `./mvnw clean install`
 - **Test**: `./mvnw test`
-- **Kjør app**: `./mvnw spring-boot:run`
-- **GraphQL Playground**: http://localhost:8080/graphiql
+- **Spesifikk test**: `./mvnw test -Dtest=KlasseNavn`
+- **Start development**: `./start-dev.sh` (H2, port 8080)
+- **Start production**: `sudo ./start-prod.sh` (PostgreSQL, port 80)
+- **GraphQL Playground**: 
+  - Dev: http://localhost:8080/graphiql
+  - Prod: http://opptaksapp.smidigakademiet.no/graphiql
+
+**Maven wrapper fix**: 
+- ✅ FIKSET: La til `-Dmaven.multiModuleProjectDirectory=$APP_HOME` i mvnw
+- Nå fungerer alle maven-kommandoer uten ekstra miljøvariabler
 
 ### Claude Code instruksjoner
 - **Alltid kjør tester** etter større endringer
