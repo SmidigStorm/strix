@@ -82,12 +82,7 @@ const søkerMenuGroups: MenuGroup[] = [
   // Kommer senere
 ];
 
-interface AppSidebarProps {
-  currentPage: 'dashboard' | 'graphiql';
-  setCurrentPage: (page: 'dashboard' | 'graphiql') => void;
-}
-
-export function AppSidebar({ currentPage, setCurrentPage }: AppSidebarProps) {
+export function AppSidebar() {
   const [selectedRole, setSelectedRole] = useState<Role>('Administrator');
   const [openGroups, setOpenGroups] = useState<Set<string>>(
     new Set(['Opptak', 'Organisasjon', 'Utdanning'])
@@ -165,31 +160,19 @@ export function AppSidebar({ currentPage, setCurrentPage }: AppSidebarProps) {
           <SidebarGroupContent className="mt-4">
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton 
-                  asChild
-                  isActive={currentPage === 'dashboard'}
-                >
-                  <button 
-                    onClick={() => setCurrentPage('dashboard')} 
-                    className="flex items-center gap-3 w-full"
-                  >
+                <SidebarMenuButton asChild>
+                  <a href="#dashboard" className="flex items-center gap-3">
                     <BarChart3 className="h-4 w-4" />
                     <span>Dashboard</span>
-                  </button>
+                  </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton 
-                  asChild
-                  isActive={currentPage === 'graphiql'}
-                >
-                  <button 
-                    onClick={() => setCurrentPage('graphiql')} 
-                    className="flex items-center gap-3 w-full"
-                  >
+                <SidebarMenuButton asChild>
+                  <a href="/graphiql" target="_blank" className="flex items-center gap-3">
                     <Code className="h-4 w-4" />
                     <span>GraphiQL</span>
-                  </button>
+                  </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
