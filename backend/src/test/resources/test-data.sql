@@ -1,7 +1,9 @@
 -- Test data for enhetstester
 -- Dette kjøres før hver test
 
--- Rens data først
+-- Rens data først (respekterer foreign keys)
+DELETE FROM bruker_rolle;
+DELETE FROM bruker;
 DELETE FROM utdanning_i_opptak;
 DELETE FROM utdanning;
 DELETE FROM opptak;

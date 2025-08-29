@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "strix",
+			"path": "."
+		},
+		{
+			"name": "backend",
+			"path": "./backend"
+		}
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "disabled",
+		"java.configuration.updateBuildConfiguration": "automatic",
+		"maven.executable.path": "./backend/mvnw"
+	}
+}
