@@ -11,21 +11,20 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class AuthMutationResolver {
-    
-    @Autowired
-    private AuthService authService;
-    
-    @MutationMapping
-    public LoginResult login(@Argument LoginInput input) {
-        try {
-            String token = authService.login(input.getEmail(), input.getPassord());
-            
-            // Hent brukerinfo for response
-            Bruker bruker = authService.getBrukerByEmail(input.getEmail());
-            
-            return new LoginResult(token, bruker);
-        } catch (SecurityException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+
+  @Autowired private AuthService authService;
+
+  @MutationMapping
+  public LoginResult login(@Argument LoginInput input) {
+    try {
+      String token = authService.login(input.getEmail(), input.getPassord());
+
+      // Hent brukerinfo for response
+      Bruker bruker = authService.getBrukerByEmail(input.getEmail());
+
+      return new LoginResult(token, bruker);
+    } catch (SecurityException e) {
+      throw new RuntimeException(e.getMessage());
     }
+  }
 }
