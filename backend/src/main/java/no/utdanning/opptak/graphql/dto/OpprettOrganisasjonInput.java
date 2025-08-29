@@ -5,6 +5,7 @@ import no.utdanning.opptak.domain.OrganisasjonsType;
 /** Input for å opprette ny organisasjon */
 public class OpprettOrganisasjonInput {
   private String navn;
+  private String kortNavn;
   private String organisasjonsnummer;
   private OrganisasjonsType organisasjonstype;
   private String epost;
@@ -19,6 +20,14 @@ public class OpprettOrganisasjonInput {
 
   public void setNavn(String navn) {
     this.navn = navn;
+  }
+
+  public String getKortNavn() {
+    return kortNavn;
+  }
+
+  public void setKortNavn(String kortNavn) {
+    this.kortNavn = kortNavn;
   }
 
   public String getOrganisasjonsnummer() {

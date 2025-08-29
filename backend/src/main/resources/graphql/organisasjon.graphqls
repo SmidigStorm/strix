@@ -53,6 +53,9 @@ input OpprettOrganisasjonInput {
     """Offisielt navn på organisasjonen"""
     navn: String!
     
+    """Kort navn / forkortelse"""
+    kortNavn: String
+    
     """Norsk organisasjonsnummer (9 siffer)"""
     organisasjonsnummer: String!
     
@@ -84,6 +87,9 @@ input OppdaterOrganisasjonInput {
     
     """Nytt navn (valgfritt)"""
     navn: String
+    
+    """Nytt kort navn (valgfritt)"""
+    kortNavn: String
     
     """Ny type (valgfritt)"""
     organisasjonstype: OrganisasjonsType

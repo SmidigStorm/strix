@@ -81,10 +81,11 @@ export default function OrganisasjonsListe() {
   const [editingOrg, setEditingOrg] = useState<Organisasjon | null>(null);
 
   // Form state
-  const [formData, setFormData] = useState<OpprettOrganisasjonInput>({
+  const [formData, setFormData] = useState<OpprettOrganisasjonInput & { kortNavn?: string }>({
     navn: '',
     organisasjonsnummer: '',
     organisasjonstype: 'UNIVERSITET',
+    kortNavn: '',
     epost: '',
     telefon: '',
     adresse: '',
@@ -136,6 +137,62 @@ export default function OrganisasjonsListe() {
     }
   };
 
+  // Oppdater eksisterende organisasjon
+  const oppdaterOrganisasjon = async () => {
+    try {
+      const response = await fetch('/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `
+            mutation OppdaterOrganisasjon($input: OppdaterOrganisasjonInput!) {
+              oppdaterOrganisasjon(input: $input) {
+                id
+                navn
+                kortNavn
+                type
+                organisasjonsnummer
+                epost
+                telefon
+                adresse
+                poststed
+                postnummer
+                nettside
+                aktiv
+              }
+            }
+          `,
+          variables: {
+            input: {
+              id: editingOrg?.id,
+              navn: formData.navn,
+              kortNavn: formData.kortNavn,
+              organisasjonstype: formData.organisasjonstype,
+              epost: formData.epost,
+              telefon: formData.telefon,
+              adresse: formData.adresse,
+              poststed: formData.poststed,
+              postnummer: formData.postnummer,
+            },
+          },
+        }),
+      });
+
+      const result = await response.json();
+      if (result.errors) {
+        throw new Error(result.errors[0].message);
+      }
+
+      await fetchOrganisasjoner();
+      setIsDialogOpen(false);
+      resetForm();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Kunne ikke oppdatere organisasjon');
+    }
+  };
+
   // Opprett ny organisasjon
   const opprettOrganisasjon = async () => {
     try {
@@ -164,7 +221,10 @@ export default function OrganisasjonsListe() {
             }
           `,
           variables: {
-            input: formData,
+            input: {
+              ...formData,
+              kortNavn: formData.kortNavn || undefined,
+            },
           },
         }),
       });
@@ -192,7 +252,7 @@ export default function OrganisasjonsListe() {
         },
         body: JSON.stringify({
           query: `
-            mutation DeaktiverOrganisasjon($id: String!) {
+            mutation DeaktiverOrganisasjon($id: ID!) {
               deaktiverOrganisasjon(id: $id) {
                 id
                 aktiv
@@ -219,6 +279,7 @@ export default function OrganisasjonsListe() {
       navn: '',
       organisasjonsnummer: '',
       organisasjonstype: 'UNIVERSITET',
+      kortNavn: '',
       epost: '',
       telefon: '',
       adresse: '',
@@ -228,9 +289,29 @@ export default function OrganisasjonsListe() {
     setEditingOrg(null);
   };
 
+  const startEditOrganisasjon = (org: Organisasjon) => {
+    setEditingOrg(org);
+    setFormData({
+      navn: org.navn,
+      organisasjonsnummer: org.organisasjonsnummer,
+      organisasjonstype: org.type,
+      kortNavn: org.kortNavn || '',
+      epost: org.epost || '',
+      telefon: org.telefon || '',
+      adresse: org.adresse || '',
+      poststed: org.poststed || '',
+      postnummer: org.postnummer || '',
+    });
+    setIsDialogOpen(true);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await opprettOrganisasjon();
+    if (editingOrg) {
+      await oppdaterOrganisasjon();
+    } else {
+      await opprettOrganisasjon();
+    }
   };
 
   useEffect(() => {
@@ -268,9 +349,14 @@ export default function OrganisasjonsListe() {
           <DialogContent className="sm:max-w-[625px]">
             <form onSubmit={handleSubmit}>
               <DialogHeader>
-                <DialogTitle>Opprett ny organisasjon</DialogTitle>
+                <DialogTitle>
+                  {editingOrg ? 'Rediger organisasjon' : 'Opprett ny organisasjon'}
+                </DialogTitle>
                 <DialogDescription>
-                  Registrer en ny utdanningsinstitusjon eller organisasjon
+                  {editingOrg 
+                    ? 'Oppdater informasjon for eksisterende organisasjon'
+                    : 'Registrer en ny utdanningsinstitusjon eller organisasjon'
+                  }
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
@@ -287,6 +373,18 @@ export default function OrganisasjonsListe() {
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="kortNavn" className="text-right">
+                    Kort navn
+                  </Label>
+                  <Input
+                    id="kortNavn"
+                    value={formData.kortNavn}
+                    onChange={(e) => setFormData({ ...formData, kortNavn: e.target.value })}
+                    className="col-span-3"
+                    placeholder="F.eks. NTNU"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="organisasjonsnummer" className="text-right">
                     Org.nr *
                   </Label>
@@ -296,6 +394,7 @@ export default function OrganisasjonsListe() {
                     onChange={(e) => setFormData({ ...formData, organisasjonsnummer: e.target.value })}
                     className="col-span-3"
                     placeholder="9 siffer"
+                    disabled={!!editingOrg}
                     required
                   />
                 </div>
@@ -378,7 +477,9 @@ export default function OrganisasjonsListe() {
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                   Avbryt
                 </Button>
-                <Button type="submit">Opprett</Button>
+                <Button type="submit">
+                  {editingOrg ? 'Oppdater' : 'Opprett'}
+                </Button>
               </DialogFooter>
             </form>
           </DialogContent>
@@ -448,7 +549,11 @@ export default function OrganisasjonsListe() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => startEditOrganisasjon(org)}
+                      >
                         <Pencil className="h-4 w-4" />
                       </Button>
                       {org.aktiv && (

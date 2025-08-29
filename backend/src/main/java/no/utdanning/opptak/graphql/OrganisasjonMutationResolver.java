@@ -34,6 +34,7 @@ public class OrganisasjonMutationResolver {
     // Opprett ny organisasjon
     Organisasjon organisasjon = new Organisasjon();
     organisasjon.setNavn(input.getNavn());
+    organisasjon.setKortNavn(input.getKortNavn());
     organisasjon.setOrganisasjonsnummer(input.getOrganisasjonsnummer());
     organisasjon.setType(input.getOrganisasjonstype());
     organisasjon.setEpost(input.getEpost());
@@ -56,6 +57,9 @@ public class OrganisasjonMutationResolver {
     // Oppdater kun felter som er spesifisert
     if (input.getNavn() != null) {
       eksisterende.setNavn(input.getNavn());
+    }
+    if (input.getKortNavn() != null) {
+      eksisterende.setKortNavn(input.getKortNavn());
     }
     if (input.getOrganisasjonstype() != null) {
       eksisterende.setType(input.getOrganisasjonstype());

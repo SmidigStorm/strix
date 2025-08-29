@@ -6,6 +6,7 @@ import no.utdanning.opptak.domain.OrganisasjonsType;
 public class OppdaterOrganisasjonInput {
   private String id;
   private String navn;
+  private String kortNavn;
   private OrganisasjonsType organisasjonstype;
   private String epost;
   private String telefon;
@@ -27,6 +28,14 @@ public class OppdaterOrganisasjonInput {
 
   public void setNavn(String navn) {
     this.navn = navn;
+  }
+
+  public String getKortNavn() {
+    return kortNavn;
+  }
+
+  public void setKortNavn(String kortNavn) {
+    this.kortNavn = kortNavn;
   }
 
   public OrganisasjonsType getOrganisasjonstype() {
