@@ -1,59 +1,31 @@
 # Entity Map - Opptak
 
+## Entitetsbeskrivelser
+
+### ORGANISASJON
+Utdanningsinstitusjoner som tilbyr utdanninger. Kan være universiteter, høgskoler, fagskoler eller private institusjoner.
+
+**Nøkkelfelter:** navn, kortNavn, type, organisasjonsnummer
+**Eksempler:** NTNU, UiO, HVL, BI
+
+### UTDANNING  
+Konkrete utdanningstilbud med spesifikke detaljer om studienivå, varighet og innhold.
+
+**Nøkkelfelter:** navn, studienivaa, studiepoeng, varighet, studiested
+**Eksempler:** "Bachelor i informatikk", "Master i AI", "Sykepleie"
+
+### OPPTAK
+Koordinerte opptaksperioder hvor utdanninger samles og søkere kan søke på flere utdanninger samtidig.
+
+**Nøkkelfelter:** navn, type, år, søknadsfrister, maksAntallUtdanninger
+**Eksempler:** "Samordnet opptak H25", "FSU V26", "NTNU Lokalt opptak"
+
 ## Entitetsdiagram
 
 ```mermaid
 erDiagram
-    ORGANISASJON {
-        string id
-        string navn
-        string kortNavn
-        string type
-        string organisasjonsnummer
-        string adresse
-        string nettside
-        datetime opprettet
-        boolean aktiv
-    }
-    
-    UTDANNING {
-        string id
-        string navn
-        string studienivaa
-        int studiepoeng
-        int varighet
-        string studiested
-        string undervisningssprak
-        string beskrivelse
-        datetime opprettet
-        boolean aktiv
-    }
-    
-    OPPTAK {
-        string id
-        string navn
-        string type
-        int aar
-        date soknadsfrist
-        date svarfrist
-        int maxUtdanningerPerSoknad
-        string status
-        string opptaksomgang
-        string beskrivelse
-        datetime opprettet
-        boolean aktiv
-    }
-    
-    UTDANNING_I_OPPTAK {
-        string id
-        int antallPlasser
-        boolean aktivt
-        datetime opprettet
-    }
-    
     ORGANISASJON ||--o{ UTDANNING : "eier"
-    UTDANNING ||--|| UTDANNING_I_OPPTAK : "har_opptak"
-    OPPTAK ||--o{ UTDANNING_I_OPPTAK : "inneholder"
+    UTDANNING }o--o{ OPPTAK : "tilbys_i"
 ```
 
 ## Relasjonsbeskrivelser
@@ -64,13 +36,15 @@ erDiagram
 - En utdanning eies av nøyaktig én organisasjon
 - Eksempel: NTNU eier "Bachelor i informatikk H25", "Master i AI H25", etc.
 
-### Utdanning TILBYS_I Opptak
-**Kardinalitet**: Mange-til-en (N:1)
-- Hver utdanning tilbys i nøyaktig ett opptak
-- Et opptak kan tilby mange utdanninger
-- Eksempel: "Bachelor i informatikk H25" og "Master i AI H25" tilbys begge i "Samordnet opptak H25"
+### Utdanning TILBYS_I Opptak  
+**Kardinalitet**: Mange-til-mange (M:N)
+**Implementasjon**: Koblingstabell `UTDANNING_I_OPPTAK`
+- En utdanning kan tilbys i flere opptak
+- Et opptak kan inneholde mange utdanninger
+- Eksempel: "Bachelor i informatikk" tilbys både i "Samordnet opptak H25" og "NTNU lokalt opptak"
+- Eksempel: "Samordnet opptak H25" inneholder både "Bachelor i informatikk" og "Master i AI"
 
 **Metadata på relasjonen:**
-- Antall studieplasser som er tilgjengelig for utdanningen i dette opptaket
-- Om utdanningen er aktiv i opptaket (kan midlertidig deaktiveres)
+- Antall studieplasser tilgjengelig
+- Om utdanningen er aktiv i opptaket
 
