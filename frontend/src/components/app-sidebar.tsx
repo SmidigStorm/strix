@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Sidebar,
   SidebarContent,
@@ -22,12 +23,14 @@ import {
   University,
   GraduationCap as StudentIcon,
   Code,
+  Building2,
 } from 'lucide-react';
 
 type Role = 'Søker' | 'Administrator';
 
 export function AppSidebar() {
   const [selectedRole, setSelectedRole] = useState<Role>('Administrator');
+  const location = useLocation();
   const RoleIcon = selectedRole === 'Administrator' ? University : StudentIcon;
 
   return (
@@ -89,13 +92,23 @@ export function AppSidebar() {
           <SidebarGroupContent className="mt-4">
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="#dashboard" className="flex items-center gap-3">
+                <SidebarMenuButton asChild isActive={location.pathname === '/'}>
+                  <Link to="/" className="flex items-center gap-3">
                     <BarChart3 className="h-4 w-4" />
                     <span>Dashboard</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              {selectedRole === 'Administrator' && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={location.pathname === '/organisasjoner'}>
+                    <Link to="/organisasjoner" className="flex items-center gap-3">
+                      <Building2 className="h-4 w-4" />
+                      <span>Organisasjoner</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <a href="/graphiql" target="_blank" className="flex items-center gap-3">

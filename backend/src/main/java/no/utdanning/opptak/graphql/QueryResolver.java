@@ -17,15 +17,6 @@ public class QueryResolver {
     this.repository = repository;
   }
 
-  @QueryMapping
-  public List<Organisasjon> organisasjoner() {
-    return repository.findAllOrganisasjoner();
-  }
-
-  @QueryMapping
-  public Organisasjon organisasjon(@Argument String id) {
-    return repository.findOrganisasjonById(id).orElse(null);
-  }
 
   @QueryMapping
   public List<Opptak> alleOpptak() {

@@ -98,16 +98,23 @@ public class OpptakRepository {
   private static class OrganisasjonRowMapper implements RowMapper<Organisasjon> {
     @Override
     public Organisasjon mapRow(ResultSet rs, int rowNum) throws SQLException {
-      return new Organisasjon(
-          rs.getString("id"),
-          rs.getString("navn"),
-          rs.getString("kort_navn"),
-          rs.getString("type"),
-          rs.getString("organisasjonsnummer"),
-          rs.getString("adresse"),
-          rs.getString("nettside"),
-          rs.getTimestamp("opprettet").toLocalDateTime(),
-          rs.getBoolean("aktiv"));
+      Organisasjon org = new Organisasjon();
+      org.setId(rs.getString("id"));
+      org.setNavn(rs.getString("navn"));
+      org.setKortNavn(rs.getString("kort_navn"));
+
+      // Map string type to enum
+      String typeStr = rs.getString("type");
+      if (typeStr != null) {
+        org.setType(no.utdanning.opptak.domain.OrganisasjonsType.valueOf(typeStr.toUpperCase()));
+      }
+
+      org.setOrganisasjonsnummer(rs.getString("organisasjonsnummer"));
+      org.setAdresse(rs.getString("adresse"));
+      org.setNettside(rs.getString("nettside"));
+      org.setOpprettet(rs.getTimestamp("opprettet").toLocalDateTime());
+      org.setAktiv(rs.getBoolean("aktiv"));
+      return org;
     }
   }
 

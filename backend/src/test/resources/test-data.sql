@@ -13,13 +13,14 @@ DELETE FROM organisasjon;
 INSERT INTO organisasjon (id, navn, kort_navn, type, organisasjonsnummer, adresse, nettside, opprettet, aktiv) VALUES
 ('NTNU-001', 'NTNU', 'NTNU', 'universitet', '974767880', 'Høgskoleringen 1, 7491 Trondheim', 'https://www.ntnu.no', '2024-01-01 10:00:00', true),
 ('UIO-001', 'Universitetet i Oslo', 'UiO', 'universitet', '971035854', 'Problemveien 7, 0315 Oslo', 'https://www.uio.no', '2024-01-01 10:00:00', true),
-('SO-001', 'Samordnet Opptak', 'SO', 'koordinator', '123456789', 'Oslo', 'https://www.samordnetopptak.no', '2024-01-01 10:00:00', true);
+('HVL-001', 'Høgskulen på Vestlandet', 'HVL', 'hogskole', '991825827', 'Inndalsveien 28, 5020 Bergen', 'https://www.hvl.no', '2024-01-01 10:00:00', true);
 
 -- Legg til test-utdanninger
 INSERT INTO utdanning (id, navn, studienivaa, studiepoeng, varighet, studiested, undervisningssprak, beskrivelse, opprettet, aktiv, organisasjon_id) VALUES
 ('NTNU-INF-001', 'Bachelor i informatikk', 'bachelor', 180, 3, 'Trondheim', 'norsk', 'Bachelor i informatikk ved NTNU', '2024-01-01 10:00:00', true, 'NTNU-001'),
 ('NTNU-INF-002', 'Master i kunstig intelligens', 'master', 120, 2, 'Trondheim', 'engelsk', 'Master i AI ved NTNU', '2024-01-01 10:00:00', true, 'NTNU-001'),
-('UIO-MED-001', 'Bachelor i medisin', 'bachelor', 360, 6, 'Oslo', 'norsk', 'Medisinstudiet ved UiO', '2024-01-01 10:00:00', true, 'UIO-001');
+('UIO-MED-001', 'Bachelor i medisin', 'bachelor', 360, 6, 'Oslo', 'norsk', 'Medisinstudiet ved UiO', '2024-01-01 10:00:00', true, 'UIO-001'),
+('HVL-SYK-001', 'Bachelor i sykepleie', 'bachelor', 180, 3, 'Bergen', 'norsk', 'Sykepleieutdanning ved HVL', '2024-01-01 10:00:00', true, 'HVL-001');
 
 -- Legg til test-opptak
 INSERT INTO opptak (id, navn, type, aar, soknadsfrist, svarfrist, max_utdanninger_per_soknad, status, opptaksomgang, beskrivelse, opprettet, aktiv) VALUES

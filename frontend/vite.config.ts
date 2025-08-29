@@ -11,4 +11,10 @@ export default defineConfig({
       "@": resolve(__dirname, "./src"),
     },
   },
+  server: {
+    proxy: {
+      '/graphql': 'http://localhost:8080',
+      '/graphiql': 'http://localhost:8080',
+    }
+  }
 })

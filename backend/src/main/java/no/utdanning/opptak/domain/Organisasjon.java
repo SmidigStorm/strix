@@ -7,11 +7,16 @@ public class Organisasjon {
   private String id;
   private String navn;
   private String kortNavn;
-  private String type;
+  private OrganisasjonsType type;
   private String organisasjonsnummer;
+  private String epost;
+  private String telefon;
   private String adresse;
+  private String poststed;
+  private String postnummer;
   private String nettside;
   private LocalDateTime opprettet;
+  private LocalDateTime oppdatert;
   private Boolean aktiv;
   private List<Utdanning> utdanninger;
 
@@ -21,20 +26,30 @@ public class Organisasjon {
       String id,
       String navn,
       String kortNavn,
-      String type,
+      OrganisasjonsType type,
       String organisasjonsnummer,
+      String epost,
+      String telefon,
       String adresse,
+      String poststed,
+      String postnummer,
       String nettside,
       LocalDateTime opprettet,
+      LocalDateTime oppdatert,
       Boolean aktiv) {
     this.id = id;
     this.navn = navn;
     this.kortNavn = kortNavn;
     this.type = type;
     this.organisasjonsnummer = organisasjonsnummer;
+    this.epost = epost;
+    this.telefon = telefon;
     this.adresse = adresse;
+    this.poststed = poststed;
+    this.postnummer = postnummer;
     this.nettside = nettside;
     this.opprettet = opprettet;
+    this.oppdatert = oppdatert;
     this.aktiv = aktiv;
   }
 
@@ -62,12 +77,44 @@ public class Organisasjon {
     this.kortNavn = kortNavn;
   }
 
-  public String getType() {
+  public OrganisasjonsType getType() {
     return type;
   }
 
-  public void setType(String type) {
+  public void setType(OrganisasjonsType type) {
     this.type = type;
+  }
+
+  public String getEpost() {
+    return epost;
+  }
+
+  public void setEpost(String epost) {
+    this.epost = epost;
+  }
+
+  public String getTelefon() {
+    return telefon;
+  }
+
+  public void setTelefon(String telefon) {
+    this.telefon = telefon;
+  }
+
+  public String getPoststed() {
+    return poststed;
+  }
+
+  public void setPoststed(String poststed) {
+    this.poststed = poststed;
+  }
+
+  public String getPostnummer() {
+    return postnummer;
+  }
+
+  public void setPostnummer(String postnummer) {
+    this.postnummer = postnummer;
   }
 
   public String getOrganisasjonsnummer() {
@@ -100,6 +147,14 @@ public class Organisasjon {
 
   public void setOpprettet(LocalDateTime opprettet) {
     this.opprettet = opprettet;
+  }
+
+  public LocalDateTime getOppdatert() {
+    return oppdatert;
+  }
+
+  public void setOppdatert(LocalDateTime oppdatert) {
+    this.oppdatert = oppdatert;
   }
 
   public Boolean getAktiv() {

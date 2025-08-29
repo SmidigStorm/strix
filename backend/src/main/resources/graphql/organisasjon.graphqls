@@ -7,9 +7,13 @@ type Organisasjon {
     id: ID!
     navn: String!
     kortNavn: String
-    type: String!
+    type: OrganisasjonsType!
     organisasjonsnummer: String!
+    epost: String
+    telefon: String
     adresse: String
+    poststed: String
+    postnummer: String
     nettside: String
     opprettet: String!
     aktiv: Boolean!
@@ -25,14 +29,125 @@ type Organisasjon {
     administrerteOpptak: [Opptak!]!
 }
 
+"""
+Typer av utdanningsorganisasjoner
+"""
+enum OrganisasjonsType {
+    """Universitet"""
+    UNIVERSITET
+    
+    """Høgskole"""
+    HOGSKOLE
+    
+    """Fagskole"""  
+    FAGSKOLE
+    
+    """Privat institusjon"""
+    PRIVAT
+}
+
+"""
+Input for å opprette en ny organisasjon
+"""
+input OpprettOrganisasjonInput {
+    """Offisielt navn på organisasjonen"""
+    navn: String!
+    
+    """Norsk organisasjonsnummer (9 siffer)"""
+    organisasjonsnummer: String!
+    
+    """Type organisasjon"""
+    organisasjonstype: OrganisasjonsType!
+    
+    """Kontakt e-postadresse"""
+    epost: String!
+    
+    """Telefonnummer"""
+    telefon: String
+    
+    """Gateadresse"""
+    adresse: String
+    
+    """Poststed"""
+    poststed: String
+    
+    """Postnummer"""
+    postnummer: String
+}
+
+"""
+Input for å oppdatere organisasjon
+"""
+input OppdaterOrganisasjonInput {
+    """ID på organisasjonen som skal oppdateres"""
+    id: ID!
+    
+    """Nytt navn (valgfritt)"""
+    navn: String
+    
+    """Ny type (valgfritt)"""
+    organisasjonstype: OrganisasjonsType
+    
+    """Ny e-post (valgfritt)"""
+    epost: String
+    
+    """Nytt telefonnummer (valgfritt)"""
+    telefon: String
+    
+    """Ny adresse (valgfritt)"""
+    adresse: String
+    
+    """Nytt poststed (valgfritt)"""
+    poststed: String
+    
+    """Nytt postnummer (valgfritt)"""
+    postnummer: String
+}
+
+"""
+Filtrering for organisasjonsliste
+"""
+input OrganisasjonFilter {
+    """Filtrer på aktiv/inaktiv status"""
+    aktiv: Boolean
+    
+    """Filtrer på organisasjonstype"""
+    organisasjonstype: OrganisasjonsType
+    
+    """Søk i organisasjonsnavn"""
+    navnSok: String
+}
+
 extend type Query {
     """
-    Henter alle organisasjoner
+    Henter alle organisasjoner med valgfri filtrering
     """
-    organisasjoner: [Organisasjon!]!
+    organisasjoner(filter: OrganisasjonFilter): [Organisasjon!]!
     
     """
     Henter en spesifikk organisasjon basert på ID
     """
     organisasjon(id: ID!): Organisasjon
+}
+
+extend type Mutation {
+    """
+    Opprett ny organisasjon
+    """
+    opprettOrganisasjon(input: OpprettOrganisasjonInput!): Organisasjon!
+    
+    """
+    Oppdater eksisterende organisasjon
+    """
+    oppdaterOrganisasjon(input: OppdaterOrganisasjonInput!): Organisasjon!
+    
+    """
+    Deaktiver organisasjon (soft delete)
+    """
+    deaktiverOrganisasjon(id: ID!): Organisasjon!
+    
+    """
+    Reaktiver organisasjon
+    """
+    reaktiverOrganisasjon(id: ID!): Organisasjon!
 }
