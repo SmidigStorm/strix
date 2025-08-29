@@ -1,7 +1,6 @@
 package no.utdanning.opptak.service;
 
 import no.utdanning.opptak.domain.Bruker;
-import no.utdanning.opptak.domain.BrukerRolle;
 import no.utdanning.opptak.repository.BrukerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -45,7 +44,7 @@ public class AuthService {
         
         // Hent roller
         List<String> rolleNavn = bruker.getRoller().stream()
-                .map(brukerRolle -> brukerRolle.getRolle().getId())
+                .map(brukerRolle -> brukerRolle.getRolleId())
                 .toList();
         
         // Generer JWT token

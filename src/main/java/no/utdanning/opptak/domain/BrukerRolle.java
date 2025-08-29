@@ -26,7 +26,7 @@ public class BrukerRolle {
     @JoinColumn(name = "bruker_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Bruker bruker;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rolle_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Rolle rolle;
     

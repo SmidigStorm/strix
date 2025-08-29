@@ -37,10 +37,32 @@ Systemet tilbyr en GraphQL API på `http://localhost:8080/graphql`.
 
 ### Eksempel queries:
 
-#### Hei-melding
+#### Autentisering - Hvem er jeg?
 ```graphql
 query {
-  hei(navn: "Ditt Navn")
+  meg {
+    email
+    navn
+    roller {
+      id
+    }
+    organisasjon {
+      navn
+    }
+  }
+}
+```
+
+#### Test-brukere (for utvikling)
+```graphql
+query {
+  testBrukere {
+    email
+    navn
+    roller
+    organisasjon
+    passord
+  }
 }
 ```
 
@@ -92,6 +114,25 @@ Systemet bruker H2 in-memory database for utvikling:
 - **Bruker:** `sa`
 - **Passord:** (tomt)
 - **Console:** http://localhost:8080/h2-console
+
+### Autentisering og Test-brukere
+
+Systemet bruker JWT tokens for autentisering. I utviklingsmiljø har vi følgende test-brukere:
+
+| Email | Navn | Rolle | Organisasjon | Passord |
+|-------|------|-------|--------------|---------|
+| `opptaksleder@ntnu.no` | Kari Opptaksleder | OPPTAKSLEDER | NTNU-TEST | test123 |
+| `behandler@uio.no` | Per Behandler | SOKNADSBEHANDLER | UiO-TEST | test123 |
+| `soker@student.no` | Astrid Søker | SOKER | - | test123 |
+| `admin@samordnetopptak.no` | Bjørn SO-Administrator | OPPTAKSLEDER | SO-TEST | test123 |
+
+**Slik logger du inn:**
+1. Kjør `testBrukere` query for å få oversikt over tilgjengelige brukere
+2. Bruk en av test-brukernes email/passord kombinasjoner
+3. Ved innlogging får du et JWT token som brukes for videre API-kall
+4. Bruk `meg` query for å se hvilken bruker du er logget inn som
+
+**Test-brukerne opprettes automatisk** via database-migrering (`V004__Legg_til_test_brukere.sql`).
 
 ### GraphQL Utvikling
 

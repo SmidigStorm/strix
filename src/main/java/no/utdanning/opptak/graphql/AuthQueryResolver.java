@@ -2,18 +2,21 @@ package no.utdanning.opptak.graphql;
 
 import io.jsonwebtoken.Claims;
 import no.utdanning.opptak.domain.Bruker;
+import no.utdanning.opptak.domain.Rolle;
 import no.utdanning.opptak.graphql.dto.TestBruker;
+import no.utdanning.opptak.repository.BrukerRepository;
 import no.utdanning.opptak.service.AuthService;
 import no.utdanning.opptak.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class AuthQueryResolver {
@@ -23,6 +26,9 @@ public class AuthQueryResolver {
     
     @Autowired
     private JwtService jwtService;
+    
+    @Autowired
+    private BrukerRepository brukerRepository;
     
     @QueryMapping
     public Bruker meg() {
@@ -44,36 +50,24 @@ public class AuthQueryResolver {
     
     @QueryMapping
     public List<TestBruker> testBrukere() {
-        return Arrays.asList(
-            new TestBruker(
-                "opptaksleder@ntnu.no",
-                "Kari Opptaksleder",
-                Arrays.asList("OPPTAKSLEDER"),
-                "NTNU-TEST",
+        return brukerRepository.findAll().stream()
+            .map(bruker -> new TestBruker(
+                bruker.getEmail(),
+                bruker.getNavn(),
+                bruker.getRoller().stream()
+                    .map(brukerRolle -> brukerRolle.getRolleId())
+                    .collect(Collectors.toList()),
+                bruker.getOrganisasjonId(),
                 "test123"
-            ),
-            new TestBruker(
-                "behandler@uio.no", 
-                "Per Behandler",
-                Arrays.asList("SOKNADSBEHANDLER"),
-                "UiO-TEST",
-                "test123"
-            ),
-            new TestBruker(
-                "soker@student.no",
-                "Astrid Søker", 
-                Arrays.asList("SOKER"),
-                null,
-                "test123"
-            ),
-            new TestBruker(
-                "admin@samordnetopptak.no",
-                "Bjørn SO-Administrator",
-                Arrays.asList("OPPTAKSLEDER"),
-                "SO-TEST",
-                "test123"
-            )
-        );
+            ))
+            .collect(Collectors.toList());
+    }
+    
+    @SchemaMapping(typeName = "Bruker", field = "roller")
+    public List<Rolle> brukerRoller(Bruker bruker) {
+        return bruker.getRoller().stream()
+            .map(brukerRolle -> brukerRolle.getRolle())
+            .collect(Collectors.toList());
     }
     
     private String hentTokenFraRequest() {

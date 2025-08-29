@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface BrukerRepository extends JpaRepository<Bruker, String> {
     Optional<Bruker> findByEmail(String email);
+    
 }

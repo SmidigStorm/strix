@@ -31,13 +31,20 @@
     
     <script>
         // GraphQL fetcher funksjon
-        function graphQLFetcher(graphQLParams) {
+        function graphQLFetcher(graphQLParams, opts) {
+            const headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            };
+            
+            // Add any custom headers from GraphiQL header editor
+            if (opts && opts.headers) {
+                Object.assign(headers, opts.headers);
+            }
+            
             return fetch('/graphql', {
                 method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
+                headers: headers,
                 body: JSON.stringify(graphQLParams),
                 credentials: 'include',
             }).then(function (response) {
