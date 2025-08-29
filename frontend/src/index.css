@@ -18,19 +18,19 @@
   -moz-osx-font-smoothing: grayscale;
   --radius: 0.625rem;
   --background: oklch(0.98 0 0); /* #F2F2F2 - Light gray */
-  --foreground: oklch(0.17 0.01 120); /* #1F261E - Dark green/charcoal */
+  --foreground: oklch(0.1 0 0); /* Helt sort */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.17 0.01 120);
+  --card-foreground: oklch(0.1 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.17 0.01 120);
-  --primary: oklch(0.17 0.01 120); /* #1F261E - Dark green/charcoal */
+  --popover-foreground: oklch(0.1 0 0);
+  --primary: oklch(0.1 0 0); /* Helt sort */
   --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.89 0.05 30); /* #F27C38 - Orange */
-  --secondary-foreground: oklch(0.17 0.01 120);
-  --muted: oklch(0.91 0.02 80); /* #F2E3B3 - Light cream/beige */
-  --muted-foreground: oklch(0.17 0.01 120);
+  --secondary: oklch(0.35 0.02 120); /* Mørk grønn - matcher primary */
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.94 0.01 120); /* Lys grønn/grå - matcher tema */
+  --muted-foreground: oklch(0.1 0 0);
   --accent: oklch(0.84 0.13 85); /* #F2C53D - Bright yellow/gold */
-  --accent-foreground: oklch(0.17 0.01 120);
+  --accent-foreground: oklch(0.1 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
@@ -151,8 +151,8 @@ button:focus-visible {
   --popover-foreground: oklch(0.98 0 0);
   --primary: oklch(0.84 0.13 85); /* #F2C53D - Bright yellow/gold */
   --primary-foreground: oklch(0.17 0.01 120);
-  --secondary: oklch(0.89 0.05 30); /* #F27C38 - Orange */
-  --secondary-foreground: oklch(0.17 0.01 120);
+  --secondary: oklch(0.35 0.02 120); /* Mørk grønn - matcher primary */
+  --secondary-foreground: oklch(0.98 0 0);
   --muted: oklch(0.35 0.01 120);
   --muted-foreground: oklch(0.91 0.02 80);
   --accent: oklch(0.89 0.05 30); /* #F27C38 - Orange */
