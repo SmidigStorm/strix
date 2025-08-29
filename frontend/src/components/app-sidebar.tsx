@@ -82,7 +82,12 @@ const søkerMenuGroups: MenuGroup[] = [
   // Kommer senere
 ];
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  currentPage: 'dashboard' | 'graphiql';
+  setCurrentPage: (page: 'dashboard' | 'graphiql') => void;
+}
+
+export function AppSidebar({ currentPage, setCurrentPage }: AppSidebarProps) {
   const [selectedRole, setSelectedRole] = useState<Role>('Administrator');
   const [openGroups, setOpenGroups] = useState<Set<string>>(
     new Set(['Opptak', 'Organisasjon', 'Utdanning'])
@@ -160,19 +165,31 @@ export function AppSidebar() {
           <SidebarGroupContent className="mt-4">
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="#dashboard" className="flex items-center gap-3">
+                <SidebarMenuButton 
+                  asChild
+                  isActive={currentPage === 'dashboard'}
+                >
+                  <button 
+                    onClick={() => setCurrentPage('dashboard')} 
+                    className="flex items-center gap-3 w-full"
+                  >
                     <BarChart3 className="h-4 w-4" />
                     <span>Dashboard</span>
-                  </a>
+                  </button>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="/graphiql" target="_blank" className="flex items-center gap-3">
+                <SidebarMenuButton 
+                  asChild
+                  isActive={currentPage === 'graphiql'}
+                >
+                  <button 
+                    onClick={() => setCurrentPage('graphiql')} 
+                    className="flex items-center gap-3 w-full"
+                  >
                     <Code className="h-4 w-4" />
                     <span>GraphiQL</span>
-                  </a>
+                  </button>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

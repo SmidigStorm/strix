@@ -1,13 +1,33 @@
+import { useState } from 'react';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import Dashboard from '@/components/dashboard';
 import { Button } from '@/components/ui/button';
+import { GraphiQLPage } from '@/components/graphiql-page';
 
 function App() {
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'graphiql'>('dashboard');
+
+  const renderCurrentPage = () => {
+    switch (currentPage) {
+      case 'graphiql':
+        return <GraphiQLPage />;
+      case 'dashboard':
+      default:
+        return (
+          <div className="flex-1 flex justify-center p-6">
+            <div className="w-full max-w-6xl mx-auto">
+              <Dashboard />
+            </div>
+          </div>
+        );
+    }
+  };
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
-        <AppSidebar />
+        <AppSidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />
 
         <main className="flex-1 flex flex-col min-w-0">
           {/* Header */}
@@ -23,11 +43,7 @@ function App() {
           </header>
 
           {/* Main content */}
-          <div className="flex-1 flex justify-center p-6">
-            <div className="w-full max-w-6xl mx-auto">
-              <Dashboard />
-            </div>
-          </div>
+          {renderCurrentPage()}
         </main>
       </div>
     </SidebarProvider>
