@@ -36,4 +36,4 @@ logging:
 
 app:
   cors:
-    allowed-origins: https://opptaksapp.smidigakademiet.no,https://www.smidigakademiet.no
+    allowed-origins: https://opptaksapp.smidigakademiet.no,https://www.smidigakademiet.no,http://localhost:3000,http://localhost:5173

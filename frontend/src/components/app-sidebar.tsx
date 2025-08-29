@@ -21,21 +21,12 @@ import { Separator } from '@/components/ui/separator';
 import {
   Building,
   GraduationCap,
-  Users,
-  FileText,
-  Settings,
   BarChart3,
-  Database,
-  Hammer,
-  Code,
   ChevronDown,
   ChevronRight,
   University,
   GraduationCap as StudentIcon,
-  School,
   ClipboardList,
-  ClipboardCheck,
-  Cog,
 } from 'lucide-react';
 
 type Role = 'Søker' | 'Administrator';
