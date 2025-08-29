@@ -27,6 +27,7 @@ import {
   University,
   GraduationCap as StudentIcon,
   ClipboardList,
+  Code,
 } from 'lucide-react';
 
 type Role = 'Søker' | 'Administrator';
@@ -163,6 +164,14 @@ export function AppSidebar() {
                   <a href="#dashboard" className="flex items-center gap-3">
                     <BarChart3 className="h-4 w-4" />
                     <span>Dashboard</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <a href="/graphiql" target="_blank" className="flex items-center gap-3">
+                    <Code className="h-4 w-4" />
+                    <span>GraphiQL</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
