@@ -29,12 +29,22 @@ type Query {
     Henter et spesifikt opptak basert på ID
     """
     opptak(id: ID!): Opptak
+    
+    """
+    Henter innlogget brukers informasjon (krever gyldig JWT token)
+    """
+    meg: Bruker
 }
 
 """
 Root Mutation type - alle endringer starter her
 """
 type Mutation {
+    """
+    Logger inn en bruker og returnerer JWT token
+    """
+    login(input: LoginInput!): LoginResult!
+    
     """
     Oppretter et nytt opptak
     """
@@ -204,4 +214,58 @@ input LeggTilUtdanningInput {
     opptakId: ID!
     antallPlasser: Int!
     aktivt: Boolean = true
+}
+
+"""
+En bruker i systemet
+"""
+type Bruker {
+    id: ID!
+    email: String!
+    navn: String!
+    aktiv: Boolean!
+    opprettet: String!
+    sistInnlogget: String
+    
+    """
+    Roller som brukeren har
+    """
+    roller: [Rolle!]!
+    
+    """
+    Organisasjonen brukeren tilhører
+    """
+    organisasjon: Organisasjon
+}
+
+"""
+En rolle som kan tildeles brukere
+"""
+type Rolle {
+    id: ID!
+    navn: String!
+    beskrivelse: String
+}
+
+"""
+Input for innlogging
+"""
+input LoginInput {
+    email: String!
+    passord: String!
+}
+
+"""
+Resultat av innlogging
+"""
+type LoginResult {
+    """
+    JWT token for autentisering
+    """
+    token: String!
+    
+    """
+    Brukerens informasjon
+    """
+    bruker: Bruker!
 }
