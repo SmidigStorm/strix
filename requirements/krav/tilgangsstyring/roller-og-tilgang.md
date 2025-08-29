@@ -12,7 +12,27 @@ Dette dokumentet beskriver rollene i opptakssystemet og deres tilganger. Tilgang
 
 ## Roller
 
-### 1. Opptaksleder
+### 1. Administrator
+**Formål**: Systemadministrasjon og overordnet styring av hele opptakssystemet
+
+**Tilganger**:
+- **Systemadministrasjon**:
+  - Administrere alle organisasjoner (opprette, redigere, deaktivere)
+  - Administrere alle brukere og roller
+  - Se og redigere all data i systemet
+  - Administrere systemkonfigurasjon og innstillinger
+  
+- **Opptak**:
+  - Se og administrere alle opptak uavhengig av organisasjon
+  - Overstyre opptaksinnstillinger ved behov
+  - Administrere systemvide opptak (som Samordnet Opptak)
+  
+- **Støtte og vedlikehold**:
+  - Tilgang til systemlogger og feilsøking
+  - Kan utføre handlinger på vegne av andre brukere ved behov
+  - Overstyre forretningsregler ved spesielle tilfeller
+
+### 2. Opptaksleder
 **Formål**: Administrere opptak og utdanninger for sin organisasjon
 
 **Tilganger**:
@@ -33,7 +53,7 @@ Dette dokumentet beskriver rollene i opptakssystemet og deres tilganger. Tilgang
   - Se og redigere egen organisasjonsinformasjon
   - Se andre organisasjoner (readonly)
 
-### 2. Søknadsbehandler
+### 3. Søknadsbehandler
 **Formål**: Behandle søknader og tildele plasser
 
 **Tilganger**:
@@ -51,7 +71,7 @@ Dette dokumentet beskriver rollene i opptakssystemet og deres tilganger. Tilgang
   - Se søkerinformasjon for de som har søkt egne utdanninger
   - Kan IKKE se søkere som kun har søkt andre organisasjoners utdanninger
 
-### 3. Søker
+### 4. Søker
 **Formål**: Søke på utdanninger og følge opp egen søknad
 
 **Tilganger**:
@@ -72,24 +92,28 @@ Dette dokumentet beskriver rollene i opptakssystemet og deres tilganger. Tilgang
 
 ## Tilgangsmatrisen
 
-| Funksjon | Opptaksleder | Søknadsbehandler | Søker |
-|----------|--------------|------------------|--------|
+| Funksjon | Administrator | Opptaksleder | Søknadsbehandler | Søker |
+|----------|---------------|--------------|------------------|--------|
+| **Systemadministrasjon** |
+| Administrere organisasjoner | ✅ Alle | ❌ | ❌ | ❌ |
+| Administrere brukere og roller | ✅ | ❌ | ❌ | ❌ |
+| Systemkonfigurasjon | ✅ | ❌ | ❌ | ❌ |
 | **Opptak** |
-| Opprette opptak | ✅ Egen org | ❌ | ❌ |
-| Administrere opptak | ✅ Egen org | ❌ | ❌ |
-| Gi tilgang til opptak | ✅ Eget opptak | ❌ | ❌ |
-| Se opptak | ✅ Alle | ✅ Med tilgang | ✅ Åpne |
+| Opprette opptak | ✅ Alle | ✅ Egen org | ❌ | ❌ |
+| Administrere opptak | ✅ Alle | ✅ Egen org | ❌ | ❌ |
+| Gi tilgang til opptak | ✅ Alle | ✅ Eget opptak | ❌ | ❌ |
+| Se opptak | ✅ Alle | ✅ Alle | ✅ Med tilgang | ✅ Åpne |
 | **Utdanninger** |
-| Legge til utdanning i opptak | ✅ Egen org* | ❌ | ❌ |
-| Endre studieplasser | ✅ Egen org | ❌ | ❌ |
-| Se utdanninger | ✅ Alle | ✅ Alle | ✅ Alle |
+| Legge til utdanning i opptak | ✅ Alle | ✅ Egen org* | ❌ | ❌ |
+| Endre studieplasser | ✅ Alle | ✅ Egen org | ❌ | ❌ |
+| Se utdanninger | ✅ Alle | ✅ Alle | ✅ Alle | ✅ Alle |
 | **Søknader** |
-| Se søknader | ❌ | ✅ Egen org | ✅ Egne |
-| Behandle søknader | ❌ | ✅ Egen org | ❌ |
-| Opprette søknad | ❌ | ❌ | ✅ |
+| Se søknader | ✅ Alle | ❌ | ✅ Egen org | ✅ Egne |
+| Behandle søknader | ✅ Alle | ❌ | ✅ Egen org | ❌ |
+| Opprette søknad | ❌ | ❌ | ❌ | ✅ |
 | **Søkere** |
-| Se søkerinformasjon | ❌ | ✅ Egne søkere | ✅ Seg selv |
-| Endre søkerinformasjon | ❌ | ❌ | ✅ Seg selv |
+| Se søkerinformasjon | ✅ Alle | ❌ | ✅ Egne søkere | ✅ Seg selv |
+| Endre søkerinformasjon | ✅ Alle | ❌ | ❌ | ✅ Seg selv |
 
 *Med tilgang til opptaket
 
