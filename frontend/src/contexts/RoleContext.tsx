@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState } from 'react';
+import type { ReactNode } from 'react';
 
 export type Role = 'Søker' | 'Søknadsbehandler' | 'Opptaksleder' | 'Administrator';
 
@@ -19,7 +20,6 @@ export function RoleProvider({ children }: RoleProviderProps) {
 
   const hasPermission = (permission: string): boolean => {
     // Basert på tilgangsmatrisen fra requirements/krav/tilgangsstyring/roller-og-tilgang.md
-    console.log(`Checking permission "${permission}" for role "${selectedRole}"`);
     switch (permission) {
       case 'VIEW_ORGANISATIONS':
         // Alle roller kan se organisasjoner (i ulike nivåer)
@@ -27,31 +27,22 @@ export function RoleProvider({ children }: RoleProviderProps) {
       
       case 'CREATE_ORGANISATION':
         // Kun Administrator kan opprette organisasjoner
-        const canCreate = selectedRole === 'Administrator';
-        console.log(`  CREATE_ORGANISATION result: ${canCreate}`);
-        return canCreate;
+        return selectedRole === 'Administrator';
       
       case 'EDIT_ORGANISATION':
         // Kun Administrator kan redigere alle organisasjoner
         // Opptaksleder kan kun se og redigere egen organisasjonsinformasjon (ikke implementert ennå)
-        const canEdit = selectedRole === 'Administrator';
-        console.log(`  EDIT_ORGANISATION result: ${canEdit}`);
-        return canEdit;
+        return selectedRole === 'Administrator';
       
       case 'DELETE_ORGANISATION':
         // Kun Administrator kan deaktivere/slette organisasjoner
-        const canDelete = selectedRole === 'Administrator';
-        console.log(`  DELETE_ORGANISATION result: ${canDelete}`);
-        return canDelete;
+        return selectedRole === 'Administrator';
       
       case 'ADMIN_ORGANISATIONS':
         // Full CRUD på alle organisasjoner - kun Administrator
-        const canAdmin = selectedRole === 'Administrator';
-        console.log(`  ADMIN_ORGANISATIONS result: ${canAdmin}`);
-        return canAdmin;
+        return selectedRole === 'Administrator';
       
       default:
-        console.log(`  Unknown permission, returning false`);
         return false;
     }
   };

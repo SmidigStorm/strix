@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useRole } from '@/contexts/RoleContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { 
+  graphQLRequest, 
+  GET_ORGANISATIONS_QUERY,
+  CREATE_ORGANISATION_MUTATION,
+  UPDATE_ORGANISATION_MUTATION,
+  DEACTIVATE_ORGANISATION_MUTATION 
+} from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -101,46 +108,8 @@ export default function OrganisasjonsListe() {
   const fetchOrganisasjoner = async () => {
     try {
       setLoading(true);
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json',
-      };
-      
-      // Legg til Authorization header hvis bruker er innlogget
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-      
-      const response = await fetch('/graphql', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          query: `
-            query GetOrganisasjoner {
-              organisasjoner {
-                id
-                navn
-                kortNavn
-                type
-                organisasjonsnummer
-                epost
-                telefon
-                adresse
-                poststed
-                postnummer
-                nettside
-                aktiv
-              }
-            }
-          `,
-        }),
-      });
-
-      const result = await response.json();
-      if (result.errors) {
-        throw new Error(result.errors[0].message);
-      }
-
-      setOrganisasjoner(result.data.organisasjoner);
+      const data = await graphQLRequest(GET_ORGANISATIONS_QUERY, undefined, token);
+      setOrganisasjoner(data.organisasjoner);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Noe gikk galt');
     } finally {
@@ -151,55 +120,23 @@ export default function OrganisasjonsListe() {
   // Oppdater eksisterende organisasjon
   const oppdaterOrganisasjon = async () => {
     try {
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json',
-      };
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-      
-      const response = await fetch('/graphql', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          query: `
-            mutation OppdaterOrganisasjon($input: OppdaterOrganisasjonInput!) {
-              oppdaterOrganisasjon(input: $input) {
-                id
-                navn
-                kortNavn
-                type
-                organisasjonsnummer
-                epost
-                telefon
-                adresse
-                poststed
-                postnummer
-                nettside
-                aktiv
-              }
-            }
-          `,
-          variables: {
-            input: {
-              id: editingOrg?.id,
-              navn: formData.navn,
-              kortNavn: formData.kortNavn,
-              organisasjonstype: formData.organisasjonstype,
-              epost: formData.epost,
-              telefon: formData.telefon,
-              adresse: formData.adresse,
-              poststed: formData.poststed,
-              postnummer: formData.postnummer,
-            },
+      await graphQLRequest(
+        UPDATE_ORGANISATION_MUTATION,
+        {
+          input: {
+            id: editingOrg?.id,
+            navn: formData.navn,
+            kortNavn: formData.kortNavn,
+            organisasjonstype: formData.organisasjonstype,
+            epost: formData.epost,
+            telefon: formData.telefon,
+            adresse: formData.adresse,
+            poststed: formData.poststed,
+            postnummer: formData.postnummer,
           },
-        }),
-      });
-
-      const result = await response.json();
-      if (result.errors) {
-        throw new Error(result.errors[0].message);
-      }
+        },
+        token
+      );
 
       await fetchOrganisasjoner();
       setIsDialogOpen(false);
@@ -212,48 +149,16 @@ export default function OrganisasjonsListe() {
   // Opprett ny organisasjon
   const opprettOrganisasjon = async () => {
     try {
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json',
-      };
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-      
-      const response = await fetch('/graphql', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          query: `
-            mutation OpprettOrganisasjon($input: OpprettOrganisasjonInput!) {
-              opprettOrganisasjon(input: $input) {
-                id
-                navn
-                kortNavn
-                type
-                organisasjonsnummer
-                epost
-                telefon
-                adresse
-                poststed
-                postnummer
-                nettside
-                aktiv
-              }
-            }
-          `,
-          variables: {
-            input: {
-              ...formData,
-              kortNavn: formData.kortNavn || undefined,
-            },
+      await graphQLRequest(
+        CREATE_ORGANISATION_MUTATION,
+        {
+          input: {
+            ...formData,
+            kortNavn: formData.kortNavn || undefined,
           },
-        }),
-      });
-
-      const result = await response.json();
-      if (result.errors) {
-        throw new Error(result.errors[0].message);
-      }
+        },
+        token
+      );
 
       await fetchOrganisasjoner();
       setIsDialogOpen(false);
@@ -266,34 +171,7 @@ export default function OrganisasjonsListe() {
   // Deaktiver organisasjon
   const deaktiverOrganisasjon = async (id: string) => {
     try {
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json',
-      };
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-      
-      const response = await fetch('/graphql', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          query: `
-            mutation DeaktiverOrganisasjon($id: ID!) {
-              deaktiverOrganisasjon(id: $id) {
-                id
-                aktiv
-              }
-            }
-          `,
-          variables: { id },
-        }),
-      });
-
-      const result = await response.json();
-      if (result.errors) {
-        throw new Error(result.errors[0].message);
-      }
-
+      await graphQLRequest(DEACTIVATE_ORGANISATION_MUTATION, { id }, token);
       await fetchOrganisasjoner();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Kunne ikke deaktivere organisasjon');
