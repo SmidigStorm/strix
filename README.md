@@ -6,6 +6,28 @@ Et moderne opptaksystem for norsk utdanning, bygget med Spring Boot, GraphQL og 
 
 ![Strix Logo](requirements/design/Hubro%20Color.png)
 
+## 🏛️ Arkitektur
+
+### Development vs Production Setup
+
+**🔧 Development (utvikling):**
+- **Frontend**: Vite dev server på http://localhost:5173/ (hot reload, rask utvikling)
+- **Backend**: Spring Boot på http://localhost:8080/ (GraphQL API + H2 in-memory)
+- **Fordeler**: Rask utvikling med hot reload, separate servere for optimal utviklingsopplevelse
+
+**🚀 Production (produksjon):**
+- **Frontend**: Bygges til statiske filer og serveres av Spring Boot
+- **Backend**: Spring Boot serverer både API og frontend fra samme server (port 80)
+- **Database**: H2 file-based for persistens
+- **Fordeler**: Enklere deployment, ingen CORS-problemer, kun én server å administrere
+
+### Hvorfor denne tilnærmingen?
+
+1. **Enkel deployment**: Kun én JAR-fil å deploye
+2. **Ingen CORS-problemer**: Frontend og API på samme domene i produksjon
+3. **Optimal utvikling**: Separate servere gir best utviklingsopplevelse
+4. **Spring Boot routing**: Håndterer både API-kall og React SPA routing
+
 ## 🚀 Kom i gang
 
 ### Forutsetninger
@@ -13,7 +35,7 @@ Et moderne opptaksystem for norsk utdanning, bygget med Spring Boot, GraphQL og 
 - Node.js 18+ og npm (for frontend utvikling)
 - Git
 
-### Installasjon
+### Development Setup
 
 1. **Klon repositoriet:**
    ```bash
@@ -35,32 +57,47 @@ Et moderne opptaksystem for norsk utdanning, bygget med Spring Boot, GraphQL og 
    ```
 
 4. **Åpne applikasjonen:**
-   - **Frontend**: http://localhost:5173/ (React dev server)
+   - **Frontend**: http://localhost:5173/ (Vite dev server med hot reload)
    - **Backend API**: http://localhost:8080/graphql
    - **GraphiQL**: http://localhost:8080/graphiql
    - **H2 Console**: http://localhost:8080/h2-console
 
 ### Production Deployment
 
-1. **Bygg frontend:**
+**Komplett deployment prosess:**
+
+1. **Bygg frontend til statiske filer:**
    ```bash
-   cd frontend && npm run build
+   cd frontend
+   npm run build
    ```
 
-2. **Kopier frontend til backend:**
+2. **Kopier frontend build til backend:**
    ```bash
+   # Fra root directory
    rm -rf backend/src/main/resources/static/assets/
    cp -r frontend/dist/* backend/src/main/resources/static/
    ```
 
-3. **Start production server:**
+3. **Commit endringene:**
+   ```bash
+   git add .
+   git commit -m "Deploy frontend til produksjon"
+   git push origin main
+   ```
+
+4. **Start production server:**
    ```bash
    cd backend
    sudo ./start-prod.sh  # Krever sudo for port 80
    ```
 
-4. **Åpne production:**
+5. **Åpne production:**
    - **Full system**: http://opptaksapp.smidigakademiet.no/
+   - **GraphQL API**: http://opptaksapp.smidigakademiet.no/graphql
+   - **GraphiQL**: http://opptaksapp.smidigakademiet.no/graphiql
+
+**⚠️ Viktig**: I produksjon serverer Spring Boot både frontend og API fra samme server, mens i development kjører de på separate porter.
 
 ## 📡 GraphQL API
 

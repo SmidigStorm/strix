@@ -303,20 +303,55 @@ strix/
 - **GraphQL API**: http://opptaksapp.smidigakademiet.no/graphql  
 - **GraphiQL**: http://opptaksapp.smidigakademiet.no/graphiql
 
+### Development vs Production Arkitektur
+
+**🔧 Development (utvikling)**:
+- **Frontend**: Vite dev server på http://localhost:5173/ (hot reload, rask utvikling)
+- **Backend**: Spring Boot på http://localhost:8080/ (GraphQL API + H2 in-memory)
+- **Separate servere**: Optimal utviklingsopplevelse med hot reload
+- **CORS konfigurert**: For kommunikasjon mellom serverne
+
+**🚀 Production (produksjon)**:
+- **Frontend**: Bygges til statiske filer og serveres av Spring Boot
+- **Backend**: Spring Boot serverer både API og frontend fra samme server (port 80)
+- **Database**: H2 file-based for persistens
+- **Fordeler**: Enklere deployment, ingen CORS-problemer, kun én server
+
 ### Deployment Prosess
 
-**Steg for å deploye frontend endringer**:
-1. `cd frontend && npm run build`
-2. `rm -rf backend/src/main/resources/static/assets/`
-3. `cp -r frontend/dist/* backend/src/main/resources/static/`
-4. `git add . && git commit -m "..."` 
-5. `git push origin main`
-6. På server: `sudo ./start-prod.sh`
+**Komplett steg-for-steg deployment av frontend endringer**:
 
-**Database**:
-- **Development**: H2 in-memory (jdbc:h2:mem:devdb)
-- **Production**: H2 file-based (jdbc:h2:file:./data/opptaksystem)
-- **Migreringer**: Flyway kjører automatisk ved oppstart
+1. **Bygg frontend til statiske filer:**
+   ```bash
+   cd frontend
+   npm run build
+   ```
+
+2. **Kopier frontend build til backend (fra root directory):**
+   ```bash
+   rm -rf backend/src/main/resources/static/assets/
+   cp -r frontend/dist/* backend/src/main/resources/static/
+   ```
+
+3. **Commit endringene:**
+   ```bash
+   git add .
+   git commit -m "Deploy frontend til produksjon"
+   git push origin main
+   ```
+
+4. **Start production server:**
+   ```bash
+   cd backend
+   sudo ./start-prod.sh  # Krever sudo for port 80
+   ```
+
+**⚠️ Viktig**: I produksjon serverer Spring Boot både frontend og API fra samme server, mens i development kjører de på separate porter for optimal utviklingsopplevelse.
+
+**Database konfiguration**:
+- **Development**: H2 in-memory (jdbc:h2:mem:devdb) - data forsvinner ved restart
+- **Production**: H2 file-based (jdbc:h2:file:./data/opptaksystem) - data persisteres
+- **Migreringer**: Flyway kjører automatisk ved oppstart for begge miljøer
 
 ### CORS Konfigurasjon ✅ IMPLEMENTERT
 
