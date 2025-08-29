@@ -1,0 +1,27 @@
+# Utdanning GraphQL Schema
+
+"""
+En utdanning tilbudt av en organisasjon
+"""
+type Utdanning {
+    id: ID!
+    navn: String!
+    studienivaa: String!
+    studiepoeng: Int!
+    varighet: Int!
+    studiested: String!
+    undervisningssprak: String!
+    beskrivelse: String
+    opprettet: String!
+    aktiv: Boolean!
+    
+    """
+    Organisasjonen som eier denne utdanningen
+    """
+    organisasjon: Organisasjon!
+    
+    """
+    Opptak hvor denne utdanningen tilbys
+    """
+    opptakTilbud: UtdanningIOpptak
+}

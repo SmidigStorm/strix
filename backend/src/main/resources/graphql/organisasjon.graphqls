@@ -1,0 +1,38 @@
+# Organisasjon GraphQL Schema
+
+"""
+En organisasjon som tilbyr utdanninger
+"""
+type Organisasjon {
+    id: ID!
+    navn: String!
+    kortNavn: String
+    type: String!
+    organisasjonsnummer: String!
+    adresse: String
+    nettside: String
+    opprettet: String!
+    aktiv: Boolean!
+    
+    """
+    Utdanninger som eies av denne organisasjonen
+    """
+    utdanninger: [Utdanning!]!
+    
+    """
+    Opptak som administreres av denne organisasjonen
+    """
+    administrerteOpptak: [Opptak!]!
+}
+
+extend type Query {
+    """
+    Henter alle organisasjoner
+    """
+    organisasjoner: [Organisasjon!]!
+    
+    """
+    Henter en spesifikk organisasjon basert på ID
+    """
+    organisasjon(id: ID!): Organisasjon
+}

@@ -1,0 +1,104 @@
+# Bruker og autentisering GraphQL Schema
+
+"""
+En bruker i systemet
+"""
+type Bruker {
+    id: ID!
+    email: String!
+    navn: String!
+    aktiv: Boolean!
+    opprettet: String!
+    sistInnlogget: String
+    
+    """
+    Roller som brukeren har
+    """
+    roller: [Rolle!]!
+    
+    """
+    Organisasjonen brukeren tilhører
+    """
+    organisasjon: Organisasjon
+}
+
+"""
+En rolle som kan tildeles brukere
+"""
+type Rolle {
+    id: ID!
+    navn: String!
+    beskrivelse: String
+}
+
+"""
+Input for innlogging
+"""
+input LoginInput {
+    email: String!
+    passord: String!
+}
+
+"""
+Resultat av innlogging
+"""
+type LoginResult {
+    """
+    JWT token for autentisering
+    """
+    token: String!
+    
+    """
+    Brukerens informasjon
+    """
+    bruker: Bruker!
+}
+
+"""
+Test-bruker for mock-autentisering (kun for utvikling)
+"""
+type TestBruker {
+    """
+    Email-adressen som brukes for innlogging
+    """
+    email: String!
+    
+    """
+    Visningsnavn for brukeren
+    """
+    navn: String!
+    
+    """
+    Roller brukeren har
+    """
+    roller: [String!]!
+    
+    """
+    Organisasjon brukeren tilhører (hvis noen)
+    """
+    organisasjon: String
+    
+    """
+    Passordet for testing (alltid "test123")
+    """
+    passord: String!
+}
+
+extend type Query {
+    """
+    Henter innlogget brukers informasjon (krever gyldig JWT token)
+    """
+    meg: Bruker
+    
+    """
+    Henter tilgjengelige test-brukere for mock-autentisering (kun for utvikling)
+    """
+    testBrukere: [TestBruker!]!
+}
+
+extend type Mutation {
+    """
+    Logger inn en bruker og returnerer JWT token
+    """
+    login(input: LoginInput!): LoginResult!
+}

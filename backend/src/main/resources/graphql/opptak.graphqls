@@ -1,0 +1,143 @@
+# Opptak GraphQL Schema
+
+"""
+Et opptak hvor utdanninger tilbys
+"""
+type Opptak {
+    id: ID!
+    navn: String!
+    type: OpptaksType!
+    aar: Int!
+    soknadsfrist: String
+    svarfrist: String
+    maxUtdanningerPerSoknad: Int!
+    status: OpptaksStatus!
+    opptaksomgang: String
+    beskrivelse: String
+    tillaterAndreOrganisasjoner: Boolean!
+    opprettet: String!
+    aktiv: Boolean!
+    
+    """
+    Organisasjonen som administrerer dette opptaket
+    """
+    administrator: Organisasjon!
+    
+    """
+    Utdanninger som tilbys i dette opptaket
+    """
+    utdanninger: [UtdanningIOpptak!]!
+    
+    """
+    Organisasjoner som har tilgang til å legge til utdanninger (hvis tillatt)
+    """
+    tillatteTilgangsorganisasjoner: [Organisasjon!]!
+}
+
+"""
+Koblingstabellen mellom Utdanning og Opptak med metadata
+"""
+type UtdanningIOpptak {
+    id: ID!
+    antallPlasser: Int!
+    aktivt: Boolean!
+    opprettet: String!
+    
+    """
+    Utdanningen som tilbys
+    """
+    utdanning: Utdanning!
+    
+    """
+    Opptaket hvor utdanningen tilbys
+    """
+    opptak: Opptak!
+}
+
+"""
+Typer opptak for statistikk
+"""
+enum OpptaksType {
+    UHG
+    FSU
+    LOKALT
+}
+
+"""
+Status for opptak
+"""
+enum OpptaksStatus {
+    FREMTIDIG
+    APENT
+    STENGT
+    AVSLUTTET
+}
+
+"""
+Input for å opprette et nytt opptak
+"""
+input OpprettOpptakInput {
+    navn: String!
+    type: OpptaksType!
+    aar: Int!
+    administratorOrganisasjonId: ID!
+    soknadsfrist: String
+    svarfrist: String
+    maxUtdanningerPerSoknad: Int
+    tillaterAndreOrganisasjoner: Boolean = false
+    beskrivelse: String
+}
+
+"""
+Input for å legge til utdanning i opptak
+"""
+input LeggTilUtdanningInput {
+    utdanningId: ID!
+    opptakId: ID!
+    antallPlasser: Int!
+    aktivt: Boolean = true
+}
+
+extend type Query {
+    """
+    Henter alle opptak
+    """
+    alleOpptak: [Opptak!]!
+    
+    """
+    Henter opptak som en organisasjon administrerer
+    """
+    opptakForAdministrator(organisasjonId: ID!): [Opptak!]!
+    
+    """
+    Henter opptak hvor en organisasjon kan legge til utdanninger
+    """
+    tilgjengeligeOpptakForOrganisasjon(organisasjonId: ID!): [Opptak!]!
+    
+    """
+    Henter et spesifikt opptak basert på ID
+    """
+    opptak(id: ID!): Opptak
+}
+
+extend type Mutation {
+    """
+    Oppretter et nytt opptak
+    """
+    opprettOpptak(input: OpprettOpptakInput!): Opptak!
+    
+    """
+    Legger til en utdanning i et opptak
+    """
+    leggTilUtdanningIOpptak(input: LeggTilUtdanningInput!): UtdanningIOpptak!
+    
+    """
+    Gir en organisasjon tilgang til å legge til utdanninger i et opptak
+    """
+    giOrganisasjonTilgang(opptakId: ID!, organisasjonId: ID!): Opptak!
+    
+    """
+    Fjerner en organisasjons tilgang til å legge til utdanninger i et opptak
+    """
+    fjernOrganisasjonTilgang(opptakId: ID!, organisasjonId: ID!): Opptak!
+}
