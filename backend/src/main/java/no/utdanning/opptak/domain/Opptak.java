@@ -17,7 +17,10 @@ public class Opptak {
   private String beskrivelse;
   private LocalDateTime opprettet;
   private Boolean aktiv;
+  private Boolean samordnet;
+  private String administratorOrganisasjonId;
   private List<UtdanningIOpptak> utdanninger;
+  private Organisasjon administrator;
 
   public Opptak() {}
 
@@ -33,7 +36,9 @@ public class Opptak {
       String opptaksomgang,
       String beskrivelse,
       LocalDateTime opprettet,
-      Boolean aktiv) {
+      Boolean aktiv,
+      Boolean samordnet,
+      String administratorOrganisasjonId) {
     this.id = id;
     this.navn = navn;
     this.type = type;
@@ -46,6 +51,8 @@ public class Opptak {
     this.beskrivelse = beskrivelse;
     this.opprettet = opprettet;
     this.aktiv = aktiv;
+    this.samordnet = samordnet;
+    this.administratorOrganisasjonId = administratorOrganisasjonId;
   }
 
   public String getId() {
@@ -150,5 +157,29 @@ public class Opptak {
 
   public void setUtdanninger(List<UtdanningIOpptak> utdanninger) {
     this.utdanninger = utdanninger;
+  }
+
+  public Boolean getSamordnet() {
+    return samordnet;
+  }
+
+  public void setSamordnet(Boolean samordnet) {
+    this.samordnet = samordnet;
+  }
+
+  public String getAdministratorOrganisasjonId() {
+    return administratorOrganisasjonId;
+  }
+
+  public void setAdministratorOrganisasjonId(String administratorOrganisasjonId) {
+    this.administratorOrganisasjonId = administratorOrganisasjonId;
+  }
+
+  public Organisasjon getAdministrator() {
+    return administrator;
+  }
+
+  public void setAdministrator(Organisasjon administrator) {
+    this.administrator = administrator;
   }
 }

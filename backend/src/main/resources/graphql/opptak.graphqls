@@ -1,7 +1,7 @@
 # Opptak GraphQL Schema
 
 """
-Et opptak hvor utdanninger tilbys
+Et opptak hvor utdanninger tilbys for studenter
 """
 type Opptak {
     id: ID!
@@ -14,12 +14,16 @@ type Opptak {
     status: OpptaksStatus!
     opptaksomgang: String
     beskrivelse: String
-    tillaterAndreOrganisasjoner: Boolean!
     opprettet: String!
     aktiv: Boolean!
     
     """
-    Organisasjonen som administrerer dette opptaket
+    Om dette opptaket er samordnet (flere organisasjoner kan delta)
+    """
+    samordnet: Boolean!
+    
+    """
+    Organisasjonen som administrerer og eier dette opptaket
     """
     administrator: Organisasjon!
     
@@ -29,7 +33,7 @@ type Opptak {
     utdanninger: [UtdanningIOpptak!]!
     
     """
-    Organisasjoner som har tilgang til å legge til utdanninger (hvis tillatt)
+    Organisasjoner som har tilgang til å legge til utdanninger (kun hvis samordnet=true)
     """
     tillatteTilgangsorganisasjoner: [Organisasjon!]!
 }
@@ -55,11 +59,22 @@ type UtdanningIOpptak {
 }
 
 """
-Typer opptak for statistikk
+Typer opptak basert på målgruppe og organisering
 """
 enum OpptaksType {
+    """
+    Universiteter og høgskoler (nasjonalt samordnet opptak)
+    """
     UHG
+    
+    """
+    Fagskoler (nasjonalt samordnet opptak for fagskoleopptak)  
+    """
     FSU
+    
+    """
+    Lokalt opptak (kan være enkeltorganisasjon eller samordnet gruppe)
+    """
     LOKALT
 }
 
@@ -83,8 +98,9 @@ input OpprettOpptakInput {
     administratorOrganisasjonId: ID!
     soknadsfrist: String
     svarfrist: String
-    maxUtdanningerPerSoknad: Int
-    tillaterAndreOrganisasjoner: Boolean = false
+    maxUtdanningerPerSoknad: Int = 10
+    samordnet: Boolean = false
+    opptaksomgang: String
     beskrivelse: String
 }
 
@@ -120,6 +136,27 @@ extend type Query {
     opptak(id: ID!): Opptak
 }
 
+"""
+Input for å oppdatere et eksisterende opptak
+"""
+input OppdaterOpptakInput {
+    id: ID!
+    navn: String
+    soknadsfrist: String
+    svarfrist: String
+    maxUtdanningerPerSoknad: Int
+    opptaksomgang: String
+    beskrivelse: String
+}
+
+"""
+Input for å endre status på et opptak
+"""
+input EndreOpptaksStatusInput {
+    opptakId: ID!
+    nyStatus: OpptaksStatus!
+}
+
 extend type Mutation {
     """
     Oppretter et nytt opptak
@@ -127,9 +164,34 @@ extend type Mutation {
     opprettOpptak(input: OpprettOpptakInput!): Opptak!
     
     """
+    Oppdaterer et eksisterende opptak (kun administrator)
+    """
+    oppdaterOpptak(input: OppdaterOpptakInput!): Opptak!
+    
+    """
+    Endrer status på et opptak (kun administrator)
+    """
+    endreOpptaksStatus(input: EndreOpptaksStatusInput!): Opptak!
+    
+    """
+    Deaktiverer et opptak (soft delete)
+    """
+    deaktiverOpptak(opptakId: ID!): Opptak!
+    
+    """
+    Reaktiverer et deaktivert opptak
+    """
+    reaktiverOpptak(opptakId: ID!): Opptak!
+    
+    """
     Legger til en utdanning i et opptak
     """
     leggTilUtdanningIOpptak(input: LeggTilUtdanningInput!): UtdanningIOpptak!
+    
+    """
+    Fjerner en utdanning fra et opptak
+    """
+    fjernUtdanningFraOpptak(opptakId: ID!, utdanningId: ID!): Boolean!
     
     """
     Gir en organisasjon tilgang til å legge til utdanninger i et opptak
