@@ -42,6 +42,26 @@ export function RoleProvider({ children }: RoleProviderProps) {
         // Full CRUD på alle organisasjoner - kun Administrator
         return selectedRole === 'Administrator';
       
+      case 'VIEW_UTDANNINGER':
+        // Alle innloggede roller kan se utdanninger (med organisasjonsskolering)
+        return selectedRole !== 'Søker';
+      
+      case 'MANAGE_UTDANNINGER':
+        // Administrator og Opptaksleder kan administrere utdanninger
+        return selectedRole === 'Administrator' || selectedRole === 'Opptaksleder';
+      
+      case 'CREATE_UTDANNING':
+        // Administrator og Opptaksleder kan opprette utdanninger
+        return selectedRole === 'Administrator' || selectedRole === 'Opptaksleder';
+      
+      case 'EDIT_UTDANNING':
+        // Administrator og Opptaksleder kan redigere utdanninger
+        return selectedRole === 'Administrator' || selectedRole === 'Opptaksleder';
+      
+      case 'DELETE_UTDANNING':
+        // Kun Administrator kan slette utdanninger permanent
+        return selectedRole === 'Administrator';
+      
       default:
         return false;
     }

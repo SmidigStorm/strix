@@ -3,6 +3,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import Dashboard from '@/components/dashboard';
 import OrganisasjonsListe from '@/components/organisasjons-liste';
+import { UtdanningsListe } from '@/components/utdannings-liste';
 import { Button } from '@/components/ui/button';
 import { RoleProvider } from '@/contexts/RoleContext';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -35,6 +36,7 @@ function App() {
                     <Routes>
                       <Route path="/" element={<Dashboard />} />
                       <Route path="/organisasjoner" element={<OrganisasjonsListe />} />
+                      <Route path="/utdanninger" element={<UtdanningsListe />} />
                     </Routes>
                   </div>
                 </div>
