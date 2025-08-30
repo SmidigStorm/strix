@@ -13,8 +13,7 @@ import no.utdanning.opptak.domain.Utdanning;
 import org.springframework.stereotype.Repository;
 
 /**
- * In-memory implementasjon av UtdanningRepository
- * Bruker HashMap for rask oppslag og enkel testing
+ * In-memory implementasjon av UtdanningRepository Bruker HashMap for rask oppslag og enkel testing
  */
 @Repository
 public class InMemoryUtdanningRepository implements UtdanningRepository {

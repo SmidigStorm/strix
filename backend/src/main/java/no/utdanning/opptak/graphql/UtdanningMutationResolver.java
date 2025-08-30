@@ -12,9 +12,7 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
-/**
- * GraphQL resolver for utdanning mutations
- */
+/** GraphQL resolver for utdanning mutations */
 @Controller
 @PreAuthorize("isAuthenticated()") // Require authentication for all methods
 public class UtdanningMutationResolver {
@@ -37,9 +35,10 @@ public class UtdanningMutationResolver {
   public Utdanning opprettUtdanning(@Argument OpprettUtdanningInput input) {
     // Sjekk at bruker har tilgang til å opprette utdanning for denne organisasjonen
     if (!securityService.canCreateUtdanningForOrganisasjon(input.getOrganisasjonId())) {
-      throw new RuntimeException("Du har ikke tilgang til å opprette utdanninger for denne organisasjonen");
+      throw new RuntimeException(
+          "Du har ikke tilgang til å opprette utdanninger for denne organisasjonen");
     }
-    
+
     // Valider at organisasjon eksisterer
     if (organisasjonRepository.findById(input.getOrganisasjonId()) == null) {
       throw new RuntimeException("Organisasjon ikke funnet: " + input.getOrganisasjonId());
@@ -96,7 +95,7 @@ public class UtdanningMutationResolver {
     if (eksisterende == null) {
       throw new RuntimeException("Utdanning ikke funnet: " + input.getId());
     }
-    
+
     // Sjekk at bruker har tilgang til å oppdatere denne utdanningen
     if (!securityService.hasAccessToUtdanning(input.getId())) {
       throw new RuntimeException("Du har ikke tilgang til å oppdatere denne utdanningen");
@@ -144,7 +143,7 @@ public class UtdanningMutationResolver {
     if (!securityService.hasAccessToUtdanning(id)) {
       throw new RuntimeException("Du har ikke tilgang til å deaktivere denne utdanningen");
     }
-    
+
     Utdanning utdanning = utdanningRepository.findById(id);
     if (utdanning == null) {
       throw new RuntimeException("Utdanning ikke funnet: " + id);
@@ -161,7 +160,7 @@ public class UtdanningMutationResolver {
     if (!securityService.hasAccessToUtdanning(id)) {
       throw new RuntimeException("Du har ikke tilgang til å aktivere denne utdanningen");
     }
-    
+
     Utdanning utdanning = utdanningRepository.findById(id);
     if (utdanning == null) {
       throw new RuntimeException("Utdanning ikke funnet: " + id);

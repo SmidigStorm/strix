@@ -4,9 +4,7 @@ import java.util.List;
 import no.utdanning.opptak.domain.Studieform;
 import no.utdanning.opptak.domain.Utdanning;
 
-/**
- * Repository for utdanninger - håndterer alle database operasjoner
- */
+/** Repository for utdanninger - håndterer alle database operasjoner */
 public interface UtdanningRepository {
 
   /** Henter alle utdanninger */
@@ -41,6 +39,7 @@ public interface UtdanningRepository {
 
   /**
    * Søker utdanninger med kombinerte filtre
+   *
    * @param navn søketekst i navn (case insensitive), nullable
    * @param studienivaa filtrer på studienivå, nullable
    * @param studiested filtrer på studiested, nullable
@@ -63,6 +62,7 @@ public interface UtdanningRepository {
 
   /**
    * Teller utdanninger med samme filtre som findWithFilters
+   *
    * @param navn søketekst i navn (case insensitive), nullable
    * @param studienivaa filtrer på studienivå, nullable
    * @param studiested filtrer på studiested, nullable

@@ -3,9 +3,7 @@ package no.utdanning.opptak.graphql.dto;
 import java.util.List;
 import no.utdanning.opptak.domain.Utdanning;
 
-/**
- * Paginert resultat av utdanninger
- */
+/** Paginert resultat av utdanninger */
 public class UtdanningPage {
   private List<Utdanning> content;
   private long totalElements;
@@ -15,11 +13,7 @@ public class UtdanningPage {
   private boolean hasNext;
   private boolean hasPrevious;
 
-  public UtdanningPage(
-      List<Utdanning> content,
-      long totalElements,
-      int currentPage,
-      int pageSize) {
+  public UtdanningPage(List<Utdanning> content, long totalElements, int currentPage, int pageSize) {
     this.content = content;
     this.totalElements = totalElements;
     this.currentPage = currentPage;

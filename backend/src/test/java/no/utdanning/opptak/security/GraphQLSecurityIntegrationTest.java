@@ -41,13 +41,11 @@ class GraphQLSecurityIntegrationTest {
         """;
 
     // When - start async request
-    MvcResult mvcResult = mockMvc
-        .perform(
-            post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(graphqlQuery))
-        .andExpect(request().asyncStarted())
-        .andReturn();
+    MvcResult mvcResult =
+        mockMvc
+            .perform(post("/graphql").contentType(MediaType.APPLICATION_JSON).content(graphqlQuery))
+            .andExpect(request().asyncStarted())
+            .andReturn();
 
     // Then - dispatch async and verify response
     mockMvc
@@ -66,7 +64,8 @@ class GraphQLSecurityIntegrationTest {
     String userId = "BRUKER-TEST";
     String email = "test@strix.no";
     String navn = "Test Administrator";
-    String token = jwtService.generateToken(userId, email, navn, Arrays.asList("ADMINISTRATOR"), null);
+    String token =
+        jwtService.generateToken(userId, email, navn, Arrays.asList("ADMINISTRATOR"), null);
 
     String graphqlQuery =
         """
@@ -76,14 +75,15 @@ class GraphQLSecurityIntegrationTest {
         """;
 
     // When - start async request
-    MvcResult mvcResult = mockMvc
-        .perform(
-            post("/graphql")
-                .header("Authorization", "Bearer " + token)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(graphqlQuery))
-        .andExpect(request().asyncStarted())
-        .andReturn();
+    MvcResult mvcResult =
+        mockMvc
+            .perform(
+                post("/graphql")
+                    .header("Authorization", "Bearer " + token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(graphqlQuery))
+            .andExpect(request().asyncStarted())
+            .andReturn();
 
     // Then - dispatch async and verify response
     mockMvc
@@ -101,7 +101,8 @@ class GraphQLSecurityIntegrationTest {
     String userId = "BRUKER-BEHANDLER";
     String email = "behandler@test.no";
     String navn = "Test Behandler";
-    String token = jwtService.generateToken(userId, email, navn, Arrays.asList("SOKNADSBEHANDLER"), "ORG-001");
+    String token =
+        jwtService.generateToken(userId, email, navn, Arrays.asList("SOKNADSBEHANDLER"), "ORG-001");
 
     String graphqlMutation =
         """
@@ -111,14 +112,15 @@ class GraphQLSecurityIntegrationTest {
         """;
 
     // When - start async request
-    MvcResult mvcResult = mockMvc
-        .perform(
-            post("/graphql")
-                .header("Authorization", "Bearer " + token)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(graphqlMutation))
-        .andExpect(request().asyncStarted())
-        .andReturn();
+    MvcResult mvcResult =
+        mockMvc
+            .perform(
+                post("/graphql")
+                    .header("Authorization", "Bearer " + token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(graphqlMutation))
+            .andExpect(request().asyncStarted())
+            .andReturn();
 
     // Then - dispatch async and verify response
     mockMvc
@@ -142,23 +144,23 @@ class GraphQLSecurityIntegrationTest {
         """;
 
     // When - start async request
-    MvcResult mvcResult = mockMvc
-        .perform(
-            post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(loginMutation))
-        .andExpect(request().asyncStarted())
-        .andReturn();
+    MvcResult mvcResult =
+        mockMvc
+            .perform(
+                post("/graphql").contentType(MediaType.APPLICATION_JSON).content(loginMutation))
+            .andExpect(request().asyncStarted())
+            .andReturn();
 
     // Then - dispatch async and verify response
-    MvcResult result = mockMvc
-        .perform(asyncDispatch(mvcResult))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.data.login.token").exists())
-        .andExpect(jsonPath("$.data.login.bruker.navn").value("Sara Administrator"))
-        .andExpect(jsonPath("$.errors").doesNotExist())
-        .andReturn();
+    MvcResult result =
+        mockMvc
+            .perform(asyncDispatch(mvcResult))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.data.login.token").exists())
+            .andExpect(jsonPath("$.data.login.bruker.navn").value("Sara Administrator"))
+            .andExpect(jsonPath("$.errors").doesNotExist())
+            .andReturn();
 
     // Verify token is valid
     String responseJson = result.getResponse().getContentAsString();
@@ -182,13 +184,12 @@ class GraphQLSecurityIntegrationTest {
         """;
 
     // When - start async request
-    MvcResult mvcResult = mockMvc
-        .perform(
-            post("/graphql")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(testUsersQuery))
-        .andExpect(request().asyncStarted())
-        .andReturn();
+    MvcResult mvcResult =
+        mockMvc
+            .perform(
+                post("/graphql").contentType(MediaType.APPLICATION_JSON).content(testUsersQuery))
+            .andExpect(request().asyncStarted())
+            .andReturn();
 
     // Then - dispatch async and verify response
     mockMvc
@@ -213,14 +214,15 @@ class GraphQLSecurityIntegrationTest {
         """;
 
     // When - start async request
-    MvcResult mvcResult = mockMvc
-        .perform(
-            post("/graphql")
-                .header("Authorization", "Bearer " + malformedToken)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(graphqlQuery))
-        .andExpect(request().asyncStarted())
-        .andReturn();
+    MvcResult mvcResult =
+        mockMvc
+            .perform(
+                post("/graphql")
+                    .header("Authorization", "Bearer " + malformedToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(graphqlQuery))
+            .andExpect(request().asyncStarted())
+            .andReturn();
 
     // Then - dispatch async and verify response
     mockMvc

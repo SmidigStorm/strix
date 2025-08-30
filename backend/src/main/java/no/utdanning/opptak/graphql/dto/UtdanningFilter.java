@@ -2,9 +2,7 @@ package no.utdanning.opptak.graphql.dto;
 
 import no.utdanning.opptak.domain.Studieform;
 
-/**
- * Filter for utdanning queries
- */
+/** Filter for utdanning queries */
 public class UtdanningFilter {
   private String navn;
   private String studienivaa;

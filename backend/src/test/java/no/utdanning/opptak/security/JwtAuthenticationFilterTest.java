@@ -1,7 +1,6 @@
 package no.utdanning.opptak.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -45,8 +44,7 @@ class JwtAuthenticationFilterTest {
 
   @Test
   @DisplayName("Should set authentication context with valid JWT token")
-  void skalSetteAuthenticationContextMedGyldigJwtToken()
-      throws ServletException, IOException {
+  void skalSetteAuthenticationContextMedGyldigJwtToken() throws ServletException, IOException {
     // Given
     String validToken = "valid.jwt.token";
     String userId = "BRUKER-001";
@@ -74,8 +72,7 @@ class JwtAuthenticationFilterTest {
 
   @Test
   @DisplayName("Should not set authentication with invalid JWT token")
-  void skalIkkeSetteAuthenticationMedUgyldigJwtToken()
-      throws ServletException, IOException {
+  void skalIkkeSetteAuthenticationMedUgyldigJwtToken() throws ServletException, IOException {
     // Given
     String invalidToken = "invalid.jwt.token";
 

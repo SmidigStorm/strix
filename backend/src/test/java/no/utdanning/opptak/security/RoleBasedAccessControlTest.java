@@ -48,18 +48,17 @@ class RoleBasedAccessControlTest {
   @DisplayName("Should allow all authenticated roles to view organisasjoner")
   void skalTillateAlleAutentiserteRollerAaSeOrganisasjoner() {
     String[] roles = {"ADMINISTRATOR", "OPPTAKSLEDER", "SOKNADSBEHANDLER", "SOKER"};
-    
+
     for (String role : roles) {
       // Given
       setupAuthenticationContext("USER_" + role, Arrays.asList(role));
-      
+
       // When & Then
-      List<no.utdanning.opptak.domain.Organisasjon> result = 
+      List<no.utdanning.opptak.domain.Organisasjon> result =
           organisasjonQueryResolver.organisasjoner(null);
-      
-      assertThat(result).isNotNull()
-          .as("Role %s should be able to view organizations", role);
-      
+
+      assertThat(result).isNotNull().as("Role %s should be able to view organizations", role);
+
       // Clean up
       SecurityContextHolder.clearContext();
     }
@@ -70,13 +69,13 @@ class RoleBasedAccessControlTest {
   void skalKunTillateAdministratorAaUtforeeMutasjoner() {
     // Test that ADMINISTRATOR can perform mutations
     setupAuthenticationContext("ADMIN_USER", Arrays.asList("ADMINISTRATOR"));
-    
+
     OppdaterOrganisasjonInput input = new OppdaterOrganisasjonInput();
     input.setId("org-1");
     input.setNavn("Updated Organization Name");
-    
+
     // Should not throw exception
-    no.utdanning.opptak.domain.Organisasjon result = 
+    no.utdanning.opptak.domain.Organisasjon result =
         organisasjonMutationResolver.oppdaterOrganisasjon(input);
     assertThat(result).isNotNull();
     assertThat(result.getNavn()).isEqualTo("Updated Organization Name");
@@ -86,21 +85,21 @@ class RoleBasedAccessControlTest {
   @DisplayName("Should block non-administrator roles from mutations")
   void skalBlokkerIkkeAdministratorRollerFraMutasjoner() {
     String[] nonAdminRoles = {"OPPTAKSLEDER", "SOKNADSBEHANDLER", "SOKER"};
-    
+
     for (String role : nonAdminRoles) {
       // Given
       setupAuthenticationContext("USER_" + role, Arrays.asList(role));
-      
+
       OppdaterOrganisasjonInput input = new OppdaterOrganisasjonInput();
       input.setId("org-1");
       input.setNavn("Unauthorized Update");
-      
+
       // When & Then
       assertThrows(
           AccessDeniedException.class,
           () -> organisasjonMutationResolver.oppdaterOrganisasjon(input),
           "Role %s should not be able to perform mutations".formatted(role));
-      
+
       // Clean up
       SecurityContextHolder.clearContext();
     }
@@ -112,17 +111,17 @@ class RoleBasedAccessControlTest {
     // Given - User with multiple roles including ADMINISTRATOR
     List<String> multipleRoles = Arrays.asList("ADMINISTRATOR", "OPPTAKSLEDER", "SOKNADSBEHANDLER");
     setupAuthenticationContext("MULTI_ROLE_USER", multipleRoles);
-    
+
     // When & Then - Should be able to perform both queries and mutations
-    List<no.utdanning.opptak.domain.Organisasjon> queryResult = 
+    List<no.utdanning.opptak.domain.Organisasjon> queryResult =
         organisasjonQueryResolver.organisasjoner(null);
     assertThat(queryResult).isNotNull();
-    
+
     OppdaterOrganisasjonInput input = new OppdaterOrganisasjonInput();
     input.setId("org-2");
     input.setNavn("Multi Role Update");
-    
-    no.utdanning.opptak.domain.Organisasjon mutationResult = 
+
+    no.utdanning.opptak.domain.Organisasjon mutationResult =
         organisasjonMutationResolver.oppdaterOrganisasjon(input);
     assertThat(mutationResult).isNotNull();
     assertThat(mutationResult.getNavn()).isEqualTo("Multi Role Update");
@@ -134,16 +133,16 @@ class RoleBasedAccessControlTest {
     // Given - User with multiple roles but NO ADMINISTRATOR
     List<String> nonAdminRoles = Arrays.asList("OPPTAKSLEDER", "SOKNADSBEHANDLER", "SOKER");
     setupAuthenticationContext("MULTI_NON_ADMIN_USER", nonAdminRoles);
-    
+
     // When & Then - Should be able to query but not mutate
-    List<no.utdanning.opptak.domain.Organisasjon> queryResult = 
+    List<no.utdanning.opptak.domain.Organisasjon> queryResult =
         organisasjonQueryResolver.organisasjoner(null);
     assertThat(queryResult).isNotNull();
-    
+
     OppdaterOrganisasjonInput input = new OppdaterOrganisasjonInput();
     input.setId("org-3");
     input.setNavn("Unauthorized Multi Role Update");
-    
+
     assertThrows(
         AccessDeniedException.class,
         () -> organisasjonMutationResolver.oppdaterOrganisasjon(input),
@@ -155,14 +154,14 @@ class RoleBasedAccessControlTest {
   void skalTesteDeaktiverOgReaktiverOperasjoner() {
     // Given - Administrator role
     setupAuthenticationContext("DEAKTIVER_USER", Arrays.asList("ADMINISTRATOR"));
-    
+
     // When & Then - Should be able to deactivate and reactivate
-    no.utdanning.opptak.domain.Organisasjon deactivatedOrg = 
+    no.utdanning.opptak.domain.Organisasjon deactivatedOrg =
         organisasjonMutationResolver.deaktiverOrganisasjon("org-1");
     assertThat(deactivatedOrg).isNotNull();
     assertThat(deactivatedOrg.getAktiv()).isFalse();
-    
-    no.utdanning.opptak.domain.Organisasjon reactivatedOrg = 
+
+    no.utdanning.opptak.domain.Organisasjon reactivatedOrg =
         organisasjonMutationResolver.reaktiverOrganisasjon("org-1");
     assertThat(reactivatedOrg).isNotNull();
     assertThat(reactivatedOrg.getAktiv()).isTrue();
@@ -173,13 +172,13 @@ class RoleBasedAccessControlTest {
   void skalBlokkerIkkeAdminFraDeaktiverOgReaktiver() {
     // Given - Non-admin role
     setupAuthenticationContext("NON_ADMIN_USER", Arrays.asList("SOKNADSBEHANDLER"));
-    
+
     // When & Then
     assertThrows(
         AccessDeniedException.class,
         () -> organisasjonMutationResolver.deaktiverOrganisasjon("org-1"),
         "Non-admin should not be able to deactivate organizations");
-        
+
     assertThrows(
         AccessDeniedException.class,
         () -> organisasjonMutationResolver.reaktiverOrganisasjon("org-1"),
@@ -190,29 +189,27 @@ class RoleBasedAccessControlTest {
   @DisplayName("Should verify organisasjon single item query access")
   void skalVerifisereOrganisasjonEnkeltElementQueryTilgang() {
     String[] roles = {"ADMINISTRATOR", "OPPTAKSLEDER", "SOKNADSBEHANDLER", "SOKER"};
-    
+
     for (String role : roles) {
       // Given
       setupAuthenticationContext("SINGLE_" + role, Arrays.asList(role));
-      
+
       // When & Then
-      no.utdanning.opptak.domain.Organisasjon result = 
+      no.utdanning.opptak.domain.Organisasjon result =
           organisasjonQueryResolver.organisasjon("org-1");
-      
-      assertThat(result).isNotNull()
-          .as("Role %s should be able to view single organization", role);
-      
+
+      assertThat(result).isNotNull().as("Role %s should be able to view single organization", role);
+
       // Clean up
       SecurityContextHolder.clearContext();
     }
   }
 
   private void setupAuthenticationContext(String userId, List<String> roles) {
-    List<SimpleGrantedAuthority> authorities = roles.stream()
-        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-        .toList();
+    List<SimpleGrantedAuthority> authorities =
+        roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role)).toList();
 
-    UsernamePasswordAuthenticationToken authToken = 
+    UsernamePasswordAuthenticationToken authToken =
         new UsernamePasswordAuthenticationToken(userId, null, authorities);
     SecurityContextHolder.getContext().setAuthentication(authToken);
   }

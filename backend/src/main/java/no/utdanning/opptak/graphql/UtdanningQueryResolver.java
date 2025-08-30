@@ -14,9 +14,7 @@ import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
-/**
- * GraphQL resolver for utdanning queries
- */
+/** GraphQL resolver for utdanning queries */
 @Controller
 @PreAuthorize("isAuthenticated()") // Require authentication for all methods
 public class UtdanningQueryResolver {
@@ -38,7 +36,7 @@ public class UtdanningQueryResolver {
   @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'OPPTAKSLEDER', 'SOKNADSBEHANDLER')")
   public Utdanning utdanning(@Argument String id) {
     Utdanning utdanning = utdanningRepository.findById(id);
-    
+
     // Sjekk tilgang for OPPTAKSLEDER
     if (utdanning != null && !securityService.isAdministrator()) {
       String userOrgId = securityService.getCurrentUserOrganisasjonId();
@@ -47,15 +45,13 @@ public class UtdanningQueryResolver {
         return null;
       }
     }
-    
+
     return utdanning;
   }
 
   @QueryMapping
   @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'OPPTAKSLEDER', 'SOKNADSBEHANDLER')")
-  public UtdanningPage utdanninger(
-      @Argument UtdanningFilter filter,
-      @Argument PageInput page) {
+  public UtdanningPage utdanninger(@Argument UtdanningFilter filter, @Argument PageInput page) {
 
     if (page == null) {
       page = new PageInput();
@@ -76,24 +72,26 @@ public class UtdanningQueryResolver {
     int offset = page.getPage() * page.getSize();
 
     // Hent filtrerte resultater
-    List<Utdanning> content = utdanningRepository.findWithFilters(
-        filter.getNavn(),
-        filter.getStudienivaa(),
-        filter.getStudiested(),
-        filter.getOrganisasjonId(),
-        filter.getStudieform(),
-        filter.getAktiv(),
-        page.getSize(),
-        offset);
+    List<Utdanning> content =
+        utdanningRepository.findWithFilters(
+            filter.getNavn(),
+            filter.getStudienivaa(),
+            filter.getStudiested(),
+            filter.getOrganisasjonId(),
+            filter.getStudieform(),
+            filter.getAktiv(),
+            page.getSize(),
+            offset);
 
     // Tell totalt antall for paginering
-    long totalElements = utdanningRepository.countWithFilters(
-        filter.getNavn(),
-        filter.getStudienivaa(),
-        filter.getStudiested(),
-        filter.getOrganisasjonId(),
-        filter.getStudieform(),
-        filter.getAktiv());
+    long totalElements =
+        utdanningRepository.countWithFilters(
+            filter.getNavn(),
+            filter.getStudienivaa(),
+            filter.getStudiested(),
+            filter.getOrganisasjonId(),
+            filter.getStudieform(),
+            filter.getAktiv());
 
     return new UtdanningPage(content, totalElements, page.getPage(), page.getSize());
   }
@@ -101,9 +99,7 @@ public class UtdanningQueryResolver {
   @QueryMapping
   @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'OPPTAKSLEDER', 'SOKNADSBEHANDLER')")
   public UtdanningPage utdanningerForOrganisasjon(
-      @Argument String organisasjonId,
-      @Argument UtdanningFilter filter,
-      @Argument PageInput page) {
+      @Argument String organisasjonId, @Argument UtdanningFilter filter, @Argument PageInput page) {
 
     // Sjekk tilgang for ikke-administratorer
     if (!securityService.isAdministrator()) {
@@ -129,31 +125,31 @@ public class UtdanningQueryResolver {
     int offset = page.getPage() * page.getSize();
 
     // Hent filtrerte resultater direkte (ikke via utdanninger() for å unngå dobbel filtrering)
-    List<Utdanning> content = utdanningRepository.findWithFilters(
-        filter.getNavn(),
-        filter.getStudienivaa(),
-        filter.getStudiested(),
-        organisasjonId,
-        filter.getStudieform(),
-        filter.getAktiv(),
-        page.getSize(),
-        offset);
+    List<Utdanning> content =
+        utdanningRepository.findWithFilters(
+            filter.getNavn(),
+            filter.getStudienivaa(),
+            filter.getStudiested(),
+            organisasjonId,
+            filter.getStudieform(),
+            filter.getAktiv(),
+            page.getSize(),
+            offset);
 
     // Tell totalt antall for paginering
-    long totalElements = utdanningRepository.countWithFilters(
-        filter.getNavn(),
-        filter.getStudienivaa(),
-        filter.getStudiested(),
-        organisasjonId,
-        filter.getStudieform(),
-        filter.getAktiv());
+    long totalElements =
+        utdanningRepository.countWithFilters(
+            filter.getNavn(),
+            filter.getStudienivaa(),
+            filter.getStudiested(),
+            organisasjonId,
+            filter.getStudieform(),
+            filter.getAktiv());
 
     return new UtdanningPage(content, totalElements, page.getPage(), page.getSize());
   }
 
-  /**
-   * Schema mapping for å fylle organisasjon-feltet i Utdanning
-   */
+  /** Schema mapping for å fylle organisasjon-feltet i Utdanning */
   @SchemaMapping(typeName = "Utdanning", field = "organisasjon")
   public Object organisasjon(Utdanning utdanning) {
     return organisasjonRepository.findById(utdanning.getOrganisasjonId());

@@ -2,9 +2,7 @@ package no.utdanning.opptak.graphql.dto;
 
 import no.utdanning.opptak.domain.Studieform;
 
-/**
- * Input for å oppdatere eksisterende utdanning
- */
+/** Input for å oppdatere eksisterende utdanning */
 public class OppdaterUtdanningInput {
   private String id;
   private String navn;

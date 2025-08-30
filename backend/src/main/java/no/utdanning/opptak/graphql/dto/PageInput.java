@@ -1,8 +1,6 @@
 package no.utdanning.opptak.graphql.dto;
 
-/**
- * Input for paginering
- */
+/** Input for paginering */
 public class PageInput {
   private Integer size = 20;
   private Integer page = 0;

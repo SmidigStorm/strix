@@ -1,8 +1,6 @@
 package no.utdanning.opptak.domain;
 
-/**
- * Enum som definerer studieformen for en utdanning
- */
+/** Enum som definerer studieformen for en utdanning */
 public enum Studieform {
   HELTID("Heltid"),
   DELTID("Deltid");

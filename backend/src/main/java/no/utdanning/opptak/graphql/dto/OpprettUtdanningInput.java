@@ -2,9 +2,7 @@ package no.utdanning.opptak.graphql.dto;
 
 import no.utdanning.opptak.domain.Studieform;
 
-/**
- * Input for å opprette ny utdanning
- */
+/** Input for å opprette ny utdanning */
 public class OpprettUtdanningInput {
   private String navn;
   private String studienivaa;
