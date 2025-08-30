@@ -29,14 +29,9 @@ public interface OpptakTilgangRepository {
   List<OpptakTilgang> findByOrganisasjonId(String organisasjonId);
   
   /**
-   * Henter aktive tilganger for et opptak
+   * Sjekker om organisasjon har tilgang til opptak
    */
-  List<OpptakTilgang> findByOpptakIdAndAktiv(String opptakId, boolean aktiv);
-  
-  /**
-   * Henter aktive tilganger for en organisasjon
-   */
-  List<OpptakTilgang> findByOrganisasjonIdAndAktiv(String organisasjonId, boolean aktiv);
+  boolean hasAccess(String opptakId, String organisasjonId);
   
   /**
    * Henter spesifikk tilgang mellom opptak og organisasjon
@@ -58,8 +53,4 @@ public interface OpptakTilgangRepository {
    */
   boolean existsById(String id);
   
-  /**
-   * Sjekker om organisasjon har tilgang til opptak
-   */
-  boolean hasAccess(String opptakId, String organisasjonId);
 }
