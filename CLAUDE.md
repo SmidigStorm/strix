@@ -57,6 +57,11 @@ strix/
 │   ├── design/                 # Design og fargepalett (Hubro/owl logo)
 │   │   ├── design.md           # Fargepalett og designsystem
 │   │   └── Hubro Color.png     # Logo referanse
+│   ├── konsepter/              # Konseptdokumenter og tekniske analyser
+│   │   ├── GRAPHQL_BEST_PRACTICES_FEEDBACK.md # GraphQL best practices analyse
+│   │   ├── SECURITY.md         # Sikkerhetsdokumentasjon
+│   │   ├── SECURITY_AUDIT_CRITICAL.md # Kritisk sikkerhetsaudit
+│   │   └── TECHNICAL_DEBT.md   # Teknisk gjeld og refactoring
 │   └── krav/                   # Domenekrav og templates
 │       ├── opptak/             # Modul: Opptak
 │       ├── templates/          # Maler for domenekrav
@@ -262,6 +267,7 @@ strix/
 ### Viktige filer å huske
 - `CLAUDE.md` - Denne filen, prosjektets hukommelse
 - `README.md` - Brukerrettet dokumentasjon
+- `requirements/konsepter/` - Konseptdokumenter og tekniske analyser
 - `requirements/krav/templates/` - Templates for domenekrav dokumentasjon
 - `requirements/krav/*/` - Domenekrav per modul
 - `requirements/design/` - Logo og fargepalett
