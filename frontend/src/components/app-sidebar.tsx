@@ -41,7 +41,7 @@ const getRoleIcon = (role: Role) => {
 };
 
 export function AppSidebar() {
-  const { selectedRole } = useRole();
+  const { selectedRole, hasPermission } = useRole();
   const { user, login, logout, isAuthenticated } = useAuth();
   const testUsers = useTestUsers();
   const location = useLocation();
@@ -138,7 +138,7 @@ export function AppSidebar() {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              {(selectedRole === 'Administrator' || selectedRole === 'Opptaksleder') && (
+              {hasPermission('VIEW_ORGANISATIONS') && (
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild isActive={location.pathname === '/organisasjoner'}>
                     <Link to="/organisasjoner" className="flex items-center gap-3">
