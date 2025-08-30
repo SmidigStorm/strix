@@ -3,8 +3,6 @@ package no.utdanning.opptak.graphql;
 import java.util.List;
 import no.utdanning.opptak.domain.*;
 import no.utdanning.opptak.repository.OpptakRepository;
-import org.springframework.graphql.data.method.annotation.Argument;
-import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
@@ -15,16 +13,6 @@ public class QueryResolver {
 
   public QueryResolver(OpptakRepository repository) {
     this.repository = repository;
-  }
-
-  @QueryMapping
-  public List<Opptak> alleOpptak() {
-    return repository.findAllOpptak();
-  }
-
-  @QueryMapping
-  public Opptak opptak(@Argument String id) {
-    return repository.findOpptakById(id).orElse(null);
   }
 
   @SchemaMapping(typeName = "Organisasjon", field = "utdanninger")

@@ -13,7 +13,7 @@ En søknadsrunde hvor søkere kan søke om studieplasser på utdanninger
 - Status: FREMTIDIG, APENT, STENGT, AVSLUTTET (gjelder også løpende opptak)
 - Eierskap: organisasjonen som opprettet opptaket
 - Tilgang: hvilke organisasjoner som kan legge til utdanninger
-- Eksklusivitet: en utdanning kan kun være i ett opptak av gangen
+- Fleksibilitet: en utdanning kan tilbys i flere opptak samtidig
 
 **Opptaksrunde**
 En fase i opptaket med egne tidsfrister og behandling
@@ -33,7 +33,7 @@ Opptak som ikke følger tradisjonelle runder med faste frister
 - Kan ha rullerende oppstart gjennom året
 
 **Samordning**
-Når flere organisasjoner samarbeider om et opptak
+Når flere organisasjoner samarbeider om et opptak (samordnet=true)
 - Eier-organisasjon administrerer og gir tilgang
 - Eier har full kontroll (endre innstillinger, frister, status)
 - Deltakende organisasjoner kan KUN:
@@ -41,10 +41,11 @@ Når flere organisasjoner samarbeider om et opptak
   - Se egne utdanninger og deres søkere
   - IKKE se andre organisasjoners data
 - Samordnet Opptak (SO) er egen organisasjon for nasjonale opptak
+- Enkeltorganisasjon kan også ha egne opptak (samordnet=false)
 
 ## Domene-eksempler
 
-**Lokale opptak:**
+**Lokale opptak (samordnet=false):**
 - "NTNU Lokalt opptak H25" - kun NTNU-utdanninger
 - "OsloMet Videreutdanning V26" - kun OsloMet
 - "Kristiania Restplasser H25" - privat høgskole
@@ -54,17 +55,25 @@ Når flere organisasjoner samarbeider om et opptak
 - "BI Executive MBA" - rullerende oppstart hver måned
 - "Noroff Nettstudier" - start når som helst
 
-**Samordnede opptak:**
-- "Samordnet opptak H25" - nasjonalt opptak via SO
-- "NTNU-UiO Felles masteropptak" - bilateral samordning
-- "Vestlandssamarbeidet H25" - regional samordning
+**Samordnede opptak (samordnet=true):**
+- "Samordnet opptak H25" - UHG, nasjonalt opptak via SO
+- "Fagskoleopptak H25" - FSU, nasjonalt opptak for fagskoler
+- "NTNU-UiO Felles masteropptak" - LOKALT, bilateral samordning
+- "Vestlandssamarbeidet H25" - LOKALT, regional samordning
 
 **Typiske opptaksdata:**
 - Navn: "Samordnet opptak H25"
-- Type: Samordnet
+- Type: UHG
+- Samordnet: true
 - Søknadsfrist: "15. april 2025"
 - Status: FREMTIDIG → APENT → STENGT → AVSLUTTET
-- Eier: "Samordna opptak (SO)"
+- Administrator: "Samordna opptak (SO)"
+
+**Eksempel på samme utdanning i flere opptak:**
+- "Master i Informatikk (NTNU)" kan være i:
+  - "Samordnet opptak H25" (UHG, samordnet)
+  - "NTNU Lokalt opptak H25" (LOKALT, ikke-samordnet)
+  - "Nordisk IT-samarbeid H25" (LOKALT, samordnet)
 
 ## User Stories (Backlog)
 
