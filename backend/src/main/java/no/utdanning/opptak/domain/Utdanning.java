@@ -14,6 +14,8 @@ public class Utdanning {
   private LocalDateTime opprettet;
   private Boolean aktiv;
   private String organisasjonId;
+  private String starttidspunkt;
+  private Studieform studieform;
   private Organisasjon organisasjon;
   private UtdanningIOpptak opptakTilbud;
 
@@ -30,7 +32,9 @@ public class Utdanning {
       String beskrivelse,
       LocalDateTime opprettet,
       Boolean aktiv,
-      String organisasjonId) {
+      String organisasjonId,
+      String starttidspunkt,
+      Studieform studieform) {
     this.id = id;
     this.navn = navn;
     this.studienivaa = studienivaa;
@@ -42,6 +46,8 @@ public class Utdanning {
     this.opprettet = opprettet;
     this.aktiv = aktiv;
     this.organisasjonId = organisasjonId;
+    this.starttidspunkt = starttidspunkt;
+    this.studieform = studieform;
   }
 
   public String getId() {
@@ -146,5 +152,21 @@ public class Utdanning {
 
   public void setOpptakTilbud(UtdanningIOpptak opptakTilbud) {
     this.opptakTilbud = opptakTilbud;
+  }
+
+  public String getStarttidspunkt() {
+    return starttidspunkt;
+  }
+
+  public void setStarttidspunkt(String starttidspunkt) {
+    this.starttidspunkt = starttidspunkt;
+  }
+
+  public Studieform getStudieform() {
+    return studieform;
+  }
+
+  public void setStudieform(Studieform studieform) {
+    this.studieform = studieform;
   }
 }
