@@ -1,21 +1,26 @@
 package no.utdanning.opptak.service;
 
-import no.utdanning.opptak.domain.Bruker;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import no.utdanning.opptak.domain.Utdanning;
 import no.utdanning.opptak.repository.UtdanningRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /** Service for håndtering av sikkerhet og tilgangskontroll for utdanninger */
 @Service
 public class UtdanningSecurityService {
 
   private final UtdanningRepository utdanningRepository;
+  private final JwtService jwtService;
 
-  public UtdanningSecurityService(UtdanningRepository utdanningRepository) {
+  public UtdanningSecurityService(UtdanningRepository utdanningRepository, JwtService jwtService) {
     this.utdanningRepository = utdanningRepository;
+    this.jwtService = jwtService;
   }
 
   /**
@@ -108,11 +113,43 @@ public class UtdanningSecurityService {
         && auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR"));
   }
 
-  /** Henter organisasjonId fra brukerens authentication principal */
+  /** Henter organisasjonId fra brukerens JWT token */
   private String getBrukerOrganisasjonId(Authentication auth) {
-    if (auth.getPrincipal() instanceof Bruker) {
-      Bruker bruker = (Bruker) auth.getPrincipal();
-      return bruker.getOrganisasjonId();
+    // Hent JWT token fra request og ekstraher organisasjonId
+    HttpServletRequest request = getCurrentRequest();
+    if (request == null) {
+      return null;
+    }
+
+    String token = extractTokenFromRequest(request);
+    if (token == null) {
+      return null;
+    }
+
+    try {
+      Claims claims = jwtService.validateToken(token);
+      return jwtService.getOrganisasjonId(claims);
+    } catch (SecurityException e) {
+      return null;
+    }
+  }
+
+  /** Henter nåværende HTTP request */
+  private HttpServletRequest getCurrentRequest() {
+    try {
+      ServletRequestAttributes attributes =
+          (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+      return attributes.getRequest();
+    } catch (IllegalStateException e) {
+      return null;
+    }
+  }
+
+  /** Ekstraherer JWT token fra Authorization header */
+  private String extractTokenFromRequest(HttpServletRequest request) {
+    String bearerToken = request.getHeader("Authorization");
+    if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+      return bearerToken.substring(7);
     }
     return null;
   }
