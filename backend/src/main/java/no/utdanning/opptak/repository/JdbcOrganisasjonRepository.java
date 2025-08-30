@@ -13,8 +13,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 /**
- * JDBC implementasjon av OrganisasjonRepository.
- * Erstatter InMemoryOrganisasjonRepository for produksjonsklar persistens.
+ * JDBC implementasjon av OrganisasjonRepository. Erstatter InMemoryOrganisasjonRepository for
+ * produksjonsklar persistens.
  */
 @Repository
 public class JdbcOrganisasjonRepository implements OrganisasjonRepository {
@@ -77,14 +77,16 @@ public class JdbcOrganisasjonRepository implements OrganisasjonRepository {
       organisasjon.setId(UUID.randomUUID().toString());
       organisasjon.setOpprettet(LocalDateTime.now());
       organisasjon.setOppdatert(LocalDateTime.now());
-      
-      String sql = """
-          INSERT INTO organisasjon (id, navn, kort_navn, type, organisasjonsnummer, 
+
+      String sql =
+          """
+          INSERT INTO organisasjon (id, navn, kort_navn, type, organisasjonsnummer,
                                    adresse, nettside, opprettet, aktiv)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
           """;
-      
-      jdbcTemplate.update(sql,
+
+      jdbcTemplate.update(
+          sql,
           organisasjon.getId(),
           organisasjon.getNavn(),
           organisasjon.getKortNavn(),
@@ -97,14 +99,16 @@ public class JdbcOrganisasjonRepository implements OrganisasjonRepository {
     } else {
       // Update existing
       organisasjon.setOppdatert(LocalDateTime.now());
-      
-      String sql = """
+
+      String sql =
+          """
           UPDATE organisasjon SET navn = ?, kort_navn = ?, type = ?, organisasjonsnummer = ?,
                                 adresse = ?, nettside = ?, aktiv = ?
           WHERE id = ?
           """;
-      
-      jdbcTemplate.update(sql,
+
+      jdbcTemplate.update(
+          sql,
           organisasjon.getNavn(),
           organisasjon.getKortNavn(),
           organisasjon.getType().name(),
@@ -114,7 +118,7 @@ public class JdbcOrganisasjonRepository implements OrganisasjonRepository {
           organisasjon.getAktiv(),
           organisasjon.getId());
     }
-    
+
     return organisasjon;
   }
 
@@ -132,9 +136,7 @@ public class JdbcOrganisasjonRepository implements OrganisasjonRepository {
     return count != null && count > 0;
   }
 
-  /**
-   * RowMapper for å konvertere database-rad til Organisasjon objekt
-   */
+  /** RowMapper for å konvertere database-rad til Organisasjon objekt */
   private static class OrganisasjonRowMapper implements RowMapper<Organisasjon> {
     @Override
     public Organisasjon mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -142,21 +144,21 @@ public class JdbcOrganisasjonRepository implements OrganisasjonRepository {
       org.setId(rs.getString("id"));
       org.setNavn(rs.getString("navn"));
       org.setKortNavn(rs.getString("kort_navn"));
-      
+
       // Convert string to enum
       String typeStr = rs.getString("type");
       if (typeStr != null) {
         org.setType(OrganisasjonsType.valueOf(typeStr.toUpperCase()));
       }
-      
+
       org.setOrganisasjonsnummer(rs.getString("organisasjonsnummer"));
       org.setAdresse(rs.getString("adresse"));
       org.setNettside(rs.getString("nettside"));
-      
+
       if (rs.getTimestamp("opprettet") != null) {
         org.setOpprettet(rs.getTimestamp("opprettet").toLocalDateTime());
       }
-      
+
       org.setAktiv(rs.getBoolean("aktiv"));
       return org;
     }

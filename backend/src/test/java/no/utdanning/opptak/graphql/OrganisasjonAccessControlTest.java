@@ -2,7 +2,6 @@ package no.utdanning.opptak.graphql;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -56,7 +55,8 @@ class OrganisasjonAccessControlTest {
   @DisplayName("Should create organisation with valid input")
   void testOpprettOrganisasjon_ValidInput() {
     // Arrange
-    when(organisasjonService.opprettOrganisasjon(any(OpprettOrganisasjonInput.class))).thenReturn(testOrganisasjon);
+    when(organisasjonService.opprettOrganisasjon(any(OpprettOrganisasjonInput.class)))
+        .thenReturn(testOrganisasjon);
 
     // Act
     Organisasjon result = organisasjonMutationResolver.opprettOrganisasjon(validInput);
@@ -71,7 +71,10 @@ class OrganisasjonAccessControlTest {
   void testOpprettOrganisasjon_DuplicateOrgNumber() {
     // Arrange
     when(organisasjonService.opprettOrganisasjon(any(OpprettOrganisasjonInput.class)))
-        .thenThrow(new IllegalArgumentException("Organisasjonsnummer er allerede registrert: " + validInput.getOrganisasjonsnummer()));
+        .thenThrow(
+            new IllegalArgumentException(
+                "Organisasjonsnummer er allerede registrert: "
+                    + validInput.getOrganisasjonsnummer()));
 
     // Act & Assert
     IllegalArgumentException exception =
@@ -115,7 +118,8 @@ class OrganisasjonAccessControlTest {
       // Arrange
       validInput.setOrganisasjonsnummer(invalidNumber);
       when(organisasjonService.opprettOrganisasjon(any(OpprettOrganisasjonInput.class)))
-          .thenThrow(new IllegalArgumentException("Ugyldig organisasjonsnummer. Må være 9 siffer."));
+          .thenThrow(
+              new IllegalArgumentException("Ugyldig organisasjonsnummer. Må være 9 siffer."));
 
       // Act & Assert
       IllegalArgumentException exception =
@@ -129,7 +133,8 @@ class OrganisasjonAccessControlTest {
           "Exception message should indicate invalid format for: " + invalidNumber);
     }
 
-    verify(organisasjonService, times(invalidNumbers.length)).opprettOrganisasjon(any(OpprettOrganisasjonInput.class));
+    verify(organisasjonService, times(invalidNumbers.length))
+        .opprettOrganisasjon(any(OpprettOrganisasjonInput.class));
   }
 
   @Test

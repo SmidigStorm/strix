@@ -14,8 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service-lag for utdanning-operasjoner.
- * Inneholder all forretningslogikk relatert til utdanninger.
+ * Service-lag for utdanning-operasjoner. Inneholder all forretningslogikk relatert til utdanninger.
  * Integrerer med UtdanningSecurityService for sikkerhetskontroll.
  */
 @Service
@@ -35,10 +34,7 @@ public class UtdanningService {
     this.securityService = securityService;
   }
 
-  /**
-   * Henter en spesifikk utdanning basert på ID.
-   * Sjekker tilgang for ikke-administratorer.
-   */
+  /** Henter en spesifikk utdanning basert på ID. Sjekker tilgang for ikke-administratorer. */
   public Utdanning findById(String id) {
     Utdanning utdanning = utdanningRepository.findById(id);
 
@@ -55,8 +51,8 @@ public class UtdanningService {
   }
 
   /**
-   * Henter utdanninger med filtrering og paginering.
-   * For ikke-administratorer filtreres automatisk på egen organisasjon.
+   * Henter utdanninger med filtrering og paginering. For ikke-administratorer filtreres automatisk
+   * på egen organisasjon.
    */
   public UtdanningPage findAll(UtdanningFilter filter, PageInput page) {
     if (page == null) {
@@ -102,11 +98,9 @@ public class UtdanningService {
     return new UtdanningPage(content, totalElements, page.getPage(), page.getSize());
   }
 
-  /**
-   * Henter utdanninger for en spesifikk organisasjon.
-   * Sjekker tilgang for ikke-administratorer.
-   */
-  public UtdanningPage findByOrganisasjon(String organisasjonId, UtdanningFilter filter, PageInput page) {
+  /** Henter utdanninger for en spesifikk organisasjon. Sjekker tilgang for ikke-administratorer. */
+  public UtdanningPage findByOrganisasjon(
+      String organisasjonId, UtdanningFilter filter, PageInput page) {
     // Sjekk tilgang for ikke-administratorer
     if (!securityService.isAdministrator()) {
       String userOrgId = securityService.getCurrentUserOrganisasjonId();
@@ -155,10 +149,7 @@ public class UtdanningService {
     return new UtdanningPage(content, totalElements, page.getPage(), page.getSize());
   }
 
-  /**
-   * Oppretter en ny utdanning.
-   * Validerer organisasjonstilgang og påkrevde felter.
-   */
+  /** Oppretter en ny utdanning. Validerer organisasjonstilgang og påkrevde felter. */
   public Utdanning opprettUtdanning(OpprettUtdanningInput input) {
     // Valider at organisasjonen eksisterer
     Organisasjon organisasjon = organisasjonRepository.findById(input.getOrganisasjonId());
@@ -168,7 +159,8 @@ public class UtdanningService {
 
     // Sjekk tilgang - kun administratorer eller opptaksledere for egen organisasjon
     if (!securityService.canCreateUtdanningForOrganisasjon(input.getOrganisasjonId())) {
-      throw new SecurityException("Ingen tilgang til å opprette utdanning for denne organisasjonen");
+      throw new SecurityException(
+          "Ingen tilgang til å opprette utdanning for denne organisasjonen");
     }
 
     // Opprett ny utdanning
@@ -188,10 +180,7 @@ public class UtdanningService {
     return utdanningRepository.save(utdanning);
   }
 
-  /**
-   * Oppdaterer en eksisterende utdanning.
-   * Validerer organisasjonstilgang.
-   */
+  /** Oppdaterer en eksisterende utdanning. Validerer organisasjonstilgang. */
   public Utdanning oppdaterUtdanning(OppdaterUtdanningInput input) {
     Utdanning eksisterende = utdanningRepository.findById(input.getId());
     if (eksisterende == null) {
@@ -238,10 +227,7 @@ public class UtdanningService {
     return utdanningRepository.save(eksisterende);
   }
 
-  /**
-   * Deaktiverer en utdanning (soft delete).
-   * Validerer organisasjonstilgang.
-   */
+  /** Deaktiverer en utdanning (soft delete). Validerer organisasjonstilgang. */
   public Utdanning deaktiverUtdanning(String id) {
     Utdanning utdanning = utdanningRepository.findById(id);
     if (utdanning == null) {
@@ -257,10 +243,7 @@ public class UtdanningService {
     return utdanningRepository.save(utdanning);
   }
 
-  /**
-   * Aktiverer en deaktivert utdanning.
-   * Validerer organisasjonstilgang.
-   */
+  /** Aktiverer en deaktivert utdanning. Validerer organisasjonstilgang. */
   public Utdanning aktiverUtdanning(String id) {
     Utdanning utdanning = utdanningRepository.findById(id);
     if (utdanning == null) {
@@ -276,10 +259,7 @@ public class UtdanningService {
     return utdanningRepository.save(utdanning);
   }
 
-  /**
-   * Sletter en utdanning permanent.
-   * Kun for administratorer.
-   */
+  /** Sletter en utdanning permanent. Kun for administratorer. */
   public boolean slettUtdanning(String id) {
     Utdanning utdanning = utdanningRepository.findById(id);
     if (utdanning == null) {
@@ -294,10 +274,7 @@ public class UtdanningService {
     return utdanningRepository.deleteById(id);
   }
 
-  /**
-   * Henter organisasjon for en utdanning.
-   * Brukes for GraphQL schema mapping.
-   */
+  /** Henter organisasjon for en utdanning. Brukes for GraphQL schema mapping. */
   public Organisasjon getOrganisasjon(Utdanning utdanning) {
     return organisasjonRepository.findById(utdanning.getOrganisasjonId());
   }

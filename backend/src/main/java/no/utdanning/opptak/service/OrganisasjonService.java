@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service-lag for organisasjon-operasjoner.
- * Inneholder all forretningslogikk relatert til organisasjoner.
+ * Service-lag for organisasjon-operasjoner. Inneholder all forretningslogikk relatert til
+ * organisasjoner.
  */
 @Service
 @Transactional
@@ -23,9 +23,7 @@ public class OrganisasjonService {
     this.organisasjonRepository = organisasjonRepository;
   }
 
-  /**
-   * Henter alle organisasjoner med valgfri filtrering.
-   */
+  /** Henter alle organisasjoner med valgfri filtrering. */
   public List<Organisasjon> findAll(OrganisasjonFilter filter) {
     if (filter == null) {
       return organisasjonRepository.findAll();
@@ -57,16 +55,12 @@ public class OrganisasjonService {
     return result;
   }
 
-  /**
-   * Henter en spesifikk organisasjon basert på ID.
-   */
+  /** Henter en spesifikk organisasjon basert på ID. */
   public Organisasjon findById(String id) {
     return organisasjonRepository.findById(id);
   }
 
-  /**
-   * Oppretter en ny organisasjon.
-   */
+  /** Oppretter en ny organisasjon. */
   public Organisasjon opprettOrganisasjon(OpprettOrganisasjonInput input) {
     // Valider at organisasjonsnummer ikke finnes fra før
     if (organisasjonRepository.existsByOrganisasjonsnummer(input.getOrganisasjonsnummer())) {
@@ -95,9 +89,7 @@ public class OrganisasjonService {
     return organisasjonRepository.save(organisasjon);
   }
 
-  /**
-   * Oppdaterer en eksisterende organisasjon.
-   */
+  /** Oppdaterer en eksisterende organisasjon. */
   public Organisasjon oppdaterOrganisasjon(OppdaterOrganisasjonInput input) {
     Organisasjon eksisterende = organisasjonRepository.findById(input.getId());
     if (eksisterende == null) {
@@ -133,9 +125,7 @@ public class OrganisasjonService {
     return organisasjonRepository.save(eksisterende);
   }
 
-  /**
-   * Deaktiverer en organisasjon (soft delete).
-   */
+  /** Deaktiverer en organisasjon (soft delete). */
   public Organisasjon deaktiverOrganisasjon(String id) {
     Organisasjon organisasjon = organisasjonRepository.findById(id);
     if (organisasjon == null) {
@@ -146,9 +136,7 @@ public class OrganisasjonService {
     return organisasjonRepository.save(organisasjon);
   }
 
-  /**
-   * Reaktiverer en deaktivert organisasjon.
-   */
+  /** Reaktiverer en deaktivert organisasjon. */
   public Organisasjon reaktiverOrganisasjon(String id) {
     Organisasjon organisasjon = organisasjonRepository.findById(id);
     if (organisasjon == null) {
@@ -159,16 +147,12 @@ public class OrganisasjonService {
     return organisasjonRepository.save(organisasjon);
   }
 
-  /**
-   * Sjekker om en organisasjon eksisterer.
-   */
+  /** Sjekker om en organisasjon eksisterer. */
   public boolean existsById(String id) {
     return organisasjonRepository.findById(id) != null;
   }
 
-  /**
-   * Sjekker om et organisasjonsnummer er registrert.
-   */
+  /** Sjekker om et organisasjonsnummer er registrert. */
   public boolean existsByOrganisasjonsnummer(String organisasjonsnummer) {
     return organisasjonRepository.existsByOrganisasjonsnummer(organisasjonsnummer);
   }

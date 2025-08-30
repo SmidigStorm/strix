@@ -9,9 +9,8 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
-/** 
- * GraphQL resolver for utdanning mutations.
- * Delegerer all forretningslogikk til UtdanningService.
+/**
+ * GraphQL resolver for utdanning mutations. Delegerer all forretningslogikk til UtdanningService.
  */
 @Controller
 @PreAuthorize("isAuthenticated()") // Require authentication for all methods

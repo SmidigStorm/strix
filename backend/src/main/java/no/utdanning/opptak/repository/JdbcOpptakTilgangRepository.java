@@ -11,9 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-/**
- * JDBC implementasjon av OpptakTilgangRepository for å håndtere samordnet opptak tilganger.
- */
+/** JDBC implementasjon av OpptakTilgangRepository for å håndtere samordnet opptak tilganger. */
 @Repository
 public class JdbcOpptakTilgangRepository implements OpptakTilgangRepository {
 
@@ -62,7 +60,8 @@ public class JdbcOpptakTilgangRepository implements OpptakTilgangRepository {
   public OpptakTilgang findByOpptakIdAndOrganisasjonId(String opptakId, String organisasjonId) {
     String sql = "SELECT * FROM opptak_tilgang WHERE opptak_id = ? AND organisasjon_id = ?";
     try {
-      return jdbcTemplate.queryForObject(sql, new OpptakTilgangRowMapper(), opptakId, organisasjonId);
+      return jdbcTemplate.queryForObject(
+          sql, new OpptakTilgangRowMapper(), opptakId, organisasjonId);
     } catch (EmptyResultDataAccessException e) {
       return null;
     }
@@ -74,13 +73,15 @@ public class JdbcOpptakTilgangRepository implements OpptakTilgangRepository {
       // Insert new
       tilgang.setId(UUID.randomUUID().toString());
       tilgang.setTildelt(LocalDateTime.now());
-      
-      String sql = """
+
+      String sql =
+          """
           INSERT INTO opptak_tilgang (id, opptak_id, organisasjon_id, tildelt, tildelt_av)
           VALUES (?, ?, ?, ?, ?)
           """;
-      
-      jdbcTemplate.update(sql,
+
+      jdbcTemplate.update(
+          sql,
           tilgang.getId(),
           tilgang.getOpptakId(),
           tilgang.getOrganisasjonId(),
@@ -88,16 +89,15 @@ public class JdbcOpptakTilgangRepository implements OpptakTilgangRepository {
           tilgang.getTildeltAv());
     } else {
       // Update existing (though this is rarely needed for access grants)
-      String sql = """
+      String sql =
+          """
           UPDATE opptak_tilgang SET tildelt_av = ?
           WHERE id = ?
           """;
-      
-      jdbcTemplate.update(sql,
-          tilgang.getTildeltAv(),
-          tilgang.getId());
+
+      jdbcTemplate.update(sql, tilgang.getTildeltAv(), tilgang.getId());
     }
-    
+
     return tilgang;
   }
 
@@ -115,9 +115,7 @@ public class JdbcOpptakTilgangRepository implements OpptakTilgangRepository {
     return count != null && count > 0;
   }
 
-  /**
-   * RowMapper for å konvertere database-rad til OpptakTilgang objekt
-   */
+  /** RowMapper for å konvertere database-rad til OpptakTilgang objekt */
   private static class OpptakTilgangRowMapper implements RowMapper<OpptakTilgang> {
     @Override
     public OpptakTilgang mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -125,11 +123,11 @@ public class JdbcOpptakTilgangRepository implements OpptakTilgangRepository {
       tilgang.setId(rs.getString("id"));
       tilgang.setOpptakId(rs.getString("opptak_id"));
       tilgang.setOrganisasjonId(rs.getString("organisasjon_id"));
-      
+
       if (rs.getTimestamp("tildelt") != null) {
         tilgang.setTildelt(rs.getTimestamp("tildelt").toLocalDateTime());
       }
-      
+
       tilgang.setTildeltAv(rs.getString("tildelt_av"));
       return tilgang;
     }

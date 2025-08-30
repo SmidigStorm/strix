@@ -3,8 +3,8 @@ package no.utdanning.opptak.domain;
 import java.time.LocalDateTime;
 
 /**
- * Representerer tilgang for en organisasjon til å delta i et samordnet opptak.
- * Kun relevant for opptak hvor samordnet=true.
+ * Representerer tilgang for en organisasjon til å delta i et samordnet opptak. Kun relevant for
+ * opptak hvor samordnet=true.
  */
 public class OpptakTilgang {
   private String id;
@@ -20,11 +20,7 @@ public class OpptakTilgang {
   public OpptakTilgang() {}
 
   public OpptakTilgang(
-      String id,
-      String opptakId,
-      String organisasjonId,
-      LocalDateTime tildelt,
-      String tildeltAv) {
+      String id, String opptakId, String organisasjonId, LocalDateTime tildelt, String tildeltAv) {
     this.id = id;
     this.opptakId = opptakId;
     this.organisasjonId = organisasjonId;

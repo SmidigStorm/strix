@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import no.utdanning.opptak.domain.Studieform;
 import no.utdanning.opptak.domain.Utdanning;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +67,7 @@ class UtdanningRepositoryTest {
   @Test
   @DisplayName("findById: Skal finne utdanning med gyldig ID")
   void findById_skalFinneUtdanningMedGyldigId() {
-    // When - bruker ID fra InMemoryRepository  
+    // When - bruker ID fra InMemoryRepository
     Utdanning funnet = utdanningRepository.findById("ntnu-informatikk-h25");
 
     // Then
@@ -113,16 +112,24 @@ class UtdanningRepositoryTest {
   void deaktiverById_skalDeaktivereEksisterendeUtdanning() {
     // Given - bruker ID fra InMemoryRepository
     String idToDeactivate = "hvl-sykepleie-h25";
-    assertTrue(utdanningRepository.existsById(idToDeactivate), "Utdanning skal eksistere før deaktivering");
-    assertTrue(utdanningRepository.findById(idToDeactivate).getAktiv(), "Utdanning skal være aktiv før deaktivering");
+    assertTrue(
+        utdanningRepository.existsById(idToDeactivate),
+        "Utdanning skal eksistere før deaktivering");
+    assertTrue(
+        utdanningRepository.findById(idToDeactivate).getAktiv(),
+        "Utdanning skal være aktiv før deaktivering");
 
     // When
     boolean deaktivert = utdanningRepository.deaktiverById(idToDeactivate);
 
     // Then
     assertTrue(deaktivert, "Deaktivering skal returnere true");
-    assertTrue(utdanningRepository.existsById(idToDeactivate), "Utdanning skal fortsatt eksistere etter deaktivering");
-    assertFalse(utdanningRepository.findById(idToDeactivate).getAktiv(), "Utdanning skal være inaktiv etter deaktivering");
+    assertTrue(
+        utdanningRepository.existsById(idToDeactivate),
+        "Utdanning skal fortsatt eksistere etter deaktivering");
+    assertFalse(
+        utdanningRepository.findById(idToDeactivate).getAktiv(),
+        "Utdanning skal være inaktiv etter deaktivering");
   }
 
   @Test
@@ -131,14 +138,18 @@ class UtdanningRepositoryTest {
     // Given - deaktiver først en utdanning
     String idToActivate = "uio-informatikk-h25";
     utdanningRepository.deaktiverById(idToActivate);
-    assertFalse(utdanningRepository.findById(idToActivate).getAktiv(), "Utdanning skal være deaktivert først");
+    assertFalse(
+        utdanningRepository.findById(idToActivate).getAktiv(),
+        "Utdanning skal være deaktivert først");
 
     // When
     boolean aktivert = utdanningRepository.aktiverById(idToActivate);
 
     // Then
     assertTrue(aktivert, "Aktivering skal returnere true");
-    assertTrue(utdanningRepository.findById(idToActivate).getAktiv(), "Utdanning skal være aktiv etter aktivering");
+    assertTrue(
+        utdanningRepository.findById(idToActivate).getAktiv(),
+        "Utdanning skal være aktiv etter aktivering");
   }
 
   // ==================== FILTERING AND SEARCH TESTING ====================
@@ -147,8 +158,8 @@ class UtdanningRepositoryTest {
   @DisplayName("findWithFilters: Skal finne alle utdanninger uten filtre")
   void findWithFilters_skalFinneAlleUtdanningerUtenFiltre() {
     // When
-    List<Utdanning> result = utdanningRepository.findWithFilters(
-        null, null, null, null, null, null, 100, 0);
+    List<Utdanning> result =
+        utdanningRepository.findWithFilters(null, null, null, null, null, null, 100, 0);
 
     // Then
     assertThat(result).isNotEmpty();
@@ -160,12 +171,13 @@ class UtdanningRepositoryTest {
   @DisplayName("findWithFilters: Skal filtrere på navn (partial match)")
   void findWithFilters_skalFiltrePaNavn() {
     // When - bruker delnavn fra InMemoryRepository
-    List<Utdanning> result = utdanningRepository.findWithFilters(
-        "informatikk", null, null, null, null, null, 100, 0);
+    List<Utdanning> result =
+        utdanningRepository.findWithFilters("informatikk", null, null, null, null, null, 100, 0);
 
     // Then - 2 utdanninger har "informatikk" i navnet (NTNU og UiO)
     assertThat(result).hasSize(2);
-    assertThat(result).extracting(Utdanning::getNavn)
+    assertThat(result)
+        .extracting(Utdanning::getNavn)
         .allMatch(navn -> navn.toLowerCase().contains("informatikk"));
   }
 
@@ -173,12 +185,13 @@ class UtdanningRepositoryTest {
   @DisplayName("findWithFilters: Skal filtrere på studienivå")
   void findWithFilters_skalFiltrePaStudienivaa() {
     // When - bruker "bachelor" som matcher InMemoryRepository data
-    List<Utdanning> result = utdanningRepository.findWithFilters(
-        null, "bachelor", null, null, null, null, 100, 0);
+    List<Utdanning> result =
+        utdanningRepository.findWithFilters(null, "bachelor", null, null, null, null, 100, 0);
 
     // Then
     assertThat(result).isNotEmpty();
-    assertThat(result).extracting(Utdanning::getStudienivaa)
+    assertThat(result)
+        .extracting(Utdanning::getStudienivaa)
         .allMatch(nivaa -> nivaa != null && nivaa.equals("bachelor"));
   }
 
@@ -186,12 +199,13 @@ class UtdanningRepositoryTest {
   @DisplayName("findWithFilters: Skal filtrere på studiested")
   void findWithFilters_skalFiltrePaStudiested() {
     // When - bruker "Trondheim" som har 2 NTNU utdanninger i InMemoryRepository
-    List<Utdanning> result = utdanningRepository.findWithFilters(
-        null, null, "Trondheim", null, null, null, 100, 0);
+    List<Utdanning> result =
+        utdanningRepository.findWithFilters(null, null, "Trondheim", null, null, null, 100, 0);
 
     // Then - 2 NTNU utdanninger i Trondheim (fra InMemoryRepository)
     assertThat(result).hasSize(2);
-    assertThat(result).extracting(Utdanning::getStudiested)
+    assertThat(result)
+        .extracting(Utdanning::getStudiested)
         .allMatch(sted -> sted.equals("Trondheim"));
   }
 
@@ -199,12 +213,13 @@ class UtdanningRepositoryTest {
   @DisplayName("findWithFilters: Skal filtrere på organisasjonId")
   void findWithFilters_skalFiltrePaOrganisasjonId() {
     // When - bruker "ntnu" som har 2 utdanninger i InMemoryRepository
-    List<Utdanning> result = utdanningRepository.findWithFilters(
-        null, null, null, "ntnu", null, null, 100, 0);
+    List<Utdanning> result =
+        utdanningRepository.findWithFilters(null, null, null, "ntnu", null, null, 100, 0);
 
     // Then - 2 NTNU utdanninger fra InMemoryRepository
     assertThat(result).hasSize(2);
-    assertThat(result).extracting(Utdanning::getOrganisasjonId)
+    assertThat(result)
+        .extracting(Utdanning::getOrganisasjonId)
         .allMatch(orgId -> orgId.equals("ntnu"));
   }
 
@@ -212,12 +227,14 @@ class UtdanningRepositoryTest {
   @DisplayName("findWithFilters: Skal filtrere på studieform")
   void findWithFilters_skalFiltrePaStudieform() {
     // When
-    List<Utdanning> result = utdanningRepository.findWithFilters(
-        null, null, null, null, Studieform.HELTID, null, 100, 0);
+    List<Utdanning> result =
+        utdanningRepository.findWithFilters(
+            null, null, null, null, Studieform.HELTID, null, 100, 0);
 
     // Then - minst 4 utdanninger har HELTID i InMemoryRepository
     assertThat(result).hasSizeGreaterThanOrEqualTo(4);
-    assertThat(result).extracting(Utdanning::getStudieform)
+    assertThat(result)
+        .extracting(Utdanning::getStudieform)
         .allMatch(form -> form.equals(Studieform.HELTID));
   }
 
@@ -225,22 +242,22 @@ class UtdanningRepositoryTest {
   @DisplayName("findWithFilters: Skal filtrere på aktiv status")
   void findWithFilters_skalFiltrePaAktivStatus() {
     // When - only active
-    List<Utdanning> activeResult = utdanningRepository.findWithFilters(
-        null, null, null, null, null, true, 100, 0);
+    List<Utdanning> activeResult =
+        utdanningRepository.findWithFilters(null, null, null, null, null, true, 100, 0);
 
     // Then - alle utdanninger i baseline InMemoryRepository er aktive (minst 5)
     assertThat(activeResult).hasSizeGreaterThanOrEqualTo(5);
-    assertThat(activeResult).extracting(Utdanning::getAktiv)
-        .allMatch(aktiv -> aktiv.equals(true));
+    assertThat(activeResult).extracting(Utdanning::getAktiv).allMatch(aktiv -> aktiv.equals(true));
 
     // When - only inactive
-    List<Utdanning> inactiveResult = utdanningRepository.findWithFilters(
-        null, null, null, null, null, false, 100, 0);
+    List<Utdanning> inactiveResult =
+        utdanningRepository.findWithFilters(null, null, null, null, null, false, 100, 0);
 
     // Then - kan være inaktive utdanninger fra andre tester
     // Bare sjekk at alle er inaktive hvis noen finnes
     if (!inactiveResult.isEmpty()) {
-      assertThat(inactiveResult).extracting(Utdanning::getAktiv)
+      assertThat(inactiveResult)
+          .extracting(Utdanning::getAktiv)
           .allMatch(aktiv -> aktiv.equals(false));
     }
   }
@@ -249,8 +266,9 @@ class UtdanningRepositoryTest {
   @DisplayName("findWithFilters: Skal kombinere flere filtre")
   void findWithFilters_skalKombinereFlereFiltre() {
     // When - bruk kombinasjon som matcher data i InMemoryRepository
-    List<Utdanning> result = utdanningRepository.findWithFilters(
-        "informatikk", "bachelor", "Trondheim", "ntnu", Studieform.HELTID, true, 100, 0);
+    List<Utdanning> result =
+        utdanningRepository.findWithFilters(
+            "informatikk", "bachelor", "Trondheim", "ntnu", Studieform.HELTID, true, 100, 0);
 
     // Then - skal finne NTNU informatikk-utdanning i Trondheim
     assertThat(result).hasSize(1);
@@ -267,12 +285,12 @@ class UtdanningRepositoryTest {
   @DisplayName("findWithFilters: Skal respektere paginering (size og offset)")
   void findWithFilters_skalRespekterePaginering() {
     // When - first page, size 1
-    List<Utdanning> page1 = utdanningRepository.findWithFilters(
-        null, null, null, null, null, null, 1, 0);
+    List<Utdanning> page1 =
+        utdanningRepository.findWithFilters(null, null, null, null, null, null, 1, 0);
 
     // When - second page, size 1
-    List<Utdanning> page2 = utdanningRepository.findWithFilters(
-        null, null, null, null, null, null, 1, 1);
+    List<Utdanning> page2 =
+        utdanningRepository.findWithFilters(null, null, null, null, null, null, 1, 1);
 
     // Then
     assertThat(page1).hasSize(1);
@@ -284,8 +302,7 @@ class UtdanningRepositoryTest {
   @DisplayName("countWithFilters: Skal telle alle utdanninger uten filtre")
   void countWithFilters_skalTelleAlleUtdanningerUtenFiltre() {
     // When
-    long count = utdanningRepository.countWithFilters(
-        null, null, null, null, null, null);
+    long count = utdanningRepository.countWithFilters(null, null, null, null, null, null);
 
     // Then - sjekk at vi får et positivt antall
     assertThat(count).isGreaterThan(0);
@@ -295,8 +312,7 @@ class UtdanningRepositoryTest {
   @DisplayName("countWithFilters: Skal telle filtrerte resultater korrekt")
   void countWithFilters_skalTelleFiltrerteResultaterKorrekt() {
     // When - bruker "bachelor" som matcher InMemoryRepository data
-    long count = utdanningRepository.countWithFilters(
-        null, "bachelor", null, null, null, null);
+    long count = utdanningRepository.countWithFilters(null, "bachelor", null, null, null, null);
 
     // Then - sjekk at vi får et positivt antall (ikke hardkodet verdi)
     assertThat(count).isGreaterThan(0);
@@ -322,27 +338,29 @@ class UtdanningRepositoryTest {
     invalidUtdanning.setOpprettet(LocalDateTime.now());
 
     // When & Then - should fail due to validation
-    assertThrows(Exception.class, () -> {
-      utdanningRepository.save(invalidUtdanning);
-    }, "Lagring med null påkrevd felt skal feile");
+    assertThrows(
+        Exception.class,
+        () -> {
+          utdanningRepository.save(invalidUtdanning);
+        },
+        "Lagring med null påkrevd felt skal feile");
   }
 
   @Test
   @DisplayName("findWithFilters: Case-insensitive søk skal fungere")
   void findWithFilters_caseInsensitiveSokSkalFungere() {
     // When - search with different case for "BACHELOR" som finnes i alle utdanningsnavnene
-    List<Utdanning> result1 = utdanningRepository.findWithFilters(
-        "BACHELOR", null, null, null, null, null, 100, 0);
-    List<Utdanning> result2 = utdanningRepository.findWithFilters(
-        "bachelor", null, null, null, null, null, 100, 0);
+    List<Utdanning> result1 =
+        utdanningRepository.findWithFilters("BACHELOR", null, null, null, null, null, 100, 0);
+    List<Utdanning> result2 =
+        utdanningRepository.findWithFilters("bachelor", null, null, null, null, null, 100, 0);
 
     // Then - should find the same results regardless of case
     assertThat(result1).hasSameSizeAs(result2);
     assertThat(result1).hasSizeGreaterThan(0);
     // Verify they contain the same utdanninger
-    assertThat(result1).extracting(Utdanning::getId)
-        .containsExactlyInAnyOrderElementsOf(
-            result2.stream().map(Utdanning::getId).toList());
+    assertThat(result1)
+        .extracting(Utdanning::getId)
+        .containsExactlyInAnyOrderElementsOf(result2.stream().map(Utdanning::getId).toList());
   }
-
 }

@@ -15,7 +15,7 @@ public class GraphQLExceptionHandler extends DataFetcherExceptionResolverAdapter
     // Log all errors for debugging
     System.err.println("GraphQL Error: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
     ex.printStackTrace();
-    
+
     if (ex instanceof IllegalArgumentException) {
       return GraphqlErrorBuilder.newError()
           .errorType(ErrorType.BAD_REQUEST)

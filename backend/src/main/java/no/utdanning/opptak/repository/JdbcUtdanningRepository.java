@@ -14,8 +14,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 /**
- * JDBC implementasjon av UtdanningRepository.
- * Erstatter InMemoryUtdanningRepository for produksjonsklar persistens.
+ * JDBC implementasjon av UtdanningRepository. Erstatter InMemoryUtdanningRepository for
+ * produksjonsklar persistens.
  */
 @Repository
 public class JdbcUtdanningRepository implements UtdanningRepository {
@@ -138,7 +138,7 @@ public class JdbcUtdanningRepository implements UtdanningRepository {
     if (limit != null && limit > 0) {
       sql.append(" LIMIT ?");
       params.add(limit);
-      
+
       if (offset != null && offset > 0) {
         sql.append(" OFFSET ?");
         params.add(offset);
@@ -196,15 +196,17 @@ public class JdbcUtdanningRepository implements UtdanningRepository {
       // Insert new
       utdanning.setId(UUID.randomUUID().toString());
       utdanning.setOpprettet(LocalDateTime.now());
-      
-      String sql = """
+
+      String sql =
+          """
           INSERT INTO utdanning (id, navn, studienivaa, studiepoeng, varighet, studiested,
                                 undervisningssprak, beskrivelse, opprettet, aktiv, organisasjon_id,
                                 starttidspunkt, studieform)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           """;
-      
-      jdbcTemplate.update(sql,
+
+      jdbcTemplate.update(
+          sql,
           utdanning.getId(),
           utdanning.getNavn(),
           utdanning.getStudienivaa(),
@@ -220,14 +222,16 @@ public class JdbcUtdanningRepository implements UtdanningRepository {
           utdanning.getStudieform() != null ? utdanning.getStudieform().name() : null);
     } else {
       // Update existing
-      String sql = """
+      String sql =
+          """
           UPDATE utdanning SET navn = ?, studienivaa = ?, studiepoeng = ?, varighet = ?,
-                              studiested = ?, undervisningssprak = ?, beskrivelse = ?, 
+                              studiested = ?, undervisningssprak = ?, beskrivelse = ?,
                               aktiv = ?, starttidspunkt = ?, studieform = ?
           WHERE id = ?
           """;
-      
-      jdbcTemplate.update(sql,
+
+      jdbcTemplate.update(
+          sql,
           utdanning.getNavn(),
           utdanning.getStudienivaa(),
           utdanning.getStudiepoeng(),
@@ -240,7 +244,7 @@ public class JdbcUtdanningRepository implements UtdanningRepository {
           utdanning.getStudieform() != null ? utdanning.getStudieform().name() : null,
           utdanning.getId());
     }
-    
+
     return utdanning;
   }
 
@@ -272,9 +276,7 @@ public class JdbcUtdanningRepository implements UtdanningRepository {
     return count != null && count > 0;
   }
 
-  /**
-   * RowMapper for å konvertere database-rad til Utdanning objekt
-   */
+  /** RowMapper for å konvertere database-rad til Utdanning objekt */
   private static class UtdanningRowMapper implements RowMapper<Utdanning> {
     @Override
     public Utdanning mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -287,21 +289,21 @@ public class JdbcUtdanningRepository implements UtdanningRepository {
       utdanning.setStudiested(rs.getString("studiested"));
       utdanning.setUndervisningssprak(rs.getString("undervisningssprak"));
       utdanning.setBeskrivelse(rs.getString("beskrivelse"));
-      
+
       if (rs.getTimestamp("opprettet") != null) {
         utdanning.setOpprettet(rs.getTimestamp("opprettet").toLocalDateTime());
       }
-      
+
       utdanning.setAktiv(rs.getBoolean("aktiv"));
       utdanning.setOrganisasjonId(rs.getString("organisasjon_id"));
       utdanning.setStarttidspunkt(rs.getString("starttidspunkt"));
-      
+
       // Convert string to enum
       String studieformStr = rs.getString("studieform");
       if (studieformStr != null) {
         utdanning.setStudieform(Studieform.valueOf(studieformStr));
       }
-      
+
       return utdanning;
     }
   }
