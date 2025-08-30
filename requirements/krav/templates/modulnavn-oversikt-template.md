@@ -1,5 +1,8 @@
 # [Modulnavn] - Domeneforståelse
 
+> **Filnavn:** `[modulnavn]-oversikt.md`  
+> **Formål:** Overordnet domeneforståelse og user story backlog
+
 ## Domene-entiteter
 
 **[Entitet 1]** 

@@ -1,5 +1,8 @@
 # [Modulnavn] - Detaljerte scenarioer
 
+> **Filnavn:** `[modulnavn]-detaljerte-scenarioer.md`  
+> **Formål:** Example mapping for utvalgte user stories fra backloggen
+
 Dette dokumentet inneholder example mapping for utvalgte user stories fra backloggen.
 
 ---
