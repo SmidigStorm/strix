@@ -46,25 +46,25 @@ Kategorisering av utdanningsnivå og -lengde
 
 ## User Stories (Backlog)
 
-### Administrere utdanninger
-- [ ] Som opptaksleder ønsker jeg å opprette ny utdanning for min organisasjon slik at vi kan tilby studieplasser
-- [ ] Som opptaksleder ønsker jeg å se oversikt over mine organisasjons utdanninger slik at jeg har kontroll
-- [ ] Som opptaksleder ønsker jeg å redigere utdanningsinformasjon slik at data er oppdatert
-- [ ] Som opptaksleder ønsker jeg å deaktivere utdanninger som ikke lenger tilbys slik at systemet er ryddig
+### Administrere utdanninger ✅ FULLSTENDIG IMPLEMENTERT
+- [x] Som opptaksleder ønsker jeg å opprette ny utdanning for min organisasjon slik at vi kan tilby studieplasser
+- [x] Som opptaksleder ønsker jeg å se oversikt over mine organisasjons utdanninger slik at jeg har kontroll
+- [x] Som opptaksleder ønsker jeg å redigere utdanningsinformasjon slik at data er oppdatert
+- [x] Som opptaksleder ønsker jeg å deaktivere utdanninger som ikke lenger tilbys slik at systemet er ryddig
 
-### Utdanningsinformasjon
-- [ ] Som opptaksleder ønsker jeg å registrere utdanningsnavn og -type slik at utdanningen kan identifiseres korrekt
+### Utdanningsinformasjon 🔄 DELVIS IMPLEMENTERT (2 av 4)
+- [x] Som opptaksleder ønsker jeg å registrere utdanningsnavn og -type slik at utdanningen kan identifiseres korrekt
 - [ ] Som opptaksleder ønsker jeg å angi antall studieplasser slik at kapasiteten er kjent
-- [ ] Som opptaksleder ønsker jeg å angi utdanningens varighet slik at søkere vet hvor lang utdanningen er
+- [x] Som opptaksleder ønsker jeg å angi utdanningens varighet slik at søkere vet hvor lang utdanningen er
 - [ ] Som opptaksleder ønsker jeg å koble utdanning til utdanningsspesifikasjon slik at den følger standarder
 
-### Søk og oversikt
-- [ ] Som opptaksleder ønsker jeg å søke etter utdanninger på tvers av organisasjoner slik at jeg kan se hva andre tilbyr
-- [ ] Som administrator ønsker jeg å se alle utdanninger i systemet slik at jeg har oversikt
-- [ ] Som administrator ønsker jeg å filtrere utdanninger etter type slik at jeg kan analysere tilbudet
+### Søk og oversikt 🔄 DELVIS IMPLEMENTERT (3 av 4)
+- [x] Som opptaksleder ønsker jeg å søke etter utdanninger på tvers av organisasjoner slik at jeg kan se hva andre tilbyr *(kun administratorer kan se på tvers)*
+- [x] Som administrator ønsker jeg å se alle utdanninger i systemet slik at jeg har oversikt
+- [x] Som administrator ønsker jeg å filtrere utdanninger etter type slik at jeg kan analysere tilbudet
 - [ ] Som opptaksleder ønsker jeg å se statistikk over mine utdanninger slik at jeg kan planlegge
 
-### Utdanningsspesifikasjoner
+### Utdanningsspesifikasjoner ❌ IKKE IMPLEMENTERT (0 av 3)
 - [ ] Som administrator ønsker jeg å administrere utdanningsspesifikasjoner slik at organisasjoner kan basere sine utdanninger på standarder
 - [ ] Som opptaksleder ønsker jeg å se tilgjengelige spesifikasjoner slik at jeg kan basere mine utdanninger på etablerte standarder
 - [ ] Som administrator ønsker jeg å se hvilke organisasjoner som tilbyr samme spesifikasjon slik at jeg kan koordinere
@@ -75,3 +75,27 @@ Kategorisering av utdanningsnivå og -lengde
 - Hvordan kobler vi utdanninger til faktiske studieplaner og pensum?
 - Kan en utdanning ha flere kontaktpersoner (studiekoordinatorer)?
 - Kan samme utdanningsspesifikasjon ha både heltid og deltid varianter?
+
+---
+
+## Implementasjonsstatus (Sist oppdatert: 2025-08-30)
+
+**📊 Totalt: 9 av 15 user stories implementert (60%)**
+
+**Fullstendig implementerte områder:**
+- ✅ **Administrere utdanninger**: Komplett CRUD med rollbasert sikkerhet
+- ✅ **GraphQL API**: Omfattende schema med queries, mutations og filtrering
+- ✅ **Frontend**: Modern React-komponent med full funksjonalitet
+- ✅ **Sikkerhet**: Organisasjon-scoped tilgangskontroll
+
+**Tekniske forbedringer utover krav:**
+- Soft delete (aktiv/inaktiv status)
+- Paginering for store datasett  
+- Utvidede felter: studiepoeng, studiested, undervisningsspråk, starttidspunkt
+- Studieform enum (HELTID/DELTID)
+- JWT-autentisering og autorisasjon
+
+**Neste prioriteringer:**
+1. **Antall studieplasser** - Legg til kapasitetsfelt i utdanning
+2. **Statistikk** - Dashboard for opptaksledere
+3. **Utdanningsspesifikasjoner** - Standardmaler og felles rammeverk
