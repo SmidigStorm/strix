@@ -30,7 +30,7 @@ public class InMemoryOrganisasjonRepository implements OrganisasjonRepository {
 
     Organisasjon ntnu =
         new Organisasjon(
-            "org-1",
+            "ntnu",
             "Norges teknisk-naturvitenskapelige universitet",
             "NTNU",
             OrganisasjonsType.UNIVERSITET,
@@ -47,7 +47,7 @@ public class InMemoryOrganisasjonRepository implements OrganisasjonRepository {
 
     Organisasjon uio =
         new Organisasjon(
-            "org-2",
+            "uio",
             "Universitetet i Oslo",
             "UiO",
             OrganisasjonsType.UNIVERSITET,
@@ -64,7 +64,7 @@ public class InMemoryOrganisasjonRepository implements OrganisasjonRepository {
 
     Organisasjon hvl =
         new Organisasjon(
-            "org-3",
+            "hvl",
             "Høgskulen på Vestlandet",
             "HVL",
             OrganisasjonsType.HOGSKOLE,
@@ -79,9 +79,27 @@ public class InMemoryOrganisasjonRepository implements OrganisasjonRepository {
             now,
             true);
 
+    Organisasjon fagskole =
+        new Organisasjon(
+            "fagskolen-innlandet",
+            "Fagskolen Innlandet",
+            "FSI", 
+            OrganisasjonsType.FAGSKOLE,
+            "123456789",
+            "opptak@fagskolen-innlandet.no",
+            "62430800",
+            "Storgata 1",
+            "Elverum", 
+            "2400",
+            "https://www.fagskolen-innlandet.no",
+            now,
+            now,
+            true);
+
     organisasjoner.put(ntnu.getId(), ntnu);
     organisasjoner.put(uio.getId(), uio);
     organisasjoner.put(hvl.getId(), hvl);
+    organisasjoner.put(fagskole.getId(), fagskole);
   }
 
   @Override
