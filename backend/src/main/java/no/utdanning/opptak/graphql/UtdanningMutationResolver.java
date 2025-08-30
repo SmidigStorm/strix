@@ -6,6 +6,7 @@ import no.utdanning.opptak.graphql.dto.OppdaterUtdanningInput;
 import no.utdanning.opptak.graphql.dto.OpprettUtdanningInput;
 import no.utdanning.opptak.repository.OrganisasjonRepository;
 import no.utdanning.opptak.repository.UtdanningRepository;
+import no.utdanning.opptak.service.UtdanningSecurityService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,17 +21,25 @@ public class UtdanningMutationResolver {
 
   private final UtdanningRepository utdanningRepository;
   private final OrganisasjonRepository organisasjonRepository;
+  private final UtdanningSecurityService securityService;
 
   public UtdanningMutationResolver(
       UtdanningRepository utdanningRepository,
-      OrganisasjonRepository organisasjonRepository) {
+      OrganisasjonRepository organisasjonRepository,
+      UtdanningSecurityService securityService) {
     this.utdanningRepository = utdanningRepository;
     this.organisasjonRepository = organisasjonRepository;
+    this.securityService = securityService;
   }
 
   @MutationMapping
   @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'OPPTAKSLEDER')")
   public Utdanning opprettUtdanning(@Argument OpprettUtdanningInput input) {
+    // Sjekk at bruker har tilgang til å opprette utdanning for denne organisasjonen
+    if (!securityService.canCreateUtdanningForOrganisasjon(input.getOrganisasjonId())) {
+      throw new RuntimeException("Du har ikke tilgang til å opprette utdanninger for denne organisasjonen");
+    }
+    
     // Valider at organisasjon eksisterer
     if (organisasjonRepository.findById(input.getOrganisasjonId()) == null) {
       throw new RuntimeException("Organisasjon ikke funnet: " + input.getOrganisasjonId());
@@ -87,6 +96,11 @@ public class UtdanningMutationResolver {
     if (eksisterende == null) {
       throw new RuntimeException("Utdanning ikke funnet: " + input.getId());
     }
+    
+    // Sjekk at bruker har tilgang til å oppdatere denne utdanningen
+    if (!securityService.hasAccessToUtdanning(input.getId())) {
+      throw new RuntimeException("Du har ikke tilgang til å oppdatere denne utdanningen");
+    }
 
     // Oppdater kun felter som er spesifisert
     if (input.getNavn() != null && !input.getNavn().trim().isEmpty()) {
@@ -126,6 +140,11 @@ public class UtdanningMutationResolver {
   @MutationMapping
   @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'OPPTAKSLEDER')")
   public Utdanning deaktiverUtdanning(@Argument String id) {
+    // Sjekk at bruker har tilgang til denne utdanningen
+    if (!securityService.hasAccessToUtdanning(id)) {
+      throw new RuntimeException("Du har ikke tilgang til å deaktivere denne utdanningen");
+    }
+    
     Utdanning utdanning = utdanningRepository.findById(id);
     if (utdanning == null) {
       throw new RuntimeException("Utdanning ikke funnet: " + id);
@@ -138,6 +157,11 @@ public class UtdanningMutationResolver {
   @MutationMapping
   @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'OPPTAKSLEDER')")
   public Utdanning aktiverUtdanning(@Argument String id) {
+    // Sjekk at bruker har tilgang til denne utdanningen
+    if (!securityService.hasAccessToUtdanning(id)) {
+      throw new RuntimeException("Du har ikke tilgang til å aktivere denne utdanningen");
+    }
+    
     Utdanning utdanning = utdanningRepository.findById(id);
     if (utdanning == null) {
       throw new RuntimeException("Utdanning ikke funnet: " + id);
@@ -150,6 +174,7 @@ public class UtdanningMutationResolver {
   @MutationMapping
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public Boolean slettUtdanning(@Argument String id) {
+    // Kun administratorer kan slette, ingen ekstra sjekk nødvendig
     if (!utdanningRepository.existsById(id)) {
       throw new RuntimeException("Utdanning ikke funnet: " + id);
     }
