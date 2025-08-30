@@ -150,21 +150,21 @@ public class InMemoryUtdanningRepository implements UtdanningRepository {
   @Override
   public List<Utdanning> findByNavnContainingIgnoreCase(String navnSok) {
     return utdanninger.values().stream()
-        .filter(utd -> utd.getNavn().toLowerCase().contains(navnSok.toLowerCase()))
+        .filter(utd -> utd.getNavn() != null && utd.getNavn().toLowerCase().contains(navnSok.toLowerCase()))
         .collect(Collectors.toList());
   }
 
   @Override
   public List<Utdanning> findByStudienivaa(String studienivaa) {
     return utdanninger.values().stream()
-        .filter(utd -> utd.getStudienivaa().equals(studienivaa))
+        .filter(utd -> studienivaa.equals(utd.getStudienivaa()))
         .collect(Collectors.toList());
   }
 
   @Override
   public List<Utdanning> findByStudiested(String studiested) {
     return utdanninger.values().stream()
-        .filter(utd -> utd.getStudiested().equals(studiested))
+        .filter(utd -> studiested.equals(utd.getStudiested()))
         .collect(Collectors.toList());
   }
 
@@ -195,31 +195,35 @@ public class InMemoryUtdanningRepository implements UtdanningRepository {
 
     Stream<Utdanning> stream = utdanninger.values().stream();
 
-    // Anvendt alle filtre
+    // Anvendt alle filtre med null-safety
     if (navn != null && !navn.trim().isEmpty()) {
-      stream = stream.filter(utd -> utd.getNavn().toLowerCase().contains(navn.toLowerCase()));
+      stream = stream.filter(utd -> utd.getNavn() != null && utd.getNavn().toLowerCase().contains(navn.toLowerCase()));
     }
     if (studienivaa != null) {
-      stream = stream.filter(utd -> utd.getStudienivaa().equals(studienivaa));
+      stream = stream.filter(utd -> studienivaa.equals(utd.getStudienivaa()));
     }
     if (studiested != null) {
-      stream = stream.filter(utd -> utd.getStudiested().equals(studiested));
+      stream = stream.filter(utd -> studiested.equals(utd.getStudiested()));
     }
     if (organisasjonId != null) {
-      stream = stream.filter(utd -> utd.getOrganisasjonId().equals(organisasjonId));
+      stream = stream.filter(utd -> organisasjonId.equals(utd.getOrganisasjonId()));
     }
     if (studieform != null) {
       stream = stream.filter(utd -> utd.getStudieform() == studieform);
     }
     if (aktiv != null) {
-      stream = stream.filter(utd -> utd.getAktiv() == aktiv);
+      stream = stream.filter(utd -> utd.getAktiv() != null && utd.getAktiv() == aktiv);
     } else {
       // Default til kun aktive
-      stream = stream.filter(utd -> utd.getAktiv());
+      stream = stream.filter(utd -> utd.getAktiv() != null && utd.getAktiv());
     }
 
-    // Sorter alfabetisk på navn for konsistent rekkefølge
-    stream = stream.sorted((a, b) -> a.getNavn().compareToIgnoreCase(b.getNavn()));
+    // Sorter alfabetisk på navn for konsistent rekkefølge (null-safe)
+    stream = stream.sorted((a, b) -> {
+      String navnA = a.getNavn() != null ? a.getNavn() : "";
+      String navnB = b.getNavn() != null ? b.getNavn() : "";
+      return navnA.compareToIgnoreCase(navnB);
+    });
 
     // Anvend paginering
     if (offset != null && offset > 0) {
@@ -243,27 +247,27 @@ public class InMemoryUtdanningRepository implements UtdanningRepository {
 
     Stream<Utdanning> stream = utdanninger.values().stream();
 
-    // Samme filtre som findWithFilters, men uten paginering
+    // Samme filtre som findWithFilters, men uten paginering (null-safe)
     if (navn != null && !navn.trim().isEmpty()) {
-      stream = stream.filter(utd -> utd.getNavn().toLowerCase().contains(navn.toLowerCase()));
+      stream = stream.filter(utd -> utd.getNavn() != null && utd.getNavn().toLowerCase().contains(navn.toLowerCase()));
     }
     if (studienivaa != null) {
-      stream = stream.filter(utd -> utd.getStudienivaa().equals(studienivaa));
+      stream = stream.filter(utd -> studienivaa.equals(utd.getStudienivaa()));
     }
     if (studiested != null) {
-      stream = stream.filter(utd -> utd.getStudiested().equals(studiested));
+      stream = stream.filter(utd -> studiested.equals(utd.getStudiested()));
     }
     if (organisasjonId != null) {
-      stream = stream.filter(utd -> utd.getOrganisasjonId().equals(organisasjonId));
+      stream = stream.filter(utd -> organisasjonId.equals(utd.getOrganisasjonId()));
     }
     if (studieform != null) {
       stream = stream.filter(utd -> utd.getStudieform() == studieform);
     }
     if (aktiv != null) {
-      stream = stream.filter(utd -> utd.getAktiv() == aktiv);
+      stream = stream.filter(utd -> utd.getAktiv() != null && utd.getAktiv() == aktiv);
     } else {
       // Default til kun aktive
-      stream = stream.filter(utd -> utd.getAktiv());
+      stream = stream.filter(utd -> utd.getAktiv() != null && utd.getAktiv());
     }
 
     return stream.count();
@@ -271,6 +275,29 @@ public class InMemoryUtdanningRepository implements UtdanningRepository {
 
   @Override
   public Utdanning save(Utdanning utdanning) {
+    // Valider påkrevde felter
+    if (utdanning.getNavn() == null || utdanning.getNavn().trim().isEmpty()) {
+      throw new IllegalArgumentException("Utdanningsnavn er påkrevd");
+    }
+    if (utdanning.getStudienivaa() == null || utdanning.getStudienivaa().trim().isEmpty()) {
+      throw new IllegalArgumentException("Studienivå er påkrevd");
+    }
+    if (utdanning.getStudiepoeng() == null || utdanning.getStudiepoeng() <= 0) {
+      throw new IllegalArgumentException("Studiepoeng må være et positivt tall");
+    }
+    if (utdanning.getVarighet() == null || utdanning.getVarighet() <= 0) {
+      throw new IllegalArgumentException("Varighet må være et positivt tall");
+    }
+    if (utdanning.getStudiested() == null || utdanning.getStudiested().trim().isEmpty()) {
+      throw new IllegalArgumentException("Studiested er påkrevd");
+    }
+    if (utdanning.getUndervisningssprak() == null || utdanning.getUndervisningssprak().trim().isEmpty()) {
+      throw new IllegalArgumentException("Undervisningsspråk er påkrevd");
+    }
+    if (utdanning.getOrganisasjonId() == null || utdanning.getOrganisasjonId().trim().isEmpty()) {
+      throw new IllegalArgumentException("OrganisasjonId er påkrevd");
+    }
+
     if (utdanning.getId() == null || utdanning.getId().trim().isEmpty()) {
       // Ny utdanning - generer ID
       utdanning.setId("utd-" + UUID.randomUUID().toString().substring(0, 8));
@@ -284,6 +311,26 @@ public class InMemoryUtdanningRepository implements UtdanningRepository {
   @Override
   public boolean deleteById(String id) {
     return utdanninger.remove(id) != null;
+  }
+
+  @Override
+  public boolean deaktiverById(String id) {
+    Utdanning utdanning = utdanninger.get(id);
+    if (utdanning != null) {
+      utdanning.setAktiv(false);
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public boolean aktiverById(String id) {
+    Utdanning utdanning = utdanninger.get(id);
+    if (utdanning != null) {
+      utdanning.setAktiv(true);
+      return true;
+    }
+    return false;
   }
 
   @Override

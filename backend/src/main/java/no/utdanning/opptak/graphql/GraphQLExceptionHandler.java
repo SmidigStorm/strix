@@ -12,6 +12,10 @@ public class GraphQLExceptionHandler extends DataFetcherExceptionResolverAdapter
 
   @Override
   protected GraphQLError resolveToSingleError(Throwable ex, DataFetchingEnvironment env) {
+    // Log all errors for debugging
+    System.err.println("GraphQL Error: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
+    ex.printStackTrace();
+    
     if (ex instanceof IllegalArgumentException) {
       return GraphqlErrorBuilder.newError()
           .errorType(ErrorType.BAD_REQUEST)
@@ -22,21 +26,22 @@ public class GraphQLExceptionHandler extends DataFetcherExceptionResolverAdapter
     } else if (ex instanceof SecurityException) {
       return GraphqlErrorBuilder.newError()
           .errorType(ErrorType.FORBIDDEN)
-          .message("Ingen tilgang til denne ressursen")
+          .message(ex.getMessage()) // Show actual security error
           .path(env.getExecutionStepInfo().getPath())
           .location(env.getField().getSourceLocation())
           .build();
     } else if (ex instanceof NullPointerException) {
       return GraphqlErrorBuilder.newError()
           .errorType(ErrorType.NOT_FOUND)
-          .message("Ressursen ble ikke funnet")
+          .message(ex.getMessage() != null ? ex.getMessage() : "Ressursen ble ikke funnet")
           .path(env.getExecutionStepInfo().getPath())
           .location(env.getField().getSourceLocation())
           .build();
     } else {
+      // Always show the actual error message
       return GraphqlErrorBuilder.newError()
           .errorType(ErrorType.INTERNAL_ERROR)
-          .message("En intern feil oppstod")
+          .message(ex.getMessage() != null ? ex.getMessage() : ex.getClass().getSimpleName())
           .path(env.getExecutionStepInfo().getPath())
           .location(env.getField().getSourceLocation())
           .build();

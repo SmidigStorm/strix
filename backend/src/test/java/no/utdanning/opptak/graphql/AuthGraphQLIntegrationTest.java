@@ -93,8 +93,8 @@ class AuthGraphQLIntegrationTest {
         .satisfy(
             errors -> {
               assertThat(errors).hasSize(1);
-              // GraphQL error handler wraps the error message
-              assertThat(errors.get(0).getMessage()).contains("En intern feil oppstod");
+              // GraphQL error handler shows actual error message
+              assertThat(errors.get(0).getMessage()).isEqualTo("Ugyldig email eller passord");
             });
   }
 
@@ -127,8 +127,8 @@ class AuthGraphQLIntegrationTest {
         .satisfy(
             errors -> {
               assertThat(errors).hasSize(1);
-              // GraphQL error handler wraps the error message
-              assertThat(errors.get(0).getMessage()).contains("En intern feil oppstod");
+              // GraphQL error handler shows actual error message
+              assertThat(errors.get(0).getMessage()).isEqualTo("Ugyldig email eller passord");
             });
   }
 }

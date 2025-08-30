@@ -85,6 +85,12 @@ public interface UtdanningRepository {
   /** Sletter utdanning permanent */
   boolean deleteById(String id);
 
+  /** Deaktiverer utdanning (soft delete) */
+  boolean deaktiverById(String id);
+
+  /** Aktiverer utdanning */
+  boolean aktiverById(String id);
+
   /** Sjekker om utdanning med gitt ID eksisterer */
   boolean existsById(String id);
 }

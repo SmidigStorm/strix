@@ -71,7 +71,7 @@ class RoleBasedAccessControlTest {
     setupAuthenticationContext("ADMIN_USER", Arrays.asList("ADMINISTRATOR"));
 
     OppdaterOrganisasjonInput input = new OppdaterOrganisasjonInput();
-    input.setId("org-1");
+    input.setId("ntnu");
     input.setNavn("Updated Organization Name");
 
     // Should not throw exception
@@ -91,7 +91,7 @@ class RoleBasedAccessControlTest {
       setupAuthenticationContext("USER_" + role, Arrays.asList(role));
 
       OppdaterOrganisasjonInput input = new OppdaterOrganisasjonInput();
-      input.setId("org-1");
+      input.setId("ntnu");
       input.setNavn("Unauthorized Update");
 
       // When & Then
@@ -118,7 +118,7 @@ class RoleBasedAccessControlTest {
     assertThat(queryResult).isNotNull();
 
     OppdaterOrganisasjonInput input = new OppdaterOrganisasjonInput();
-    input.setId("org-2");
+    input.setId("uio");
     input.setNavn("Multi Role Update");
 
     no.utdanning.opptak.domain.Organisasjon mutationResult =
@@ -140,7 +140,7 @@ class RoleBasedAccessControlTest {
     assertThat(queryResult).isNotNull();
 
     OppdaterOrganisasjonInput input = new OppdaterOrganisasjonInput();
-    input.setId("org-3");
+    input.setId("hvl");
     input.setNavn("Unauthorized Multi Role Update");
 
     assertThrows(
@@ -157,12 +157,12 @@ class RoleBasedAccessControlTest {
 
     // When & Then - Should be able to deactivate and reactivate
     no.utdanning.opptak.domain.Organisasjon deactivatedOrg =
-        organisasjonMutationResolver.deaktiverOrganisasjon("org-1");
+        organisasjonMutationResolver.deaktiverOrganisasjon("ntnu");
     assertThat(deactivatedOrg).isNotNull();
     assertThat(deactivatedOrg.getAktiv()).isFalse();
 
     no.utdanning.opptak.domain.Organisasjon reactivatedOrg =
-        organisasjonMutationResolver.reaktiverOrganisasjon("org-1");
+        organisasjonMutationResolver.reaktiverOrganisasjon("ntnu");
     assertThat(reactivatedOrg).isNotNull();
     assertThat(reactivatedOrg.getAktiv()).isTrue();
   }
@@ -176,12 +176,12 @@ class RoleBasedAccessControlTest {
     // When & Then
     assertThrows(
         AccessDeniedException.class,
-        () -> organisasjonMutationResolver.deaktiverOrganisasjon("org-1"),
+        () -> organisasjonMutationResolver.deaktiverOrganisasjon("ntnu"),
         "Non-admin should not be able to deactivate organizations");
 
     assertThrows(
         AccessDeniedException.class,
-        () -> organisasjonMutationResolver.reaktiverOrganisasjon("org-1"),
+        () -> organisasjonMutationResolver.reaktiverOrganisasjon("ntnu"),
         "Non-admin should not be able to reactivate organizations");
   }
 
@@ -196,7 +196,7 @@ class RoleBasedAccessControlTest {
 
       // When & Then
       no.utdanning.opptak.domain.Organisasjon result =
-          organisasjonQueryResolver.organisasjon("org-1");
+          organisasjonQueryResolver.organisasjon("ntnu");
 
       assertThat(result).isNotNull().as("Role %s should be able to view single organization", role);
 

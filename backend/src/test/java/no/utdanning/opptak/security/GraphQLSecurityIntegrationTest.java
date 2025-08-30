@@ -53,7 +53,7 @@ class GraphQLSecurityIntegrationTest {
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.errors").isArray())
-        .andExpect(jsonPath("$.errors[0].message").value("En intern feil oppstod"))
+        .andExpect(jsonPath("$.errors[0].message").value("Access Denied"))
         .andExpect(jsonPath("$.data").isEmpty());
   }
 
@@ -128,7 +128,7 @@ class GraphQLSecurityIntegrationTest {
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.errors").isArray())
-        .andExpect(jsonPath("$.errors[0].message").value("En intern feil oppstod"))
+        .andExpect(jsonPath("$.errors[0].message").value("Access Denied"))
         .andExpect(jsonPath("$.data").isEmpty());
   }
 
@@ -230,7 +230,7 @@ class GraphQLSecurityIntegrationTest {
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.errors").isArray())
-        .andExpect(jsonPath("$.errors[0].message").value("En intern feil oppstod"))
+        .andExpect(jsonPath("$.errors[0].message").value("Access Denied"))
         .andExpect(jsonPath("$.data").isEmpty());
   }
 }

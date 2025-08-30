@@ -25,7 +25,7 @@ class BrukerRepositoryTest {
 
     assertThat(bruker).isPresent();
     assertThat(bruker.get().getNavn()).isEqualTo("Kari Opptaksleder");
-    assertThat(bruker.get().getOrganisasjonId()).isEqualTo("ORG-NTNU-TEST");
+    assertThat(bruker.get().getOrganisasjonId()).isEqualTo("ntnu");
     assertThat(bruker.get().getAktiv()).isTrue();
   }
 
@@ -44,7 +44,7 @@ class BrukerRepositoryTest {
     nyBruker.setId("TEST-BRUKER-001");
     nyBruker.setEmail("test@example.com");
     nyBruker.setNavn("Test Bruker");
-    nyBruker.setOrganisasjonId("ORG-NTNU-TEST");
+    nyBruker.setOrganisasjonId("ntnu");
     nyBruker.setPassordHash("$2a$10$hashedPassword");
     nyBruker.setAktiv(true);
 
