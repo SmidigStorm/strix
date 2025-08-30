@@ -40,7 +40,7 @@ public class InMemoryUtdanningRepository implements UtdanningRepository {
             "Bachelor i informatikk med fokus på programmering og systemutvikling",
             now,
             true,
-            "org-1", // NTNU ID fra OrganisasjonRepository
+            "ntnu", // NTNU ID fra OrganisasjonRepository
             "HØST_2025",
             Studieform.HELTID);
 
@@ -56,7 +56,7 @@ public class InMemoryUtdanningRepository implements UtdanningRepository {
             "Utdanning innen bygg- og miljøteknikk",
             now,
             true,
-            "org-1", // NTNU
+            "ntnu", // NTNU
             "HØST_2025",
             Studieform.HELTID);
 
@@ -72,7 +72,7 @@ public class InMemoryUtdanningRepository implements UtdanningRepository {
             "Informatikkutdanning ved UiO",
             now,
             true,
-            "org-2", // UiO ID
+            "uio", // UiO ID
             "HØST_2025",
             Studieform.HELTID);
 
@@ -88,7 +88,7 @@ public class InMemoryUtdanningRepository implements UtdanningRepository {
             "Sykepleieutdanning ved HVL",
             now,
             true,
-            "org-3", // HVL ID
+            "hvl", // HVL ID
             "HØST_2025",
             Studieform.HELTID);
 
@@ -105,7 +105,7 @@ public class InMemoryUtdanningRepository implements UtdanningRepository {
             "Sykepleieutdanning ved HVL - deltidsstudium",
             now,
             true,
-            "org-3", // HVL ID
+            "hvl", // HVL ID
             "HØST_2025",
             Studieform.DELTID);
 
