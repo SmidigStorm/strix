@@ -16,6 +16,16 @@ type Utdanning {
     aktiv: Boolean!
     
     """
+    Starttidspunkt for utdanningen (f.eks. 'HØST_2025', 'VÅR_2026')
+    """
+    starttidspunkt: String!
+    
+    """
+    Studieform: HELTID eller DELTID
+    """
+    studieform: Studieform!
+    
+    """
     Organisasjonen som eier denne utdanningen
     """
     organisasjon: Organisasjon!
@@ -24,4 +34,186 @@ type Utdanning {
     Opptak hvor denne utdanningen tilbys
     """
     opptakTilbud: UtdanningIOpptak
+}
+
+"""
+Studieform enum
+"""
+enum Studieform {
+    HELTID
+    DELTID
+}
+
+"""
+Input type for å opprette ny utdanning
+"""
+input OpprettUtdanningInput {
+    navn: String!
+    studienivaa: String!
+    studiepoeng: Int!
+    varighet: Int!
+    studiested: String!
+    undervisningssprak: String!
+    beskrivelse: String
+    starttidspunkt: String!
+    studieform: Studieform!
+    organisasjonId: ID!
+}
+
+"""
+Input type for å oppdatere eksisterende utdanning
+"""
+input OppdaterUtdanningInput {
+    id: ID!
+    navn: String
+    studienivaa: String
+    studiepoeng: Int
+    varighet: Int
+    studiested: String
+    undervisningssprak: String
+    beskrivelse: String
+    starttidspunkt: String
+    studieform: Studieform
+    aktiv: Boolean
+}
+
+"""
+Filter for å søke etter utdanninger
+"""
+input UtdanningFilter {
+    """
+    Søk i utdanningsnavn (case-insensitive)
+    """
+    navn: String
+    
+    """
+    Filtrer på studienivå
+    """
+    studienivaa: String
+    
+    """
+    Filtrer på studiested
+    """
+    studiested: String
+    
+    """
+    Filtrer på organisasjon
+    """
+    organisasjonId: ID
+    
+    """
+    Filtrer på studieform
+    """
+    studieform: Studieform
+    
+    """
+    Kun aktive utdanninger (default: true)
+    """
+    aktiv: Boolean
+}
+
+"""
+Paginering input
+"""
+input PageInput {
+    """
+    Antall elementer per side (max 100, default: 20)
+    """
+    size: Int = 20
+    
+    """
+    Sidenummer (0-basert, default: 0)
+    """
+    page: Int = 0
+}
+
+"""
+Paginert resultat av utdanninger
+"""
+type UtdanningPage {
+    """
+    Liste av utdanninger for denne siden
+    """
+    content: [Utdanning!]!
+    
+    """
+    Totalt antall elementer
+    """
+    totalElements: Int!
+    
+    """
+    Totalt antall sider
+    """
+    totalPages: Int!
+    
+    """
+    Nåværende side (0-basert)
+    """
+    currentPage: Int!
+    
+    """
+    Antall elementer per side
+    """
+    pageSize: Int!
+    
+    """
+    Om det finnes neste side
+    """
+    hasNext: Boolean!
+    
+    """
+    Om det finnes forrige side
+    """
+    hasPrevious: Boolean!
+}
+
+extend type Query {
+    """
+    Hent en spesifikk utdanning basert på ID
+    """
+    utdanning(id: ID!): Utdanning
+    
+    """
+    Hent alle utdanninger med paginering og filtrering
+    """
+    utdanninger(
+        filter: UtdanningFilter
+        page: PageInput
+    ): UtdanningPage!
+    
+    """
+    Hent utdanninger for en spesifikk organisasjon
+    """
+    utdanningerForOrganisasjon(
+        organisasjonId: ID!
+        filter: UtdanningFilter
+        page: PageInput
+    ): UtdanningPage!
+}
+
+extend type Mutation {
+    """
+    Opprett ny utdanning
+    """
+    opprettUtdanning(input: OpprettUtdanningInput!): Utdanning!
+    
+    """
+    Oppdater eksisterende utdanning
+    """
+    oppdaterUtdanning(input: OppdaterUtdanningInput!): Utdanning!
+    
+    """
+    Deaktiver utdanning (soft delete)
+    """
+    deaktiverUtdanning(id: ID!): Utdanning!
+    
+    """
+    Aktiver utdanning
+    """
+    aktiverUtdanning(id: ID!): Utdanning!
+    
+    """
+    Slett utdanning permanent (kun for administratorer)
+    """
+    slettUtdanning(id: ID!): Boolean!
 }
