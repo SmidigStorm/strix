@@ -3,111 +3,47 @@ package no.utdanning.opptak.graphql;
 import no.utdanning.opptak.domain.Organisasjon;
 import no.utdanning.opptak.graphql.dto.OppdaterOrganisasjonInput;
 import no.utdanning.opptak.graphql.dto.OpprettOrganisasjonInput;
-import no.utdanning.opptak.repository.OrganisasjonRepository;
+import no.utdanning.opptak.service.OrganisasjonService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
-/** GraphQL resolver for organisasjon mutations */
+/** 
+ * GraphQL resolver for organisasjon mutations.
+ * Delegerer all forretningslogikk til OrganisasjonService.
+ */
 @Controller
 @PreAuthorize("isAuthenticated()") // Require authentication for all methods
 public class OrganisasjonMutationResolver {
 
-  private final OrganisasjonRepository organisasjonRepository;
+  private final OrganisasjonService organisasjonService;
 
-  public OrganisasjonMutationResolver(OrganisasjonRepository organisasjonRepository) {
-    this.organisasjonRepository = organisasjonRepository;
+  public OrganisasjonMutationResolver(OrganisasjonService organisasjonService) {
+    this.organisasjonService = organisasjonService;
   }
 
   @MutationMapping
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public Organisasjon opprettOrganisasjon(@Argument OpprettOrganisasjonInput input) {
-    // Valider at organisasjonsnummer ikke finnes fra før
-    if (organisasjonRepository.existsByOrganisasjonsnummer(input.getOrganisasjonsnummer())) {
-      throw new RuntimeException(
-          "Organisasjonsnummer er allerede registrert: " + input.getOrganisasjonsnummer());
-    }
-
-    // Valider organisasjonsnummer format (9 siffer)
-    if (!input.getOrganisasjonsnummer().matches("\\d{9}")) {
-      throw new RuntimeException("Ugyldig organisasjonsnummer. Må være 9 siffer.");
-    }
-
-    // Opprett ny organisasjon
-    Organisasjon organisasjon = new Organisasjon();
-    organisasjon.setNavn(input.getNavn());
-    organisasjon.setKortNavn(input.getKortNavn());
-    organisasjon.setOrganisasjonsnummer(input.getOrganisasjonsnummer());
-    organisasjon.setType(input.getOrganisasjonstype());
-    organisasjon.setEpost(input.getEpost());
-    organisasjon.setTelefon(input.getTelefon());
-    organisasjon.setAdresse(input.getAdresse());
-    organisasjon.setPoststed(input.getPoststed());
-    organisasjon.setPostnummer(input.getPostnummer());
-    organisasjon.setAktiv(true); // Nye organisasjoner er aktive som standard
-
-    return organisasjonRepository.save(organisasjon);
+    return organisasjonService.opprettOrganisasjon(input);
   }
 
   @MutationMapping
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public Organisasjon oppdaterOrganisasjon(@Argument OppdaterOrganisasjonInput input) {
-    Organisasjon eksisterende = organisasjonRepository.findById(input.getId());
-    if (eksisterende == null) {
-      throw new RuntimeException("Organisasjon ikke funnet: " + input.getId());
-    }
-
-    // Oppdater kun felter som er spesifisert
-    if (input.getNavn() != null) {
-      eksisterende.setNavn(input.getNavn());
-    }
-    if (input.getKortNavn() != null) {
-      eksisterende.setKortNavn(input.getKortNavn());
-    }
-    if (input.getOrganisasjonstype() != null) {
-      eksisterende.setType(input.getOrganisasjonstype());
-    }
-    if (input.getEpost() != null) {
-      eksisterende.setEpost(input.getEpost());
-    }
-    if (input.getTelefon() != null) {
-      eksisterende.setTelefon(input.getTelefon());
-    }
-    if (input.getAdresse() != null) {
-      eksisterende.setAdresse(input.getAdresse());
-    }
-    if (input.getPoststed() != null) {
-      eksisterende.setPoststed(input.getPoststed());
-    }
-    if (input.getPostnummer() != null) {
-      eksisterende.setPostnummer(input.getPostnummer());
-    }
-
-    return organisasjonRepository.save(eksisterende);
+    return organisasjonService.oppdaterOrganisasjon(input);
   }
 
   @MutationMapping
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public Organisasjon deaktiverOrganisasjon(@Argument String id) {
-    Organisasjon organisasjon = organisasjonRepository.findById(id);
-    if (organisasjon == null) {
-      throw new RuntimeException("Organisasjon ikke funnet: " + id);
-    }
-
-    organisasjon.setAktiv(false);
-    return organisasjonRepository.save(organisasjon);
+    return organisasjonService.deaktiverOrganisasjon(id);
   }
 
   @MutationMapping
   @PreAuthorize("hasRole('ADMINISTRATOR')")
   public Organisasjon reaktiverOrganisasjon(@Argument String id) {
-    Organisasjon organisasjon = organisasjonRepository.findById(id);
-    if (organisasjon == null) {
-      throw new RuntimeException("Organisasjon ikke funnet: " + id);
-    }
-
-    organisasjon.setAktiv(true);
-    return organisasjonRepository.save(organisasjon);
+    return organisasjonService.reaktiverOrganisasjon(id);
   }
 }

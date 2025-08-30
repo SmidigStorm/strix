@@ -8,7 +8,7 @@ import static org.mockito.Mockito.*;
 import java.util.Arrays;
 import no.utdanning.opptak.domain.*;
 import no.utdanning.opptak.graphql.dto.OpprettOrganisasjonInput;
-import no.utdanning.opptak.repository.OrganisasjonRepository;
+import no.utdanning.opptak.service.OrganisasjonService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("Organisation Access Control Tests")
 class OrganisasjonAccessControlTest {
 
-  @Mock private OrganisasjonRepository organisasjonRepository;
+  @Mock private OrganisasjonService organisasjonService;
 
   @InjectMocks private OrganisasjonMutationResolver organisasjonMutationResolver;
 
@@ -56,35 +56,33 @@ class OrganisasjonAccessControlTest {
   @DisplayName("Should create organisation with valid input")
   void testOpprettOrganisasjon_ValidInput() {
     // Arrange
-    when(organisasjonRepository.existsByOrganisasjonsnummer(anyString())).thenReturn(false);
-    when(organisasjonRepository.save(any(Organisasjon.class))).thenReturn(testOrganisasjon);
+    when(organisasjonService.opprettOrganisasjon(any(OpprettOrganisasjonInput.class))).thenReturn(testOrganisasjon);
 
     // Act
     Organisasjon result = organisasjonMutationResolver.opprettOrganisasjon(validInput);
 
     // Assert
     assertNotNull(result, "Result should not be null");
-    verify(organisasjonRepository).existsByOrganisasjonsnummer(validInput.getOrganisasjonsnummer());
-    verify(organisasjonRepository).save(any(Organisasjon.class));
+    verify(organisasjonService).opprettOrganisasjon(validInput);
   }
 
   @Test
   @DisplayName("Should throw exception when organisation number already exists")
   void testOpprettOrganisasjon_DuplicateOrgNumber() {
     // Arrange
-    when(organisasjonRepository.existsByOrganisasjonsnummer(anyString())).thenReturn(true);
+    when(organisasjonService.opprettOrganisasjon(any(OpprettOrganisasjonInput.class)))
+        .thenThrow(new IllegalArgumentException("Organisasjonsnummer er allerede registrert: " + validInput.getOrganisasjonsnummer()));
 
     // Act & Assert
-    RuntimeException exception =
+    IllegalArgumentException exception =
         assertThrows(
-            RuntimeException.class,
+            IllegalArgumentException.class,
             () -> organisasjonMutationResolver.opprettOrganisasjon(validInput));
 
     assertTrue(
         exception.getMessage().contains("Organisasjonsnummer er allerede registrert"),
         "Exception message should indicate duplicate organisation number");
-    verify(organisasjonRepository).existsByOrganisasjonsnummer(validInput.getOrganisasjonsnummer());
-    verify(organisasjonRepository, never()).save(any());
+    verify(organisasjonService).opprettOrganisasjon(validInput);
   }
 
   @Test
@@ -92,18 +90,19 @@ class OrganisasjonAccessControlTest {
   void testOpprettOrganisasjon_InvalidOrgNumberFormat() {
     // Arrange
     validInput.setOrganisasjonsnummer("12345"); // Too short
-    when(organisasjonRepository.existsByOrganisasjonsnummer(anyString())).thenReturn(false);
+    when(organisasjonService.opprettOrganisasjon(any(OpprettOrganisasjonInput.class)))
+        .thenThrow(new IllegalArgumentException("Ugyldig organisasjonsnummer. Må være 9 siffer."));
 
     // Act & Assert
-    RuntimeException exception =
+    IllegalArgumentException exception =
         assertThrows(
-            RuntimeException.class,
+            IllegalArgumentException.class,
             () -> organisasjonMutationResolver.opprettOrganisasjon(validInput));
 
     assertTrue(
         exception.getMessage().contains("Ugyldig organisasjonsnummer"),
         "Exception message should indicate invalid format");
-    verify(organisasjonRepository, never()).save(any());
+    verify(organisasjonService).opprettOrganisasjon(validInput);
   }
 
   @Test
@@ -115,12 +114,13 @@ class OrganisasjonAccessControlTest {
     for (String invalidNumber : invalidNumbers) {
       // Arrange
       validInput.setOrganisasjonsnummer(invalidNumber);
-      when(organisasjonRepository.existsByOrganisasjonsnummer(anyString())).thenReturn(false);
+      when(organisasjonService.opprettOrganisasjon(any(OpprettOrganisasjonInput.class)))
+          .thenThrow(new IllegalArgumentException("Ugyldig organisasjonsnummer. Må være 9 siffer."));
 
       // Act & Assert
-      RuntimeException exception =
+      IllegalArgumentException exception =
           assertThrows(
-              RuntimeException.class,
+              IllegalArgumentException.class,
               () -> organisasjonMutationResolver.opprettOrganisasjon(validInput),
               "Should reject invalid org number: " + invalidNumber);
 
@@ -129,7 +129,7 @@ class OrganisasjonAccessControlTest {
           "Exception message should indicate invalid format for: " + invalidNumber);
     }
 
-    verify(organisasjonRepository, never()).save(any());
+    verify(organisasjonService, times(invalidNumbers.length)).opprettOrganisasjon(any(OpprettOrganisasjonInput.class));
   }
 
   @Test
@@ -137,22 +137,16 @@ class OrganisasjonAccessControlTest {
   void testDeaktiverOrganisasjon() {
     // Arrange
     String orgId = "ORG-TEST-123";
-    when(organisasjonRepository.findById(orgId)).thenReturn(testOrganisasjon);
-    when(organisasjonRepository.save(any(Organisasjon.class))).thenReturn(testOrganisasjon);
+    testOrganisasjon.setAktiv(false); // Service will set this to false
+    when(organisasjonService.deaktiverOrganisasjon(orgId)).thenReturn(testOrganisasjon);
 
     // Act
     Organisasjon result = organisasjonMutationResolver.deaktiverOrganisasjon(orgId);
 
     // Assert
     assertNotNull(result, "Result should not be null");
-    verify(organisasjonRepository).findById(orgId);
-    verify(organisasjonRepository)
-        .save(
-            argThat(
-                org -> {
-                  assertFalse(org.getAktiv(), "Organisation should be deactivated");
-                  return true;
-                }));
+    assertFalse(result.getAktiv(), "Organisation should be deactivated");
+    verify(organisasjonService).deaktiverOrganisasjon(orgId);
   }
 
   @Test
@@ -160,23 +154,16 @@ class OrganisasjonAccessControlTest {
   void testReaktiverOrganisasjon() {
     // Arrange
     String orgId = "ORG-TEST-123";
-    testOrganisasjon.setAktiv(false); // Start with inactive organisation
-    when(organisasjonRepository.findById(orgId)).thenReturn(testOrganisasjon);
-    when(organisasjonRepository.save(any(Organisasjon.class))).thenReturn(testOrganisasjon);
+    testOrganisasjon.setAktiv(true); // Service will set this to true
+    when(organisasjonService.reaktiverOrganisasjon(orgId)).thenReturn(testOrganisasjon);
 
     // Act
     Organisasjon result = organisasjonMutationResolver.reaktiverOrganisasjon(orgId);
 
     // Assert
     assertNotNull(result, "Result should not be null");
-    verify(organisasjonRepository).findById(orgId);
-    verify(organisasjonRepository)
-        .save(
-            argThat(
-                org -> {
-                  assertTrue(org.getAktiv(), "Organisation should be reactivated");
-                  return true;
-                }));
+    assertTrue(result.getAktiv(), "Organisation should be reactivated");
+    verify(organisasjonService).reaktiverOrganisasjon(orgId);
   }
 
   @Test
@@ -184,19 +171,19 @@ class OrganisasjonAccessControlTest {
   void testDeaktiverOrganisasjon_NotFound() {
     // Arrange
     String nonExistentId = "ORG-NOT-FOUND";
-    when(organisasjonRepository.findById(nonExistentId)).thenReturn(null);
+    when(organisasjonService.deaktiverOrganisasjon(nonExistentId))
+        .thenThrow(new IllegalArgumentException("Organisasjon ikke funnet: " + nonExistentId));
 
     // Act & Assert
-    RuntimeException exception =
+    IllegalArgumentException exception =
         assertThrows(
-            RuntimeException.class,
+            IllegalArgumentException.class,
             () -> organisasjonMutationResolver.deaktiverOrganisasjon(nonExistentId));
 
     assertTrue(
         exception.getMessage().contains("Organisasjon ikke funnet"),
         "Exception message should indicate organisation not found");
-    verify(organisasjonRepository).findById(nonExistentId);
-    verify(organisasjonRepository, never()).save(any());
+    verify(organisasjonService).deaktiverOrganisasjon(nonExistentId);
   }
 
   @Test
@@ -213,7 +200,7 @@ class OrganisasjonAccessControlTest {
     org2.setNavn("Organisasjon 2");
     org2.setAktiv(false);
 
-    when(organisasjonRepository.findAll()).thenReturn(Arrays.asList(org1, org2));
+    when(organisasjonService.findAll(null)).thenReturn(Arrays.asList(org1, org2));
 
     // Act
     var result = organisasjonQueryResolver.organisasjoner(null);
@@ -221,7 +208,7 @@ class OrganisasjonAccessControlTest {
     // Assert
     assertNotNull(result, "Result should not be null");
     assertEquals(2, result.size(), "Should return all organisations");
-    verify(organisasjonRepository).findAll();
+    verify(organisasjonService).findAll(null);
   }
 
   @Test
@@ -229,20 +216,17 @@ class OrganisasjonAccessControlTest {
   void testOpprettOrganisasjon_WithKortNavn() {
     // Arrange
     validInput.setKortNavn("KORT");
-    when(organisasjonRepository.existsByOrganisasjonsnummer(anyString())).thenReturn(false);
-    when(organisasjonRepository.save(any(Organisasjon.class)))
-        .thenAnswer(
-            invocation -> {
-              Organisasjon saved = invocation.getArgument(0);
-              assertEquals("KORT", saved.getKortNavn(), "KortNavn should be preserved");
-              return saved;
-            });
+    testOrganisasjon.setKortNavn("KORT");
+    when(organisasjonService.opprettOrganisasjon(any(OpprettOrganisasjonInput.class)))
+        .thenReturn(testOrganisasjon);
 
     // Act
-    organisasjonMutationResolver.opprettOrganisasjon(validInput);
+    Organisasjon result = organisasjonMutationResolver.opprettOrganisasjon(validInput);
 
     // Assert
-    verify(organisasjonRepository).save(any(Organisasjon.class));
+    assertNotNull(result, "Result should not be null");
+    assertEquals("KORT", result.getKortNavn(), "KortNavn should be preserved");
+    verify(organisasjonService).opprettOrganisasjon(validInput);
   }
 
   @Test
@@ -250,17 +234,12 @@ class OrganisasjonAccessControlTest {
   void testOpprettOrganisasjon_NullKortNavn() {
     // Arrange
     validInput.setKortNavn(null);
-    when(organisasjonRepository.existsByOrganisasjonsnummer(anyString())).thenReturn(false);
-    when(organisasjonRepository.save(any(Organisasjon.class)))
-        .thenAnswer(
-            invocation -> {
-              Organisasjon saved = invocation.getArgument(0);
-              // Should not throw exception with null kortNavn
-              return saved;
-            });
+    testOrganisasjon.setKortNavn(null);
+    when(organisasjonService.opprettOrganisasjon(any(OpprettOrganisasjonInput.class)))
+        .thenReturn(testOrganisasjon);
 
     // Act & Assert
     assertDoesNotThrow(() -> organisasjonMutationResolver.opprettOrganisasjon(validInput));
-    verify(organisasjonRepository).save(any(Organisasjon.class));
+    verify(organisasjonService).opprettOrganisasjon(validInput);
   }
 }
