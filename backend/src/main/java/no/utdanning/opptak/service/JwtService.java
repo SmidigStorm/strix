@@ -75,4 +75,24 @@ public class JwtService {
   public boolean isTokenExpired(Claims claims) {
     return claims.getExpiration().before(new Date());
   }
+
+  // Convenience methods for Spring Security integration
+  public String extractUserId(String token) {
+    Claims claims = validateToken(token);
+    return getBrukerId(claims);
+  }
+
+  public List<String> extractRoles(String token) {
+    Claims claims = validateToken(token);
+    return getRoller(claims);
+  }
+
+  public boolean isTokenValid(String token) {
+    try {
+      Claims claims = validateToken(token);
+      return !isTokenExpired(claims);
+    } catch (SecurityException e) {
+      return false;
+    }
+  }
 }

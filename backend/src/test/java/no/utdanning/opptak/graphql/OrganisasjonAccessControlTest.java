@@ -6,8 +6,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import no.utdanning.opptak.domain.*;
 import no.utdanning.opptak.graphql.dto.OpprettOrganisasjonInput;
 import no.utdanning.opptak.repository.OrganisasjonRepository;

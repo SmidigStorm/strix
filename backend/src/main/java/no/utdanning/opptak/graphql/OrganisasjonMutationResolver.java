@@ -6,10 +6,12 @@ import no.utdanning.opptak.graphql.dto.OpprettOrganisasjonInput;
 import no.utdanning.opptak.repository.OrganisasjonRepository;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 /** GraphQL resolver for organisasjon mutations */
 @Controller
+@PreAuthorize("isAuthenticated()") // Require authentication for all methods
 public class OrganisasjonMutationResolver {
 
   private final OrganisasjonRepository organisasjonRepository;
@@ -19,6 +21,7 @@ public class OrganisasjonMutationResolver {
   }
 
   @MutationMapping
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   public Organisasjon opprettOrganisasjon(@Argument OpprettOrganisasjonInput input) {
     // Valider at organisasjonsnummer ikke finnes fra før
     if (organisasjonRepository.existsByOrganisasjonsnummer(input.getOrganisasjonsnummer())) {
@@ -48,6 +51,7 @@ public class OrganisasjonMutationResolver {
   }
 
   @MutationMapping
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   public Organisasjon oppdaterOrganisasjon(@Argument OppdaterOrganisasjonInput input) {
     Organisasjon eksisterende = organisasjonRepository.findById(input.getId());
     if (eksisterende == null) {
@@ -84,6 +88,7 @@ public class OrganisasjonMutationResolver {
   }
 
   @MutationMapping
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   public Organisasjon deaktiverOrganisasjon(@Argument String id) {
     Organisasjon organisasjon = organisasjonRepository.findById(id);
     if (organisasjon == null) {
@@ -95,6 +100,7 @@ public class OrganisasjonMutationResolver {
   }
 
   @MutationMapping
+  @PreAuthorize("hasRole('ADMINISTRATOR')")
   public Organisasjon reaktiverOrganisasjon(@Argument String id) {
     Organisasjon organisasjon = organisasjonRepository.findById(id);
     if (organisasjon == null) {

@@ -17,7 +17,6 @@ public class QueryResolver {
     this.repository = repository;
   }
 
-
   @QueryMapping
   public List<Opptak> alleOpptak() {
     return repository.findAllOpptak();

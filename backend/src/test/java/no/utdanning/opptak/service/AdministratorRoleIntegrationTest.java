@@ -40,7 +40,8 @@ class AdministratorRoleIntegrationTest {
     assertEquals("Sara Administrator", admin.getNavn());
     assertEquals("BRUKER-ADMIN", admin.getId());
     assertTrue(admin.getAktiv(), "Administrator should be active");
-    assertNull(admin.getOrganisasjonId(), "Administrator should not be tied to specific organisation");
+    assertNull(
+        admin.getOrganisasjonId(), "Administrator should not be tied to specific organisation");
   }
 
   @Test
@@ -105,7 +106,7 @@ class AdministratorRoleIntegrationTest {
     // According to the access matrix, Administrator should have:
     // ✅ Alle for most functions including:
     // - Administrere organisasjoner
-    // - Administrere brukere og roller  
+    // - Administrere brukere og roller
     // - Systemkonfigurasjon
     // - Se og administrere alle opptak
     // - Overstyre opptaksinnstillinger
@@ -158,7 +159,7 @@ class AdministratorRoleIntegrationTest {
         admin.getOrganisasjonId(),
         "Administrator should not be tied to specific organisation for system-wide access");
 
-    // This allows Administrator to manage all organisations rather than being 
+    // This allows Administrator to manage all organisations rather than being
     // restricted to one like Opptaksleder or Søknadsbehandler roles
   }
 }

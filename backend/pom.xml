@@ -67,6 +67,12 @@
             <artifactId>flyway-core</artifactId>
         </dependency>
 
+        <!-- Spring Security for authorization -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        
         <!-- JWT for authentication -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

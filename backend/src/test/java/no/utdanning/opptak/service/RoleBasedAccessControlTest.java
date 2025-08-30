@@ -27,7 +27,10 @@ class RoleBasedAccessControlTest {
     List<Rolle> allRoles = rolleRepository.findAll();
 
     // Assert
-    assertEquals(4, allRoles.size(), "Should have 4 roles: ADMINISTRATOR, OPPTAKSLEDER, SOKNADSBEHANDLER, SOKER");
+    assertEquals(
+        4,
+        allRoles.size(),
+        "Should have 4 roles: ADMINISTRATOR, OPPTAKSLEDER, SOKNADSBEHANDLER, SOKER");
 
     // Verify specific roles exist
     assertTrue(
