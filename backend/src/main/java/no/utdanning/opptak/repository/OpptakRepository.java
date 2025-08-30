@@ -159,7 +159,9 @@ public class OpptakRepository {
           rs.getString("beskrivelse"),
           rs.getTimestamp("opprettet").toLocalDateTime(),
           rs.getBoolean("aktiv"),
-          rs.getString("organisasjon_id"));
+          rs.getString("organisasjon_id"),
+          rs.getString("starttidspunkt"),
+          no.utdanning.opptak.domain.Studieform.valueOf(rs.getString("studieform")));
     }
   }
 
