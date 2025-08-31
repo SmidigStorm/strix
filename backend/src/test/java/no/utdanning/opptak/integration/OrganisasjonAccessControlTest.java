@@ -1,4 +1,4 @@
-package no.utdanning.opptak.graphql;
+package no.utdanning.opptak.integration;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -8,6 +8,8 @@ import java.util.Arrays;
 import no.utdanning.opptak.domain.*;
 import no.utdanning.opptak.graphql.dto.OpprettOrganisasjonInput;
 import no.utdanning.opptak.service.OrganisasjonService;
+import no.utdanning.opptak.graphql.OrganisasjonMutationResolver;
+import no.utdanning.opptak.graphql.OrganisasjonQueryResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

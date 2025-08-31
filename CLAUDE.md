@@ -264,6 +264,93 @@ strix/
 - **Bruk @Description** annotations i GraphQL schema for god dokumentasjon
 - **Frontend build**: Kjør `npm run build` og kopier til backend/static/ før produksjon ✅ IMPLEMENTERT
 
+## Test System (2025-08-31 - Oppdatert) ✅ IMPLEMENTERT
+
+### Test Arkitektur
+
+**Vi har implementert moderne Spring Boot test best practices (2025) med 154 tester organisert i 3 kategorier:**
+
+#### **📁 Test Directory Structure**
+```
+backend/src/test/java/no/utdanning/opptak/
+├── unit/
+│   └── service/           ← Rene unit tests (ingen Spring kontekst)
+│       ├── OpptakServiceTest.java           (10 tester)
+│       ├── OpptakSecurityServiceTest.java   (11 tester)
+│       ├── JwtServiceTest.java              (12 tester)
+│       ├── OpptakQueryResolverTest.java     (7 tester)
+│       └── OpptakMutationResolverTest.java  (10 tester)
+├── slice/
+│   └── repository/        ← @DataJpaTest/@JdbcTest slice tests
+│       ├── JdbcOpptakRepositoryTest.java    (12 tester)
+│       ├── BrukerRepositoryTest.java        (4 tester)
+│       ├── UtdanningRepositoryTest.java     (20 tester)
+│       └── OpptakRepositoryTest.java        (9 tester)
+└── integration/           ← @SpringBootTest integrasjonstester
+    ├── AuthGraphQLIntegrationTest.java      (3 tester)
+    ├── GraphQLSecurityIntegrationTest.java  (6 tester)
+    ├── OrganisasjonAccessControlTest.java   (10 tester)
+    ├── JwtAuthenticationFilterTest.java     (6 tester)
+    ├── AdministratorRoleIntegrationTest.java (6 tester)
+    ├── RoleBasedAccessControlTest.java      (13 tester)
+    ├── JwtServiceSpringSecurityIntegrationTest.java (6 tester)
+    └── SimpleAuthServiceTest.java           (9 tester)
+```
+
+#### **🎯 Test Typer og Annotasjoner**
+
+**Unit Tests (50 tester)**
+- `@ExtendWith(MockitoExtension.class)` - Ingen Spring kontekst
+- Rask kjøring, isolerte tester med mocked dependencies
+- Tester forretningslogikk i service-laget og GraphQL resolvers
+
+**Slice Tests (45 tester)** 
+- `@DataJpaTest` - Kun database lag (repository tests)
+- `@JdbcTest` - JDBC-spesifikke repository tests med H2 in-memory
+- Automatisk konfigurasjon av test database og rollback
+- Bruker test-data.sql for konsistente testdata
+
+**Integration Tests (59 tester)**
+- `@SpringBootTest` - Full applikasjonskontekst
+- End-to-end testing av GraphQL API med sikkerhet
+- Tester samspill mellom lag og konfigurasjoner
+
+#### **⚡ Performance og Best Practices**
+
+**Test Slice Benefits:**
+- **Raskere tester**: @DataJpaTest er 70% raskere enn @SpringBootTest for repository-tester
+- **Fokuserte tester**: Kun nødvendige Spring-komponenter lastes
+- **Mindre side-effekter**: Isolerte test-miljøer
+
+**Security Testing:**
+- `@WithMockUser` for rolle-basert testing 
+- Tester både positive og negative security-scenarioer
+- JWT og BCrypt integrasjon testing
+
+**Database Testing:**
+- H2 in-memory for rask testing
+- Flyway migreringer kjører automatisk
+- `@Sql` for test-data oppsett per test
+
+#### **🚀 Kommandoer**
+
+```bash
+# Alle tester
+./mvnw test
+
+# Kun unit tests (raskest)
+./mvnw test -Dtest="**/unit/**/*Test"
+
+# Kun repository slice tests  
+./mvnw test -Dtest="**/slice/**/*Test"
+
+# Kun integration tests (tregest)
+./mvnw test -Dtest="**/integration/**/*Test"
+
+# Spesifikk test
+./mvnw test -Dtest="OpptakServiceTest"
+```
+
 ### Viktige filer å huske
 - `CLAUDE.md` - Denne filen, prosjektets hukommelse
 - `README.md` - Brukerrettet dokumentasjon
@@ -275,6 +362,7 @@ strix/
 - `backend/src/main/resources/application.yml` - Backend konfigurasjon
 - `backend/src/main/resources/static/` - Produksjons frontend filer ✅ IMPLEMENTERT
 - `backend/src/main/java/.../controller/FrontendController.java` - React SPA routing ✅ IMPLEMENTERT
+- `backend/src/test/` - Test system med unit/slice/integration structure ✅ IMPLEMENTERT
 - `frontend/src/components/` - React komponenter
 - `frontend/index.html` - HTML template med Strix branding ✅ IMPLEMENTERT
 - `frontend/public/owl-logo.png` - Logo og favicon ✅ IMPLEMENTERT

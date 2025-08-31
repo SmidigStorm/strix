@@ -1,22 +1,25 @@
-package no.utdanning.opptak.repository;
+package no.utdanning.opptak.slice.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 import java.util.List;
 import no.utdanning.opptak.domain.*;
+import no.utdanning.opptak.repository.JdbcOpptakRepository;
+import no.utdanning.opptak.repository.JdbcOrganisasjonRepository;
+import no.utdanning.opptak.repository.JdbcUtdanningRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 @JdbcTest
 @ActiveProfiles("test")
-@ComponentScan(basePackages = "no.utdanning.opptak.repository")
+@Import({JdbcOpptakRepository.class, JdbcOrganisasjonRepository.class, JdbcUtdanningRepository.class})
 @Sql(scripts = "/test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-class OpptakRepositoryTest {
+class JdbcOpptakRepositoryTest {
 
   @Autowired private JdbcOpptakRepository opptakRepository;
   @Autowired private JdbcOrganisasjonRepository organisasjonRepository;
@@ -141,5 +144,38 @@ class OpptakRepositoryTest {
     assertThat(oppdatertOpptak.getNavn()).isEqualTo("Oppdatert navn");
     assertThat(oppdatertOpptak.getBeskrivelse()).isEqualTo("Oppdatert beskrivelse");
     assertThat(oppdatertOpptak.getMaxUtdanningerPerSoknad()).isEqualTo(15);
+  }
+
+  @Test
+  void skalFinneOpptakByType() {
+    List<Opptak> uhgOpptak = opptakRepository.findByType(OpptaksType.UHG);
+    List<Opptak> fsuOpptak = opptakRepository.findByType(OpptaksType.FSU);
+
+    assertThat(uhgOpptak).isNotEmpty();
+    assertThat(uhgOpptak).allMatch(o -> o.getType() == OpptaksType.UHG);
+
+    assertThat(fsuOpptak).isNotEmpty();
+    assertThat(fsuOpptak).allMatch(o -> o.getType() == OpptaksType.FSU);
+  }
+
+  @Test
+  void skalFinneOpptakBySamordnet() {
+    List<Opptak> samordnede = opptakRepository.findBySamordnet(true);
+    List<Opptak> lokale = opptakRepository.findBySamordnet(false);
+
+    assertThat(samordnede).isNotEmpty();
+    assertThat(samordnede).allMatch(o -> o.getSamordnet());
+
+    assertThat(lokale).isNotEmpty();
+    assertThat(lokale).allMatch(o -> !o.getSamordnet());
+  }
+
+  @Test
+  void skalSjekkeOmNavnEksisterer() {
+    boolean eksisterer = opptakRepository.existsByNavn("Samordnet opptak H25");
+    boolean eksistererIkke = opptakRepository.existsByNavn("Finnes ikke");
+
+    assertThat(eksisterer).isTrue();
+    assertThat(eksistererIkke).isFalse();
   }
 }

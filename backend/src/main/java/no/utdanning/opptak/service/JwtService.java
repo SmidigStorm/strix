@@ -95,4 +95,9 @@ public class JwtService {
       return false;
     }
   }
+
+  public String extractOrganisasjonId(String token) {
+    Claims claims = validateToken(token);
+    return getOrganisasjonId(claims);
+  }
 }

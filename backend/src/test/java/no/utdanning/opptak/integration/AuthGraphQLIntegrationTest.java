@@ -1,4 +1,4 @@
-package no.utdanning.opptak.graphql;
+package no.utdanning.opptak.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -1,4 +1,4 @@
-package no.utdanning.opptak.service;
+package no.utdanning.opptak.unit.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -7,6 +7,7 @@ import io.jsonwebtoken.Claims;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import no.utdanning.opptak.service.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

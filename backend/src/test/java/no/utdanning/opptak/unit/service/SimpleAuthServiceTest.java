@@ -1,4 +1,4 @@
-package no.utdanning.opptak.service;
+package no.utdanning.opptak.unit.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -12,6 +12,8 @@ import java.util.Set;
 import no.utdanning.opptak.domain.Bruker;
 import no.utdanning.opptak.domain.BrukerRolle;
 import no.utdanning.opptak.repository.BrukerRepository;
+import no.utdanning.opptak.service.JwtService;
+import no.utdanning.opptak.service.AuthService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

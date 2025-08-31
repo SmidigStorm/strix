@@ -1,4 +1,4 @@
-package no.utdanning.opptak.repository;
+package no.utdanning.opptak.slice.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -7,23 +7,27 @@ import java.time.LocalDateTime;
 import java.util.List;
 import no.utdanning.opptak.domain.Studieform;
 import no.utdanning.opptak.domain.Utdanning;
+import no.utdanning.opptak.repository.JdbcUtdanningRepository;
+import no.utdanning.opptak.repository.UtdanningRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
-@SpringBootTest
+@JdbcTest
 @ActiveProfiles("test")
-@Transactional
+@Import({JdbcUtdanningRepository.class})
+@Sql(scripts = "/test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @DisplayName("UtdanningRepository - Repository layer testing")
 class UtdanningRepositoryTest {
 
   @Autowired private UtdanningRepository utdanningRepository;
 
-  // Testene bruker kun data fra InMemoryUtdanningRepository
-  // Egne testdata lages inline når nødvendig
+  // Testene bruker data fra test-data.sql
+  // Nye testdata lages inline når nødvendig
 
   // ==================== BASIC CRUD TESTING ====================
 

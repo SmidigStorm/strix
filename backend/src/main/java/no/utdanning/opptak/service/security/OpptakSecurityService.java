@@ -1,6 +1,5 @@
 package no.utdanning.opptak.service.security;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import no.utdanning.opptak.domain.Opptak;
 import no.utdanning.opptak.repository.JdbcOpptakRepository;
@@ -99,23 +98,8 @@ public class OpptakSecurityService {
       return null;
     }
 
-    // Hent bruker ID fra JWT token
-    HttpServletRequest request = getCurrentRequest();
-    if (request == null) {
-      return null;
-    }
-
-    String token = extractTokenFromRequest(request);
-    if (token == null) {
-      return null;
-    }
-
-    try {
-      Claims claims = jwtService.validateToken(token);
-      return claims.getSubject(); // Bruker ID er i subject
-    } catch (SecurityException e) {
-      return null;
-    }
+    // The principal is the userId set by JwtAuthenticationFilter
+    return auth.getPrincipal().toString();
   }
 
   /** Sjekker om nåværende bruker er administrator */
@@ -128,6 +112,7 @@ public class OpptakSecurityService {
 
   /** Henter organisasjonId fra brukerens JWT token */
   private String getBrukerOrganisasjonId(Authentication auth) {
+    // Get the JWT token from the request to extract organisasjonId
     HttpServletRequest request = getCurrentRequest();
     if (request == null) {
       return null;
@@ -139,9 +124,9 @@ public class OpptakSecurityService {
     }
 
     try {
-      Claims claims = jwtService.validateToken(token);
-      return jwtService.getOrganisasjonId(claims);
-    } catch (SecurityException e) {
+      // Extract organisasjonId directly without re-validating (already validated by filter)
+      return jwtService.extractOrganisasjonId(token);
+    } catch (Exception e) {
       return null;
     }
   }

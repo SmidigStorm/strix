@@ -1,4 +1,4 @@
-package no.utdanning.opptak.security;
+package no.utdanning.opptak.unit.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;

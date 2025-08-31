@@ -1,4 +1,4 @@
-package no.utdanning.opptak.service;
+package no.utdanning.opptak.integration;
 
 import static org.junit.jupiter.api.Assertions.*;
 

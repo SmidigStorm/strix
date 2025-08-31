@@ -38,7 +38,7 @@ public class OpptakMutationResolver {
   /** Endrer status på opptak */
   @MutationMapping
   @PreAuthorize("hasAnyRole('ADMINISTRATOR', 'OPPTAKSLEDER')")
-  public Opptak endreOpptakStatus(@Argument EndreOpptaksStatusInput input) {
+  public Opptak endreOpptaksStatus(@Argument EndreOpptaksStatusInput input) {
     return opptakService.endreStatus(input);
   }
 

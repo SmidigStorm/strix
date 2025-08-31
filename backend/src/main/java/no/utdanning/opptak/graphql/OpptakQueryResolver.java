@@ -50,14 +50,14 @@ public class OpptakQueryResolver {
   }
 
   /** Henter administrator organisasjon for opptak */
-  @SchemaMapping
-  public Organisasjon administratorOrganisasjon(Opptak opptak) {
+  @SchemaMapping(field = "administrator")
+  public Organisasjon administrator(Opptak opptak) {
     return opptakService.getAdministratorOrganisasjon(opptak);
   }
 
   /** Henter organisasjoner som har tilgang til opptak */
-  @SchemaMapping
-  public List<Organisasjon> tillateTilgangsorganisasjoner(Opptak opptak) {
+  @SchemaMapping(field = "tillatteTilgangsorganisasjoner")
+  public List<Organisasjon> tillatteTilgangsorganisasjoner(Opptak opptak) {
     return opptakService.getTillateTilgangsorganisasjoner(opptak);
   }
 }
