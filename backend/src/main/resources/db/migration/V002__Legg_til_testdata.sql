@@ -2,10 +2,10 @@
 
 -- Organisasjoner
 INSERT INTO organisasjon (id, navn, kort_navn, type, organisasjonsnummer, adresse, nettside) VALUES
-('ntnu', 'Norges teknisk-naturvitenskapelige universitet', 'NTNU', 'universitet', '974767880', 'Høgskoleringen 1, 7491 Trondheim', 'https://www.ntnu.no'),
-('uio', 'Universitetet i Oslo', 'UiO', 'universitet', '971035854', 'Problemveien 7, 0315 Oslo', 'https://www.uio.no'),
-('hvl', 'Høgskulen på Vestlandet', 'HVL', 'høgskole', '991825827', 'Inndalsveien 28, 5020 Bergen', 'https://www.hvl.no'),
-('fagskolen-innlandet', 'Fagskolen Innlandet', 'FSI', 'fagskole', '123456789', 'Storgata 1, 2400 Elverum', 'https://www.fagskolen-innlandet.no');
+('ntnu', 'Norges teknisk-naturvitenskapelige universitet', 'NTNU', 'UNIVERSITET', '974767880', 'Høgskoleringen 1, 7491 Trondheim', 'https://www.ntnu.no'),
+('uio', 'Universitetet i Oslo', 'UiO', 'UNIVERSITET', '971035854', 'Problemveien 7, 0315 Oslo', 'https://www.uio.no'),
+('hvl', 'Høgskulen på Vestlandet', 'HVL', 'HOGSKOLE', '991825827', 'Inndalsveien 28, 5020 Bergen', 'https://www.hvl.no'),
+('fagskolen-innlandet', 'Fagskolen Innlandet', 'FSI', 'FAGSKOLE', '123456789', 'Storgata 1, 2400 Elverum', 'https://www.fagskolen-innlandet.no');
 
 -- Utdanninger
 INSERT INTO utdanning (id, navn, studienivaa, studiepoeng, varighet, studiested, undervisningssprak, beskrivelse, organisasjon_id) VALUES

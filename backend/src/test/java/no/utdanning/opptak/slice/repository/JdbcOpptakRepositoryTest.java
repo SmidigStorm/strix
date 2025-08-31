@@ -3,27 +3,84 @@ package no.utdanning.opptak.slice.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import no.utdanning.opptak.domain.*;
 import no.utdanning.opptak.repository.JdbcOpptakRepository;
 import no.utdanning.opptak.repository.JdbcOrganisasjonRepository;
 import no.utdanning.opptak.repository.JdbcUtdanningRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 @JdbcTest
-@ActiveProfiles("test")
+@ActiveProfiles("dev")
 @Import({JdbcOpptakRepository.class, JdbcOrganisasjonRepository.class, JdbcUtdanningRepository.class})
-@Sql(scripts = "/test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class JdbcOpptakRepositoryTest {
 
   @Autowired private JdbcOpptakRepository opptakRepository;
   @Autowired private JdbcOrganisasjonRepository organisasjonRepository;
   @Autowired private JdbcUtdanningRepository utdanningRepository;
+  @Autowired private JdbcTemplate jdbcTemplate;
+  
+  private String testOrgId1 = "test-org-1";
+  private String testOrgId2 = "test-org-2";
+  private String testSoOrgId = "test-so-org";
+  private String testOpptakId1 = "test-opptak-1";
+  private String testOpptakId2 = "test-opptak-2";
+  
+  @BeforeEach
+  void setUp() {
+    // Create test organizations
+    createTestOrganisasjon(testOrgId1, "NTNU Test", "NTNU");
+    createTestOrganisasjon(testOrgId2, "UiO Test", "UiO");
+    createTestOrganisasjon(testSoOrgId, "Samordnet opptak test", "SO");
+    
+    // Create test opptak
+    createTestOpptak(testOpptakId1, "Samordnet opptak H25", OpptaksType.UHG, testSoOrgId, true);
+    createTestOpptak(testOpptakId2, "NTNU Lokalt opptak", OpptaksType.LOKALT, testOrgId1, false);
+    
+    // Create test utdanninger
+    createTestUtdanning("test-utd-1", "Bachelor i informatikk", testOrgId1);
+    createTestUtdanning("test-utd-2", "Master i AI", testOrgId1);
+  }
+  
+  @AfterEach
+  void tearDown() {
+    // Clean up in reverse order due to foreign keys - only test data
+    jdbcTemplate.update("DELETE FROM utdanning_i_opptak WHERE utdanning_id LIKE 'test-%' OR opptak_id LIKE 'test-%'");
+    jdbcTemplate.update("DELETE FROM utdanning WHERE id LIKE 'test-%'");
+    jdbcTemplate.update("DELETE FROM opptak WHERE id LIKE 'test-%' OR administrator_organisasjon_id LIKE 'test-%'");
+    jdbcTemplate.update("DELETE FROM organisasjon WHERE id LIKE 'test-%'");
+  }
+  
+  private void createTestOrganisasjon(String id, String navn, String kortNavn) {
+    // Use different organisasjonsnummer for each test org to avoid unique constraint violations
+    String orgNummer = "99" + Math.abs(id.hashCode() % 1000000); // Generate unique number based on ID
+    jdbcTemplate.update(
+      "INSERT INTO organisasjon (id, navn, kort_navn, type, organisasjonsnummer, adresse, nettside, opprettet, aktiv) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      id, navn, kortNavn, "UNIVERSITET", orgNummer, "Test adresse", "https://test.no", LocalDateTime.now(), true
+    );
+  }
+  
+  private void createTestOpptak(String id, String navn, OpptaksType type, String adminOrgId, boolean samordnet) {
+    jdbcTemplate.update(
+      "INSERT INTO opptak (id, navn, type, aar, administrator_organisasjon_id, samordnet, max_utdanninger_per_soknad, status, opprettet, aktiv) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      id, navn, type.name(), 2025, adminOrgId, samordnet, 10, OpptaksStatus.FREMTIDIG.name(), LocalDateTime.now(), true
+    );
+  }
+  
+  private void createTestUtdanning(String id, String navn, String orgId) {
+    jdbcTemplate.update(
+      "INSERT INTO utdanning (id, navn, studienivaa, studiepoeng, varighet, studiested, undervisningssprak, beskrivelse, opprettet, aktiv, organisasjon_id, starttidspunkt, studieform) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      id, navn, "bachelor", 180, 3, "Test sted", "norsk", "Test beskrivelse", LocalDateTime.now(), true, orgId, "HØST_2025", "HELTID"
+    );
+  }
 
   @Test
   void skalFinneAlleOrganisasjoner() {
@@ -37,10 +94,10 @@ class JdbcOpptakRepositoryTest {
 
   @Test
   void skalFinneOrganisasjonById() {
-    Organisasjon organisasjon = organisasjonRepository.findById("NTNU-001");
+    Organisasjon organisasjon = organisasjonRepository.findById(testOrgId1);
 
     assertThat(organisasjon).isNotNull();
-    assertThat(organisasjon.getNavn()).isEqualTo("NTNU");
+    assertThat(organisasjon.getNavn()).isEqualTo("NTNU Test");
     assertThat(organisasjon.getKortNavn()).isEqualTo("NTNU");
   }
 
@@ -64,7 +121,7 @@ class JdbcOpptakRepositoryTest {
 
   @Test
   void skalFinneOpptakById() {
-    Opptak opptak = opptakRepository.findById("SO-H25-001");
+    Opptak opptak = opptakRepository.findById(testOpptakId1);
 
     assertThat(opptak).isNotNull();
     assertThat(opptak.getNavn()).isEqualTo("Samordnet opptak H25");
@@ -74,10 +131,10 @@ class JdbcOpptakRepositoryTest {
 
   @Test
   void skalFinneUtdanningerForOrganisasjon() {
-    List<Utdanning> utdanninger = utdanningRepository.findByOrganisasjonId("NTNU-001");
+    List<Utdanning> utdanninger = utdanningRepository.findByOrganisasjonId(testOrgId1);
 
     assertThat(utdanninger).isNotEmpty();
-    assertThat(utdanninger).allMatch(u -> u.getOrganisasjonId().equals("NTNU-001"));
+    assertThat(utdanninger).allMatch(u -> u.getOrganisasjonId().equals(testOrgId1));
     assertThat(utdanninger).allMatch(u -> u.getAktiv());
   }
 
@@ -90,8 +147,9 @@ class JdbcOpptakRepositoryTest {
     nyttOpptak.setMaxUtdanningerPerSoknad(5);
     nyttOpptak.setStatus(OpptaksStatus.FREMTIDIG);
     nyttOpptak.setSoknadsfrist(LocalDate.of(2025, 3, 1));
-    nyttOpptak.setAdministratorOrganisasjonId("NTNU-001");
+    nyttOpptak.setAdministratorOrganisasjonId(testOrgId1);
     nyttOpptak.setSamordnet(false);
+    nyttOpptak.setAktiv(true);
 
     Opptak lagretOpptak = opptakRepository.save(nyttOpptak);
 
@@ -116,7 +174,7 @@ class JdbcOpptakRepositoryTest {
     samordnetOpptak.setStatus(OpptaksStatus.FREMTIDIG);
     samordnetOpptak.setSoknadsfrist(LocalDate.of(2025, 4, 15));
     samordnetOpptak.setSvarfrist(LocalDate.of(2025, 7, 20));
-    samordnetOpptak.setAdministratorOrganisasjonId("SO-001");
+    samordnetOpptak.setAdministratorOrganisasjonId(testSoOrgId);
     samordnetOpptak.setSamordnet(true);
     samordnetOpptak.setOpptaksomgang("Hovedopptak");
     samordnetOpptak.setBeskrivelse("Test beskrivelse for samordnet opptak");
@@ -125,14 +183,14 @@ class JdbcOpptakRepositoryTest {
 
     assertThat(lagretOpptak.getId()).isNotNull();
     assertThat(lagretOpptak.getSamordnet()).isTrue();
-    assertThat(lagretOpptak.getAdministratorOrganisasjonId()).isEqualTo("SO-001");
+    assertThat(lagretOpptak.getAdministratorOrganisasjonId()).isEqualTo(testSoOrgId);
     assertThat(lagretOpptak.getOpptaksomgang()).isEqualTo("Hovedopptak");
     assertThat(lagretOpptak.getBeskrivelse()).isEqualTo("Test beskrivelse for samordnet opptak");
   }
 
   @Test
   void skalOppdatereEksisterendeOpptak() {
-    Opptak opptak = opptakRepository.findById("SO-H25-001");
+    Opptak opptak = opptakRepository.findById(testOpptakId1);
     assertThat(opptak).isNotNull();
 
     opptak.setNavn("Oppdatert navn");

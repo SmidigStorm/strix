@@ -12,5 +12,8 @@ public enum OrganisasjonsType {
   FAGSKOLE,
 
   /** Privat institusjon */
-  PRIVAT
+  PRIVAT,
+
+  /** Offentlig organisasjon (f.eks. Samordnet opptak) */
+  OFFENTLIG
 }

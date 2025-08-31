@@ -161,7 +161,10 @@ class OpptakSecurityServiceTest {
   void skalHenteCurrentUserId() {
     // Arrange
     String userId = "user-123";
-    Authentication auth = new UsernamePasswordAuthenticationToken(userId, null);
+    Authentication auth = new UsernamePasswordAuthenticationToken(
+        userId, 
+        null, 
+        Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
     when(securityContext.getAuthentication()).thenReturn(auth);
 
     // Act

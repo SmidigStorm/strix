@@ -3,7 +3,7 @@
 
 -- Add Samordnet opptak organization 
 INSERT INTO organisasjon (id, navn, kort_navn, type, organisasjonsnummer, adresse, nettside, aktiv) VALUES
-('SO-001', 'Samordnet opptak', 'SO', 'offentlig', '987654321', 'Postboks 1, 0131 Oslo', 'https://www.samordnetopptak.no', true);
+('SO-001', 'Samordnet opptak', 'SO', 'OFFENTLIG', '987654321', 'Postboks 1, 0131 Oslo', 'https://www.samordnetopptak.no', true);
 
 -- Add administrator organization ID and samordnet flag to opptak table
 ALTER TABLE opptak ADD COLUMN IF NOT EXISTS administrator_organisasjon_id VARCHAR(255);

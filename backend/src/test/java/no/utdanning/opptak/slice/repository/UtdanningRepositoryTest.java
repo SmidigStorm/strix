@@ -9,25 +9,71 @@ import no.utdanning.opptak.domain.Studieform;
 import no.utdanning.opptak.domain.Utdanning;
 import no.utdanning.opptak.repository.JdbcUtdanningRepository;
 import no.utdanning.opptak.repository.UtdanningRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 @JdbcTest
-@ActiveProfiles("test")
+@ActiveProfiles("dev")
 @Import({JdbcUtdanningRepository.class})
-@Sql(scripts = "/test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @DisplayName("UtdanningRepository - Repository layer testing")
 class UtdanningRepositoryTest {
 
   @Autowired private UtdanningRepository utdanningRepository;
-
-  // Testene bruker data fra test-data.sql
-  // Nye testdata lages inline når nødvendig
+  @Autowired private JdbcTemplate jdbcTemplate;
+  
+  private String testOrgId1 = "test-org-1";
+  private String testOrgId2 = "test-org-2";
+  private String testUtdId1 = "test-utd-1";
+  private String testUtdId2 = "test-utd-2";
+  
+  @BeforeEach
+  void setUp() {
+    // Create test organizations
+    createTestOrganisasjon(testOrgId1, "NTNU Test", "NTNU");
+    createTestOrganisasjon(testOrgId2, "UiO Test", "UiO");
+    
+    // Create test utdanninger
+    createTestUtdanning(testUtdId1, "Testutdanning i informatikk", testOrgId1, "bachelor", 180);
+    createTestUtdanning(testUtdId2, "Testutdanning i AI", testOrgId1, "master", 120);
+    createTestUtdanning("test-utd-3", "Vanlig utdanning i medisin", testOrgId2, "bachelor", 360);
+    createTestUtdanning("test-utd-4", "Vanlig utdanning i økonomi", testOrgId2, "master", 120);
+    createTestUtdanning("test-utd-deaktiviert", "Utgått program", testOrgId1, "bachelor", 180, false);
+  }
+  
+  @AfterEach
+  void tearDown() {
+    // Clean up in reverse order due to foreign keys - only test data
+    jdbcTemplate.update("DELETE FROM utdanning_i_opptak WHERE utdanning_id LIKE 'test-%' OR opptak_id LIKE 'test-%'");
+    jdbcTemplate.update("DELETE FROM utdanning WHERE id LIKE 'test-%' OR organisasjon_id LIKE 'test-%'");
+    jdbcTemplate.update("DELETE FROM organisasjon WHERE id LIKE 'test-%'");
+  }
+  
+  private void createTestOrganisasjon(String id, String navn, String kortNavn) {
+    // Use different organisasjonsnummer for each test org to avoid unique constraint violations
+    String orgNummer = "88" + Math.abs(id.hashCode() % 1000000); // Generate unique number based on ID
+    jdbcTemplate.update(
+      "INSERT INTO organisasjon (id, navn, kort_navn, type, organisasjonsnummer, adresse, nettside, opprettet, aktiv) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      id, navn, kortNavn, "UNIVERSITET", orgNummer, "Test adresse", "https://test.no", LocalDateTime.now(), true
+    );
+  }
+  
+  private void createTestUtdanning(String id, String navn, String orgId, String nivaa, int studiepoeng) {
+    createTestUtdanning(id, navn, orgId, nivaa, studiepoeng, true);
+  }
+  
+  private void createTestUtdanning(String id, String navn, String orgId, String nivaa, int studiepoeng, boolean aktiv) {
+    jdbcTemplate.update(
+      "INSERT INTO utdanning (id, navn, studienivaa, studiepoeng, varighet, studiested, undervisningssprak, beskrivelse, opprettet, aktiv, organisasjon_id, starttidspunkt, studieform) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      id, navn, nivaa, studiepoeng, 3, "Test sted", "norsk", "Test beskrivelse", LocalDateTime.now(), aktiv, orgId, "HØST_2025", "HELTID"
+    );
+  }
 
   // ==================== BASIC CRUD TESTING ====================
 
@@ -45,7 +91,7 @@ class UtdanningRepositoryTest {
     nyUtdanning.setBeskrivelse("PhD program");
     nyUtdanning.setStarttidspunkt("Vår");
     nyUtdanning.setStudieform(Studieform.HELTID);
-    nyUtdanning.setOrganisasjonId("874789652"); // UiB organisasjonsnummer
+    nyUtdanning.setOrganisasjonId(testOrgId1); // Test organization
     nyUtdanning.setAktiv(true);
     nyUtdanning.setOpprettet(LocalDateTime.now());
 
@@ -63,7 +109,7 @@ class UtdanningRepositoryTest {
     assertEquals("PhD program", lagret.getBeskrivelse());
     assertEquals("Vår", lagret.getStarttidspunkt());
     assertEquals(Studieform.HELTID, lagret.getStudieform());
-    assertEquals("874789652", lagret.getOrganisasjonId());
+    assertEquals(testOrgId1, lagret.getOrganisasjonId());
     assertTrue(lagret.getAktiv());
     assertNotNull(lagret.getOpprettet());
   }
@@ -174,15 +220,18 @@ class UtdanningRepositoryTest {
   @Test
   @DisplayName("findWithFilters: Skal filtrere på navn (partial match)")
   void findWithFilters_skalFiltrePaNavn() {
-    // When - bruker delnavn fra InMemoryRepository
+    // When - søker på "Testutdanning" som kun finnes i test data
     List<Utdanning> result =
-        utdanningRepository.findWithFilters("informatikk", null, null, null, null, null, 100, 0);
+        utdanningRepository.findWithFilters("Testutdanning", null, null, null, null, null, 100, 0);
 
-    // Then - 2 utdanninger har "informatikk" i navnet (NTNU og UiO)
+    // Then - 2 test utdanninger har "Testutdanning" i navnet
     assertThat(result).hasSize(2);
     assertThat(result)
         .extracting(Utdanning::getNavn)
-        .allMatch(navn -> navn.toLowerCase().contains("informatikk"));
+        .allMatch(navn -> navn.contains("Testutdanning"));
+    assertThat(result)
+        .extracting(Utdanning::getId)
+        .containsExactlyInAnyOrder(testUtdId1, testUtdId2);
   }
 
   @Test
