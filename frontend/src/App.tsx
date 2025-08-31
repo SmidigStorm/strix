@@ -5,6 +5,7 @@ import Dashboard from '@/components/dashboard';
 import OrganisasjonsListe from '@/components/organisasjons-liste';
 import { UtdanningsListe } from '@/components/utdannings-liste';
 import OpptaksListe from '@/components/opptak-liste';
+import { OpptakDetaljer } from '@/components/opptak-detaljer';
 import { Button } from '@/components/ui/button';
 import { RoleProvider } from '@/contexts/RoleContext';
 import { AuthProvider } from '@/contexts/AuthContext';
@@ -39,6 +40,7 @@ function App() {
                       <Route path="/organisasjoner" element={<OrganisasjonsListe />} />
                       <Route path="/utdanninger" element={<UtdanningsListe />} />
                       <Route path="/opptak" element={<OpptaksListe />} />
+                      <Route path="/opptak/:id" element={<OpptakDetaljer />} />
                     </Routes>
                   </div>
                 </div>

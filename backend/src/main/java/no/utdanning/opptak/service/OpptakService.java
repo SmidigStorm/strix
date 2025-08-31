@@ -202,6 +202,26 @@ public class OpptakService {
       eksisterende.setBeskrivelse(input.getBeskrivelse());
     }
 
+    if (input.getType() != null) {
+      eksisterende.setType(input.getType());
+    }
+
+    if (input.getAar() != null && input.getAar() > 0) {
+      eksisterende.setAar(input.getAar());
+    }
+
+    if (input.getAdministratorOrganisasjonId() != null) {
+      // Valider at organisasjonen eksisterer
+      if (!organisasjonRepository.existsById(input.getAdministratorOrganisasjonId())) {
+        throw new IllegalArgumentException("Organisasjon ikke funnet: " + input.getAdministratorOrganisasjonId());
+      }
+      eksisterende.setAdministratorOrganisasjonId(input.getAdministratorOrganisasjonId());
+    }
+
+    if (input.getSamordnet() != null) {
+      eksisterende.setSamordnet(input.getSamordnet());
+    }
+
     return opptakRepository.save(eksisterende);
   }
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useRole } from '@/contexts/RoleContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
@@ -91,6 +92,7 @@ interface FormData {
 }
 
 export default function OpptaksListe() {
+  const navigate = useNavigate();
   const { selectedRole } = useRole();
   const { token } = useAuth();
   const [opptak, setOpptak] = useState<Opptak[]>([]);
@@ -174,9 +176,13 @@ export default function OpptaksListe() {
       const input = {
         id: selectedOpptak.id,
         navn: formData.navn,
+        type: formData.type,
+        aar: formData.aar,
+        administratorOrganisasjonId: formData.administratorOrganisasjonId,
         soknadsfrist: formData.soknadsfrist,
         svarfrist: formData.svarfrist,
         maxUtdanningerPerSoknad: formData.maxUtdanningerPerSoknad,
+        samordnet: formData.samordnet,
         opptaksomgang: formData.opptaksomgang,
         beskrivelse: formData.beskrivelse,
       };
@@ -561,8 +567,7 @@ export default function OpptaksListe() {
                         <DropdownMenuLabel>Handlinger</DropdownMenuLabel>
                         <DropdownMenuItem
                           onClick={() => {
-                            // TODO: Navigate to detail view
-                            console.log('View details:', opptak.id);
+                            navigate(`/opptak/${opptak.id}`);
                           }}
                         >
                           Se detaljer
@@ -648,65 +653,116 @@ export default function OpptaksListe() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div>
-              <Label htmlFor="edit-navn">Navn *</Label>
-              <Input
-                id="edit-navn"
-                value={formData.navn}
-                onChange={(e) => setFormData({ ...formData, navn: e.target.value })}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-soknadsfrist">Søknadsfrist</Label>
-                <Input
-                  id="edit-soknadsfrist"
-                  type="datetime-local"
-                  value={formData.soknadsfrist || ''}
-                  onChange={(e) => setFormData({ ...formData, soknadsfrist: e.target.value })}
-                />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="edit-navn">Navn *</Label>
+                    <Input
+                      id="edit-navn"
+                      value={formData.navn}
+                      onChange={(e) => setFormData({ ...formData, navn: e.target.value })}
+                      placeholder="F.eks. Samordnet opptak høst 2025"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-type">Type *</Label>
+                    <Select
+                      value={formData.type}
+                      onValueChange={(value) => setFormData({ ...formData, type: value as OpptaksType })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="UHG">Universitet/Høgskole</SelectItem>
+                        <SelectItem value="FSU">Fagskole</SelectItem>
+                        <SelectItem value="LOKALT">Lokalt</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="edit-aar">År *</Label>
+                    <Select
+                      value={formData.aar.toString()}
+                      onValueChange={(value) => setFormData({ ...formData, aar: parseInt(value) })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {years.map((year) => (
+                          <SelectItem key={year} value={year.toString()}>
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-opptaksomgang">Opptaksomgang</Label>
+                    <Input
+                      id="edit-opptaksomgang"
+                      value={formData.opptaksomgang || ''}
+                      onChange={(e) => setFormData({ ...formData, opptaksomgang: e.target.value })}
+                      placeholder="F.eks. Høst, Vår"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="edit-soknadsfrist">Søknadsfrist</Label>
+                    <Input
+                      id="edit-soknadsfrist"
+                      type="datetime-local"
+                      value={formData.soknadsfrist || ''}
+                      onChange={(e) => setFormData({ ...formData, soknadsfrist: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-svarfrist">Svarfrist</Label>
+                    <Input
+                      id="edit-svarfrist"
+                      type="datetime-local"
+                      value={formData.svarfrist || ''}
+                      onChange={(e) => setFormData({ ...formData, svarfrist: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="edit-maxUtdanninger">Maks utdanninger per søknad</Label>
+                    <Input
+                      id="edit-maxUtdanninger"
+                      type="number"
+                      min="1"
+                      max="50"
+                      value={formData.maxUtdanningerPerSoknad}
+                      onChange={(e) => setFormData({ ...formData, maxUtdanningerPerSoknad: parseInt(e.target.value) })}
+                    />
+                  </div>
+                  <div className="flex items-center space-x-2 mt-6">
+                    <input
+                      type="checkbox"
+                      id="edit-samordnet"
+                      checked={formData.samordnet}
+                      onChange={(e) => setFormData({ ...formData, samordnet: e.target.checked })}
+                      className="rounded border-gray-300"
+                    />
+                    <Label htmlFor="edit-samordnet">Samordnet opptak</Label>
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="edit-beskrivelse">Beskrivelse</Label>
+                  <Textarea
+                    id="edit-beskrivelse"
+                    value={formData.beskrivelse || ''}
+                    onChange={(e) => setFormData({ ...formData, beskrivelse: e.target.value })}
+                    placeholder="Valgfri beskrivelse av opptaket..."
+                    rows={3}
+                  />
+                </div>
               </div>
-              <div>
-                <Label htmlFor="edit-svarfrist">Svarfrist</Label>
-                <Input
-                  id="edit-svarfrist"
-                  type="datetime-local"
-                  value={formData.svarfrist || ''}
-                  onChange={(e) => setFormData({ ...formData, svarfrist: e.target.value })}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-maxUtdanninger">Maks utdanninger per søknad</Label>
-                <Input
-                  id="edit-maxUtdanninger"
-                  type="number"
-                  min="1"
-                  max="50"
-                  value={formData.maxUtdanningerPerSoknad}
-                  onChange={(e) => setFormData({ ...formData, maxUtdanningerPerSoknad: parseInt(e.target.value) })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="edit-opptaksomgang">Opptaksomgang</Label>
-                <Input
-                  id="edit-opptaksomgang"
-                  value={formData.opptaksomgang || ''}
-                  onChange={(e) => setFormData({ ...formData, opptaksomgang: e.target.value })}
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="edit-beskrivelse">Beskrivelse</Label>
-              <Textarea
-                id="edit-beskrivelse"
-                value={formData.beskrivelse || ''}
-                onChange={(e) => setFormData({ ...formData, beskrivelse: e.target.value })}
-                rows={3}
-              />
-            </div>
-          </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
               Avbryt

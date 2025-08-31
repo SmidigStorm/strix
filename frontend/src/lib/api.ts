@@ -420,12 +420,21 @@ export const UPDATE_OPPTAK_MUTATION = `
     oppdaterOpptak(input: $input) {
       id
       navn
+      type
+      aar
       soknadsfrist
       svarfrist
       maxUtdanningerPerSoknad
+      status
       opptaksomgang
       beskrivelse
       aktiv
+      samordnet
+      administrator {
+        id
+        navn
+        kortNavn
+      }
     }
   }
 `;

@@ -142,9 +142,13 @@ Input for å oppdatere et eksisterende opptak
 input OppdaterOpptakInput {
     id: ID!
     navn: String
+    type: OpptaksType
+    aar: Int
+    administratorOrganisasjonId: ID
     soknadsfrist: String
     svarfrist: String
     maxUtdanningerPerSoknad: Int
+    samordnet: Boolean
     opptaksomgang: String
     beskrivelse: String
 }
