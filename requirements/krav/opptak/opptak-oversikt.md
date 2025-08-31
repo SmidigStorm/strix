@@ -32,16 +32,35 @@ Opptak som ikke følger tradisjonelle runder med faste frister
 - Typisk for videreutdanning, EVU-kurs, restplasser
 - Kan ha rullerende oppstart gjennom året
 
-**Samordning**
-Når flere organisasjoner samarbeider om et opptak (samordnet=true)
-- Eier-organisasjon administrerer og gir tilgang
-- Eier har full kontroll (endre innstillinger, frister, status)
-- Deltakende organisasjoner kan KUN:
-  - Legge til egne utdanninger
-  - Se egne utdanninger og deres søkere
-  - IKKE se andre organisasjoners data
-- Samordnet Opptak (SO) er egen organisasjon for nasjonale opptak
-- Enkeltorganisasjon kan også ha egne opptak (samordnet=false)
+**Samordning og roller**
+Samordning oppstår når en opptaksleder inviterer andre organisasjoner til sitt opptak:
+
+**Prosess for samordning:**
+1. Opptaksleder (Eier) oppretter opptak for sin organisasjon (samordnet=false)
+2. Opptaksleder (Eier) inviterer andre organisasjoner → opptaket blir samordnet=true
+3. Inviterte organisasjoner får Deltager-rolle i dette opptaket
+
+**Roller og tilganger:**
+
+- **Opptaksleder (Eier)**:
+  - Kan endre alle opptaksinnstillinger (frister, status, navn)
+  - Kan legge til utdanninger fra sin organisasjon
+  - Kan se alle utdanninger i opptaket (fra alle organisasjoner)
+  - Kan gi/fjerne tilgang til andre organisasjoner
+  
+- **Opptaksleder (Deltager)**:
+  - Kan KUN legge til utdanninger fra sin egen organisasjon
+  - Kan KUN se egne utdanninger og deres data
+  - Kan IKKE endre opptaksinnstillinger
+  - Kan IKKE se andre organisasjoners utdanninger eller søkere
+
+- **Administrator**:
+  - Kan legge til alle utdanninger til alle opptak
+  - Kan administrere alle opptak på vegne av organisasjoner
+
+**Spesialtilfeller:**
+- Samordnet Opptak (SO) er egen organisasjon for nasjonale opptak (UHG, FSU)
+- Enkeltorganisasjon kan ha egne, ikke-samordnede opptak (samordnet=false)
 
 ## Domene-eksempler
 
@@ -60,6 +79,21 @@ Når flere organisasjoner samarbeider om et opptak (samordnet=true)
 - "Fagskoleopptak H25" - FSU, nasjonalt opptak for fagskoler
 - "NTNU-UiO Felles masteropptak" - LOKALT, bilateral samordning
 - "Vestlandssamarbeidet H25" - LOKALT, regional samordning
+
+**Praktisk eksempel - Samordningslogikk:**
+
+*Situasjon:* NTNU oppretter "IT-masteropptak H25" og inviterer UiO og UiB til å delta:
+
+1. **Før invitasjon:** 
+   - Opptak: "IT-masteropptak H25" (eier: NTNU, samordnet=false)
+   - Kun NTNU kan legge til egne utdanninger
+
+2. **Etter invitasjon av UiO og UiB:**
+   - Opptak: "IT-masteropptak H25" (eier: NTNU, samordnet=true)
+   - NTNU (Eier): Kan legge til NTNU-utdanninger, se alle utdanninger fra alle org
+   - UiO (Deltager): Kan legge til UiO-utdanninger, ser kun UiO-utdanninger
+   - UiB (Deltager): Kan legge til UiB-utdanninger, ser kun UiB-utdanninger
+   - Administrator: Kan legge til utdanninger fra alle organisasjoner
 
 **Typiske opptaksdata:**
 - Navn: "Samordnet opptak H25"
@@ -87,13 +121,22 @@ Når flere organisasjoner samarbeider om et opptak (samordnet=true)
 - [ ] Som opptaksleder (eier) ønsker jeg å gi andre organisasjoner tilgang til mitt opptak slik at vi kan samordne
 - [ ] Som opptaksleder (eier) ønsker jeg å fjerne tilgang for organisasjoner som ikke lenger skal delta
 - [ ] Som opptaksleder ønsker jeg å se hvilke organisasjoner som har tilgang til opptaket
-- [ ] Som opptaksleder ønsker jeg å legge egne utdanninger i opptak jeg har tilgang til
 
-### Utdanninger i opptak
-- [ ] Som opptaksleder ønsker jeg å legge til utdanninger fra min organisasjon i opptaket
-- [ ] Som opptaksleder ønsker jeg å fjerne utdanninger fra opptaket hvis de ikke skal tilbys
-- [ ] Som opptaksleder ønsker jeg å angi antall studieplasser per utdanning i opptaket
+### Utdanninger i opptak - Eier av opptak
+- [ ] Som opptaksleder (eier) ønsker jeg å legge til utdanninger fra min organisasjon i mitt opptak
+- [ ] Som opptaksleder (eier) ønsker jeg å fjerne utdanninger fra mitt opptak hvis de ikke skal tilbys
+- [ ] Som opptaksleder (eier) ønsker jeg å angi antall studieplasser per utdanning i mitt opptak
 - [ ] Som opptaksleder (eier) ønsker jeg å se alle utdanninger i mitt opptak uavhengig av organisasjon
+
+### Utdanninger i opptak - Deltager i samordnet opptak
+- [ ] Som opptaksleder (deltager) ønsker jeg å legge til utdanninger fra min organisasjon i samordnet opptak jeg har tilgang til
+- [ ] Som opptaksleder (deltager) ønsker jeg å fjerne mine organisasjons utdanninger fra samordnet opptak
+- [ ] Som opptaksleder (deltager) ønsker jeg å angi antall studieplasser for mine utdanninger i samordnet opptak
+- [ ] Som opptaksleder (deltager) ønsker jeg å kun se mine organisasjons utdanninger i samordnet opptak
+
+### Administrator - Full tilgang
+- [ ] Som administrator ønsker jeg å legge til alle utdanninger til alle opptak uavhengig av organisasjon
+- [ ] Som administrator ønsker jeg å administrere alle opptak på vegne av organisasjoner ved behov
 
 ### Søkere og opptak
 - [ ] Som søker ønsker jeg å se åpne opptak slik at jeg vet hvor jeg kan søke

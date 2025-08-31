@@ -35,19 +35,32 @@ Dette dokumentet beskriver rollene i opptakssystemet og deres tilganger. Tilgang
 ### 2. Opptaksleder
 **Formål**: Administrere opptak og utdanninger for sin organisasjon
 
-**Tilganger**:
-- **Opptak**:
+**Tilganger varierer basert på rolle i opptaket:**
+
+#### 2A. Opptaksleder (Eier av opptak)
+**Når**: Brukerens organisasjon er administrator/eier av opptaket
+
+- **Opptak-administrasjon**:
   - Opprette nye opptak for sin organisasjon
   - Administrere opptak som organisasjonen eier (endre status, frister, etc.)
-  - Gi andre organisasjoners opptaksledere tilgang til egne opptak (samordning)
+  - Gi andre organisasjoner tilgang til eget opptak (gjør det samordnet)
   - Fjerne tilgang for organisasjoner som ikke lenger skal delta
-  - Se opptak hvor egen organisasjon har fått tilgang av andre
   
-- **Utdanninger**:
-  - Legge til egne organisasjons utdanninger i opptak (der de har tilgang)
+- **Utdanninger i eget opptak**:
+  - Legge til utdanninger fra sin organisasjon i sitt opptak
   - Definere antall studieplasser for egne utdanninger
   - Aktivere/deaktivere egne utdanninger i opptak
-  - Spesialtilfelle: Opptaksleder som eier opptaket kan legge til alle organisasjoners utdanninger
+  - Se alle utdanninger i opptaket (uavhengig av organisasjon)
+
+#### 2B. Opptaksleder (Deltager i samordnet opptak)
+**Når**: Brukerens organisasjon har fått tilgang til andres opptak
+
+- **Begrenset tilgang til samordnet opptak**:
+  - Se opptak hvor egen organisasjon har fått tilgang
+  - Legge til kun egne organisasjons utdanninger i samordnet opptak
+  - Definere antall studieplasser kun for egne utdanninger
+  - Aktivere/deaktivere kun egne utdanninger i samordnet opptak
+  - Se kun egne organisasjons utdanninger i samordnet opptak (ikke andres data)
 
 - **Organisasjon**:
   - Se og redigere egen organisasjonsinformasjon
