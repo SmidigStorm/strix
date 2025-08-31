@@ -48,7 +48,7 @@ class OrganisasjonAccessControlTest {
     validInput.setNavn("Ny Test Organisasjon");
     validInput.setKortNavn("NTO");
     validInput.setOrganisasjonsnummer("987654321");
-    validInput.setOrganisasjonstype(OrganisasjonsType.HØGSKOLE);
+    validInput.setOrganisasjonstype(OrganisasjonsType.HOGSKOLE);
     validInput.setEpost("test@ny.no");
     validInput.setTelefon("87654321");
   }
