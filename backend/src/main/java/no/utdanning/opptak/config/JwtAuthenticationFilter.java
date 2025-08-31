@@ -30,15 +30,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     String token = extractTokenFromRequest(request);
+    logger.debug("JWT Filter - Token extracted: " + (token != null ? "present" : "missing"));
 
     if (token != null && jwtService.isTokenValid(token)) {
       try {
         String userId = jwtService.extractUserId(token);
         List<String> roles = jwtService.extractRoles(token);
 
+        logger.debug("JWT Authentication - UserId: " + userId + ", Roles: " + roles);
+
         // Convert roles to Spring Security authorities with ROLE_ prefix
         List<SimpleGrantedAuthority> authorities =
             roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role)).toList();
+
+        logger.debug("JWT Authentication - Authorities: " + authorities);
 
         // Create authentication token
         UsernamePasswordAuthenticationToken authToken =
@@ -47,6 +52,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Set authentication in security context
         SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        logger.debug("JWT Authentication - SecurityContext set for user: " + userId);
 
       } catch (SecurityException e) {
         // Log security exception but don't block request - Spring Security will handle unauthorized
