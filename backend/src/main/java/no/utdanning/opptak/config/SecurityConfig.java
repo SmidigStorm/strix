@@ -40,8 +40,13 @@ public class SecurityConfig {
                     .permitAll() // GraphQL endpoint (authorization handled at method level)
                     .requestMatchers("/graphiql", "/graphiql/**")
                     .permitAll() // GraphiQL development tool
-                    .requestMatchers("/", "/index.html", "/assets/**", "/owl-logo.png", "/vite.svg")
-                    .permitAll() // Static frontend resources
+                    .requestMatchers("/", "/index.html", "/assets/**", "/owl-logo.png", "/vite.svg", "/graphiql.html")
+                    .permitAll() // Static frontend resources and GraphiQL
+                    .requestMatchers(
+                        "/opptak", "/opptak/**", 
+                        "/organisasjoner", "/organisasjoner/**", 
+                        "/utdanninger", "/utdanninger/**")
+                    .permitAll() // Frontend SPA routes
                     .anyRequest()
                     .authenticated()) // All other requests require authentication
         .addFilterBefore(

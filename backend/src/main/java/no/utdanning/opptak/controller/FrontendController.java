@@ -11,7 +11,12 @@ public class FrontendController {
     return "forward:/index.html";
   }
 
-  @GetMapping(value = {"/opptak/**", "/organisasjon/**", "/utdanning/**"})
+  @GetMapping(
+      value = {
+        "/opptak", "/opptak/**",
+        "/organisasjoner", "/organisasjoner/**",
+        "/utdanninger", "/utdanninger/**"
+      })
   public String spa() {
     return "forward:/index.html";
   }
