@@ -29,6 +29,7 @@ import {
   UserCheck,
   Users,
   BookOpen,
+  Calendar,
 } from 'lucide-react';
 
 const getRoleIcon = (role: Role) => {
@@ -155,6 +156,16 @@ export function AppSidebar() {
                     <Link to="/utdanninger" className="flex items-center gap-3">
                       <BookOpen className="h-4 w-4" />
                       <span>Utdanninger</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
+              {hasPermission('VIEW_OPPTAK') && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild isActive={location.pathname === '/opptak'}>
+                    <Link to="/opptak" className="flex items-center gap-3">
+                      <Calendar className="h-4 w-4" />
+                      <span>Opptak</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

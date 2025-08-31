@@ -268,3 +268,230 @@ export const DELETE_UTDANNING_MUTATION = `
     slettUtdanning(id: $id)
   }
 `;
+
+// Opptak GraphQL operations
+
+/**
+ * GraphQL query for fetching all opptak
+ */
+export const GET_ALL_OPPTAK_QUERY = `
+  query GetAlleOpptak {
+    alleOpptak {
+      id
+      navn
+      type
+      aar
+      soknadsfrist
+      svarfrist
+      maxUtdanningerPerSoknad
+      status
+      opptaksomgang
+      beskrivelse
+      opprettet
+      aktiv
+      samordnet
+      administrator {
+        id
+        navn
+        kortNavn
+      }
+    }
+  }
+`;
+
+/**
+ * GraphQL query for fetching a single opptak
+ */
+export const GET_OPPTAK_QUERY = `
+  query GetOpptak($id: ID!) {
+    opptak(id: $id) {
+      id
+      navn
+      type
+      aar
+      soknadsfrist
+      svarfrist
+      maxUtdanningerPerSoknad
+      status
+      opptaksomgang
+      beskrivelse
+      opprettet
+      aktiv
+      samordnet
+      administrator {
+        id
+        navn
+        kortNavn
+        type
+      }
+      utdanninger {
+        id
+        antallPlasser
+        aktivt
+        opprettet
+        utdanning {
+          id
+          navn
+          studienivaa
+          studiepoeng
+          organisasjon {
+            id
+            navn
+          }
+        }
+      }
+      tillatteTilgangsorganisasjoner {
+        id
+        navn
+        kortNavn
+      }
+    }
+  }
+`;
+
+/**
+ * GraphQL query for fetching opptak by administrator organization
+ */
+export const GET_OPPTAK_FOR_ADMINISTRATOR_QUERY = `
+  query GetOpptakForAdministrator($organisasjonId: ID!) {
+    opptakForAdministratorOrganisasjon(organisasjonId: $organisasjonId) {
+      id
+      navn
+      type
+      aar
+      status
+      soknadsfrist
+      aktiv
+    }
+  }
+`;
+
+/**
+ * GraphQL query for fetching available opptak for an organization
+ */
+export const GET_TILGJENGELIGE_OPPTAK_QUERY = `
+  query GetTilgjengeligeOpptak($organisasjonId: ID!) {
+    tilgjengeligeOpptakForOrganisasjon(organisasjonId: $organisasjonId) {
+      id
+      navn
+      type
+      aar
+      status
+      samordnet
+      administrator {
+        id
+        navn
+      }
+    }
+  }
+`;
+
+/**
+ * GraphQL mutation for creating opptak
+ */
+export const CREATE_OPPTAK_MUTATION = `
+  mutation OpprettOpptak($input: OpprettOpptakInput!) {
+    opprettOpptak(input: $input) {
+      id
+      navn
+      type
+      aar
+      soknadsfrist
+      svarfrist
+      maxUtdanningerPerSoknad
+      status
+      opptaksomgang
+      beskrivelse
+      aktiv
+      samordnet
+      administrator {
+        id
+        navn
+      }
+    }
+  }
+`;
+
+/**
+ * GraphQL mutation for updating opptak
+ */
+export const UPDATE_OPPTAK_MUTATION = `
+  mutation OppdaterOpptak($input: OppdaterOpptakInput!) {
+    oppdaterOpptak(input: $input) {
+      id
+      navn
+      soknadsfrist
+      svarfrist
+      maxUtdanningerPerSoknad
+      opptaksomgang
+      beskrivelse
+      aktiv
+    }
+  }
+`;
+
+/**
+ * GraphQL mutation for changing opptak status
+ */
+export const CHANGE_OPPTAK_STATUS_MUTATION = `
+  mutation EndreOpptaksStatus($input: EndreOpptaksStatusInput!) {
+    endreOpptaksStatus(input: $input) {
+      id
+      status
+    }
+  }
+`;
+
+/**
+ * GraphQL mutation for deactivating opptak
+ */
+export const DEACTIVATE_OPPTAK_MUTATION = `
+  mutation DeaktiverOpptak($opptakId: ID!) {
+    deaktiverOpptak(opptakId: $opptakId) {
+      id
+      aktiv
+    }
+  }
+`;
+
+/**
+ * GraphQL mutation for reactivating opptak
+ */
+export const REACTIVATE_OPPTAK_MUTATION = `
+  mutation ReaktiverOpptak($opptakId: ID!) {
+    reaktiverOpptak(opptakId: $opptakId) {
+      id
+      aktiv
+    }
+  }
+`;
+
+/**
+ * GraphQL mutation for giving organization access to opptak
+ */
+export const GIVE_ORGANISATION_ACCESS_MUTATION = `
+  mutation GiOrganisasjonTilgang($opptakId: ID!, $organisasjonId: ID!) {
+    giOrganisasjonOpptakTilgang(opptakId: $opptakId, organisasjonId: $organisasjonId) {
+      id
+      tillatteTilgangsorganisasjoner {
+        id
+        navn
+      }
+    }
+  }
+`;
+
+/**
+ * GraphQL mutation for removing organization access from opptak
+ */
+export const REMOVE_ORGANISATION_ACCESS_MUTATION = `
+  mutation FjernOrganisasjonTilgang($opptakId: ID!, $organisasjonId: ID!) {
+    fjernOrganisasjonOpptakTilgang(opptakId: $opptakId, organisasjonId: $organisasjonId) {
+      id
+      tillatteTilgangsorganisasjoner {
+        id
+        navn
+      }
+    }
+  }
+`;

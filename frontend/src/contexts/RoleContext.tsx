@@ -62,6 +62,30 @@ export function RoleProvider({ children }: RoleProviderProps) {
         // Kun Administrator kan slette utdanninger permanent
         return selectedRole === 'Administrator';
       
+      case 'VIEW_OPPTAK':
+        // Alle innloggede roller kan se opptak (med organisasjonsskolering)
+        return selectedRole !== 'Søker';
+      
+      case 'MANAGE_OPPTAK':
+        // Administrator og Opptaksleder kan administrere opptak
+        return selectedRole === 'Administrator' || selectedRole === 'Opptaksleder';
+      
+      case 'CREATE_OPPTAK':
+        // Administrator og Opptaksleder kan opprette opptak
+        return selectedRole === 'Administrator' || selectedRole === 'Opptaksleder';
+      
+      case 'EDIT_OPPTAK':
+        // Administrator og Opptaksleder kan redigere opptak
+        return selectedRole === 'Administrator' || selectedRole === 'Opptaksleder';
+      
+      case 'CHANGE_OPPTAK_STATUS':
+        // Administrator og Opptaksleder kan endre opptak status
+        return selectedRole === 'Administrator' || selectedRole === 'Opptaksleder';
+      
+      case 'DELETE_OPPTAK':
+        // Kun Administrator kan deaktivere opptak
+        return selectedRole === 'Administrator';
+      
       default:
         return false;
     }

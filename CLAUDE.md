@@ -351,6 +351,53 @@ backend/src/test/java/no/utdanning/opptak/
 ./mvnw test -Dtest="OpptakServiceTest"
 ```
 
+### **🔒 GraphQL API Testing (Manual) - VIKTIG PROSEDYRE**
+
+**PROBLEM**: Jeg gjør ofte feil når jeg tester GraphQL API manuelt med curl ved å prøve å lage kompliserte nested kommandoer for å hente JWT token.
+
+**RIKTIG FREMGANGSMÅTE**: Alltid gjør dette i 2 separate steg:
+
+**Steg 1: Hent JWT token**
+```bash
+curl -s -X POST http://localhost:8080/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query": "mutation { login(input: { email: \"admin@strix.no\", passord: \"test123\" }) { token } }"}'
+```
+
+**Steg 2: Bruk token i faktisk GraphQL spørring**
+```bash
+curl -X POST http://localhost:8080/graphql \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer [SETT_INN_TOKEN_HER]" \
+  -d '{"query": "{ alleOpptak { id navn type aar status } }"}'
+```
+
+**Test-brukere tilgjengelig:**
+- admin@strix.no (ADMINISTRATOR) - passord: test123
+- opptaksleder@ntnu.no (OPPTAKSLEDER) - passord: test123  
+- behandler@uio.no (SOKNADSBEHANDLER) - passord: test123
+- soker@student.no (SOKER) - passord: test123
+
+**Eksempel på vellykket alleOpptak respons:**
+```json
+{
+  "data": {
+    "alleOpptak": [
+      {
+        "id": "ntnu-lokalt-v26",
+        "navn": "NTNU lokalt opptak vår 2026", 
+        "type": "LOKALT",
+        "aar": 2026,
+        "status": "FREMTIDIG",
+        "aktiv": true,
+        "administrator": {"navn": "Norges teknisk-naturvitenskapelige universitet"}
+      },
+      // ... flere opptak
+    ]
+  }
+}
+```
+
 ### Viktige filer å huske
 - `CLAUDE.md` - Denne filen, prosjektets hukommelse
 - `README.md` - Brukerrettet dokumentasjon
