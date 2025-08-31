@@ -37,13 +37,16 @@ enum OrganisasjonsType {
     UNIVERSITET
     
     """Høgskole"""
-    HOGSKOLE
+    HØGSKOLE
     
     """Fagskole"""  
     FAGSKOLE
     
     """Privat institusjon"""
     PRIVAT
+    
+    """Offentlig organisasjon (f.eks. Samordnet opptak)"""
+    OFFENTLIG
 }
 
 """
