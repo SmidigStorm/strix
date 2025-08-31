@@ -6,7 +6,7 @@ public enum OrganisasjonsType {
   UNIVERSITET,
 
   /** Høgskole */
-  HOGSKOLE,
+  HØGSKOLE,
 
   /** Fagskole */
   FAGSKOLE,

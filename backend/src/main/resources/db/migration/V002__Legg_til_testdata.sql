@@ -4,7 +4,7 @@
 INSERT INTO organisasjon (id, navn, kort_navn, type, organisasjonsnummer, adresse, nettside) VALUES
 ('ntnu', 'Norges teknisk-naturvitenskapelige universitet', 'NTNU', 'UNIVERSITET', '974767880', 'Høgskoleringen 1, 7491 Trondheim', 'https://www.ntnu.no'),
 ('uio', 'Universitetet i Oslo', 'UiO', 'UNIVERSITET', '971035854', 'Problemveien 7, 0315 Oslo', 'https://www.uio.no'),
-('hvl', 'Høgskulen på Vestlandet', 'HVL', 'HOGSKOLE', '991825827', 'Inndalsveien 28, 5020 Bergen', 'https://www.hvl.no'),
+('hvl', 'Høgskulen på Vestlandet', 'HVL', 'HØGSKOLE', '991825827', 'Inndalsveien 28, 5020 Bergen', 'https://www.hvl.no'),
 ('fagskolen-innlandet', 'Fagskolen Innlandet', 'FSI', 'FAGSKOLE', '123456789', 'Storgata 1, 2400 Elverum', 'https://www.fagskolen-innlandet.no');
 
 -- Utdanninger
