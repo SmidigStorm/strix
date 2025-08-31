@@ -32,8 +32,12 @@ public class BrukerRolleId implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     BrukerRolleId that = (BrukerRolleId) o;
     return Objects.equals(brukerId, that.brukerId) && Objects.equals(rolleId, that.rolleId);
   }
