@@ -212,7 +212,7 @@ public class OpptakService {
 
     if (input.getAdministratorOrganisasjonId() != null) {
       // Valider at organisasjonen eksisterer
-      if (!organisasjonRepository.existsById(input.getAdministratorOrganisasjonId())) {
+      if (organisasjonRepository.findById(input.getAdministratorOrganisasjonId()) == null) {
         throw new IllegalArgumentException("Organisasjon ikke funnet: " + input.getAdministratorOrganisasjonId());
       }
       eksisterende.setAdministratorOrganisasjonId(input.getAdministratorOrganisasjonId());
