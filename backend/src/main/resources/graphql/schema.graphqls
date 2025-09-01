@@ -5,10 +5,53 @@
 Root Query type - alle spørringer starter her
 Spring GraphQL merger automatisk extend type Query fra alle schema-filer
 """
-type Query
+type Query {
+  """Dashboard statistikk for systemet"""
+  dashboardStats: DashboardStatistikk
+}
 
 """
 Root Mutation type - alle endringer starter her  
 Spring GraphQL merger automatisk extend type Mutation fra alle schema-filer
 """
 type Mutation
+
+"""Dashboard statistikk for administratorer og opptaksledere"""
+type DashboardStatistikk {
+  """Antall aktive organisasjoner i systemet"""
+  antallOrganisasjoner: Int!
+  
+  """Antall aktive utdanninger i systemet"""
+  antallUtdanninger: Int!
+  
+  """Antall åpne opptak"""
+  antallApneOpptak: Int!
+  
+  """Antall totalt opptak"""
+  antallTotaltOpptak: Int!
+  
+  """Antall utdanninger tilknyttet opptak"""
+  antallUtdanningerIOpptak: Int!
+  
+  """Topp 5 organisasjoner med flest utdanninger"""
+  topOrganisasjoner: [OrganisasjonStatistikk!]!
+  
+  """Nyeste opptak (topp 5)"""
+  nyesteOpptak: [OpptakSammendrag!]!
+}
+
+"""Statistikk for en organisasjon"""
+type OrganisasjonStatistikk {
+  organisasjon: Organisasjon!
+  antallUtdanninger: Int!
+}
+
+"""Sammendrag av opptak for dashboard"""
+type OpptakSammendrag {
+  id: String!
+  navn: String!
+  type: OpptaksType!
+  status: OpptaksStatus!
+  antallUtdanninger: Int!
+  opprettet: String!
+}
