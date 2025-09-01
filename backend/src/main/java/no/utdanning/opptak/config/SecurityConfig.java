@@ -38,8 +38,8 @@ public class SecurityConfig {
                     // Allow login mutation (needed for authentication)
                     .requestMatchers("/graphql")
                     .permitAll() // GraphQL endpoint (authorization handled at method level)
-                    .requestMatchers("/graphiql", "/graphiql/**")
-                    .permitAll() // GraphiQL development tool
+                    .requestMatchers("/graphiql", "/graphiql/**", "/api-tester", "/custom-graphiql.html")
+                    .permitAll() // GraphiQL development tools
                     .requestMatchers("/", "/index.html", "/assets/**", "/owl-logo.png", "/vite.svg", "/graphiql.html")
                     .permitAll() // Static frontend resources and GraphiQL
                     .requestMatchers(

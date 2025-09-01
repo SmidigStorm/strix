@@ -13,6 +13,7 @@
     "test:run": "vitest run"
   },
   "dependencies": {
+    "@graphiql/toolkit": "^0.11.3",
     "@hookform/resolvers": "^5.2.1",
     "@radix-ui/react-collapsible": "^1.1.12",
     "@radix-ui/react-dialog": "^1.1.15",

@@ -174,7 +174,7 @@ export function AppSidebar() {
                 <SidebarMenuButton asChild>
                   <a href="/graphiql" target="_blank" className="flex items-center gap-3">
                     <Code className="h-4 w-4" />
-                    <span>GraphiQL</span>
+                    <span>GraphQL Explorer</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>

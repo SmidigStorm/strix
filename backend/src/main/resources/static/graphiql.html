@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>🦉 Strix GraphQL Explorer</title>
     <meta charset="utf-8">
-    <title>Opptaksystem GraphiQL</title>
-    <meta name="robots" content="noindex">
-    <meta name="referrer" content="origin">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
@@ -12,41 +10,73 @@
             margin: 0;
             width: 100%;
             overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         
         #graphiql {
             height: 100vh;
         }
+        
+        .token-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 9999;
+            background: white;
+            border: 2px solid #1F261E;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 13px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .status-success { 
+            color: #28a745; 
+            font-weight: 600; 
+        }
+        
+        .status-warning { 
+            color: #ffc107; 
+            font-weight: 600; 
+        }
     </style>
+    
     <!-- GraphiQL CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/graphiql@3.0.6/graphiql.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/graphiql@3/graphiql.min.css" />
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/graphiql@3/graphiql.min.js"></script>
 </head>
 <body>
-    <div id="graphiql">Loading...</div>
+    <div id="graphiql">Loading GraphiQL...</div>
     
-    <!-- React og GraphiQL JavaScript -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/graphiql@3.0.6/graphiql.min.js"></script>
-    
+    <div id="tokenStatus" class="token-status">
+        <span>Sjekker token...</span>
+    </div>
+
     <script>
-        // GraphQL fetcher funksjon
-        function graphQLFetcher(graphQLParams, opts) {
+        let currentToken = null;
+
+        // GraphQL fetcher med automatisk JWT-token fra localStorage
+        function graphQLFetcher(graphQLParams) {
+            const token = localStorage.getItem('authToken');
+            
             const headers = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             };
             
-            // Add any custom headers from GraphiQL header editor
-            if (opts && opts.headers) {
-                Object.assign(headers, opts.headers);
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+                currentToken = token;
             }
             
+            updateTokenStatus();
+
             return fetch('/graphql', {
                 method: 'post',
                 headers: headers,
                 body: JSON.stringify(graphQLParams),
-                credentials: 'include',
             }).then(function (response) {
                 return response.text();
             }).then(function (responseBody) {
@@ -58,24 +88,78 @@
             });
         }
 
-        // Default query
-        const defaultQuery = `# Velkommen til Opptaksystem GraphiQL!
-# Prøv å kjøre en query av gangen:
+        function updateTokenStatus() {
+            const statusElement = document.getElementById('tokenStatus');
+            if (currentToken) {
+                statusElement.innerHTML = '<span class="status-success">✅ Token aktiv - autentiserte queries fungerer</span>';
+            } else {
+                statusElement.innerHTML = '<span class="status-warning">⚠️ Ingen token - logg inn i hovedappen først</span>';
+            }
+        }
 
-query {
-  hei
+        function checkForTokenUpdates() {
+            const token = localStorage.getItem('authToken');
+            if (token !== currentToken) {
+                currentToken = token;
+                updateTokenStatus();
+            }
+        }
+
+        // Default query med gode eksempler
+        const defaultQuery = `# 🦉 Strix GraphQL Explorer
+#
+# TOKEN AUTOMATISK HENTET FRA HOVEDAPP!
+# Ctrl+Space for autocomplete!
+#
+# Test med disse queries:
+
+query HvemErJeg {
+  meg {
+    navn
+    email
+    roller {
+      navn
+    }
+  }
+}
+
+query TestBrukere {
+  testBrukere {
+    email
+    navn
+    roller
+    organisasjon
+  }
+}
+
+query HentOrganisasjoner {
+  organisasjoner {
+    id
+    navn
+    kortNavn
+    type
+  }
 }`;
 
-        // Render GraphiQL
-        const root = ReactDOM.createRoot(document.getElementById('graphiql'));
-        root.render(
-            React.createElement(GraphiQL, {
-                fetcher: graphQLFetcher,
-                defaultQuery: defaultQuery,
-                headerEditorEnabled: true,
-                shouldPersistHeaders: true
-            })
-        );
+        // Initialize GraphiQL
+        document.addEventListener('DOMContentLoaded', function() {
+            ReactDOM.render(
+                React.createElement(GraphiQL, {
+                    fetcher: graphQLFetcher,
+                    defaultQuery: defaultQuery,
+                    headerEditorEnabled: true,
+                    shouldPersistHeaders: false,
+                }),
+                document.getElementById('graphiql')
+            );
+            
+            // Initial token check
+            checkForTokenUpdates();
+            updateTokenStatus();
+            
+            // Check for token updates every 2 seconds
+            setInterval(checkForTokenUpdates, 2000);
+        });
     </script>
 </body>
 </html>

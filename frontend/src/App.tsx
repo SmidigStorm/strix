@@ -33,17 +33,21 @@ function App() {
                 </header>
 
                 {/* Main content */}
-                <div className="flex-1 flex justify-center p-6">
-                  <div className="w-full max-w-6xl mx-auto">
-                    <Routes>
-                      <Route path="/" element={<Dashboard />} />
-                      <Route path="/organisasjoner" element={<OrganisasjonsListe />} />
-                      <Route path="/utdanninger" element={<UtdanningsListe />} />
-                      <Route path="/opptak" element={<OpptaksListe />} />
-                      <Route path="/opptak/:id" element={<OpptakDetaljer />} />
-                    </Routes>
-                  </div>
-                </div>
+                <Routes>
+                  <Route path="/*" element={
+                    <div className="flex-1 flex justify-center p-6">
+                      <div className="w-full max-w-6xl mx-auto">
+                        <Routes>
+                          <Route path="/" element={<Dashboard />} />
+                          <Route path="/organisasjoner" element={<OrganisasjonsListe />} />
+                          <Route path="/utdanninger" element={<UtdanningsListe />} />
+                          <Route path="/opptak" element={<OpptaksListe />} />
+                          <Route path="/opptak/:id" element={<OpptakDetaljer />} />
+                        </Routes>
+                      </div>
+                    </div>
+                  } />
+                </Routes>
               </main>
             </div>
           </SidebarProvider>
