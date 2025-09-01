@@ -103,23 +103,116 @@ Et moderne opptaksystem for norsk utdanning, bygget med Spring Boot, GraphQL og 
 
 Systemet tilbyr en GraphQL API på `http://localhost:8080/graphql`.
 
-### Eksempel queries:
+### GraphiQL Demo - 4 Spørringer
 
-#### Autentisering - Hvem er jeg?
+**Åpne GraphiQL:** http://localhost:8080/graphiql
+
+#### 1. Innlogging - Få JWT token
 ```graphql
-query {
-  meg {
-    email
-    navn
-    roller {
-      id
-    }
-    organisasjon {
+mutation Login {
+  login(input: {
+    email: "admin@strix.no"
+    passord: "test123"
+  }) {
+    token
+    bruker {
       navn
+      email
+      roller {
+        navn
+      }
+      organisasjon {
+        navn
+        kortNavn
+      }
     }
   }
 }
 ```
+
+#### 2. Hent alle organisasjoner (krever autentisering)
+```graphql
+query HentOrganisasjoner {
+  organisasjoner {
+    id
+    navn
+    kortNavn
+    type
+    organisasjonsnummer
+    nettside
+    aktiv
+  }
+}
+```
+
+#### 3. Hent opptak med detaljert info
+```graphql
+query HentOpptak {
+  opptak {
+    id
+    navn
+    type
+    aar
+    status
+    samordnet
+    soknadsfrist
+    administrator {
+      navn
+      kortNavn
+    }
+    utdanninger {
+      id
+      antallPlasser
+      aktivt
+      utdanning {
+        navn
+        studienivaa
+        organisasjon {
+          navn
+        }
+      }
+    }
+  }
+}
+```
+
+#### 4. Hent utdanninger med organisasjonsinfo
+```graphql
+query HentUtdanninger {
+  utdanninger {
+    id
+    navn
+    studienivaa
+    studiepoeng
+    varighet
+    studiested
+    organisasjon {
+      navn
+      kortNavn
+      type
+    }
+  }
+}
+```
+
+### Autentisering i GraphiQL
+
+**Steg 1:** Kjør først innlogging-mutation for å få token  
+**Steg 2:** Kopier token fra responsen  
+**Steg 3:** Legg til HTTP header i GraphiQL (under query-ruten):
+
+```json
+{
+  "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBzdHJpeC5ubyIsInJvbGxlciI6WyJBRE1JTklTVFJBVE9SIl0sIm9yZ2FuaXNhc2pvbklkIjpudWxsLCJpYXQiOjE3MjUxMjYyOTAsImV4cCI6MTcyNTEyOTg5MH0.DITT_TOKEN_HER"
+}
+```
+
+**Test-brukere tilgjengelig:**
+- `admin@strix.no` (Administrator) - passord: `test123`
+- `opptaksleder@ntnu.no` (Opptaksleder NTNU) - passord: `test123`  
+- `behandler@uio.no` (Søknadsbehandler UiO) - passord: `test123`
+
+### Andre nyttige queries:
 
 #### Test-brukere (for utvikling)
 ```graphql
