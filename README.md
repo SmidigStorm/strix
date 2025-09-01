@@ -107,7 +107,18 @@ Systemet tilbyr en GraphQL API på `http://localhost:8080/graphql`.
 
 **Åpne GraphiQL:** http://localhost:8080/graphiql
 
-#### 1. Innlogging - Få JWT token
+#### Viktig: Login-sekvens først!
+
+**Du MÅ følge denne sekvensen for at queries skal fungere:**
+
+1. **Kjør først login-mutation** (uten authorization header)
+2. **Kopier JWT token** fra responsen  
+3. **Sett Authorization header** med token
+4. **Kjør deretter de andre queries** (de krever autentisering)
+
+---
+
+#### 1. Innlogging - Få JWT token (KJØR FØRST)
 ```graphql
 mutation Login {
   login(input: {
@@ -145,72 +156,59 @@ query HentOrganisasjoner {
 }
 ```
 
-#### 3. Hent opptak med detaljert info
+#### 3. Hent tilgjengelige test-brukere (krever IKKE autentisering)
 ```graphql
-query HentOpptak {
-  opptak {
-    id
+query TestBrukere {
+  testBrukere {
+    email
     navn
-    type
-    aar
-    status
-    samordnet
-    soknadsfrist
-    administrator {
-      navn
-      kortNavn
-    }
-    utdanninger {
-      id
-      antallPlasser
-      aktivt
-      utdanning {
-        navn
-        studienivaa
-        organisasjon {
-          navn
-        }
-      }
-    }
+    roller
+    organisasjon
+    passord
   }
 }
 ```
 
-#### 4. Hent utdanninger med organisasjonsinfo
+#### 4. Prøv en autentisert query - Se hvem du er logget inn som
 ```graphql
-query HentUtdanninger {
-  utdanninger {
-    id
+query HvemErJeg {
+  meg {
     navn
-    studienivaa
-    studiepoeng
-    varighet
-    studiested
-    organisasjon {
-      navn
-      kortNavn
-      type
-    }
+    email
   }
 }
 ```
+*Denne query vil FEILE hvis du ikke har satt Authorization header med gyldig token fra steg 1!*
 
 ### Autentisering i GraphiQL
 
-**Steg 1:** Kjør først innlogging-mutation for å få token  
-**Steg 2:** Kopier token fra responsen  
-**Steg 3:** Legg til HTTP header i GraphiQL (under query-ruten):
+**VIKTIG: Følg denne sekvensen nøyaktig:**
 
+1. **Kjør innlogging-mutation** (Query #1 - UTEN authorization header)
+2. **Kopier hele token-verdien** fra response (lang tekst-streng)  
+3. **Åpne HTTP Headers** (under query-feltet i GraphiQL)
+4. **Lim inn header** som vist under:
+   ```json
+   {
+     "Authorization": "Bearer DIN_LANGE_TOKEN_STRENG_HER"
+   }
+   ```
+5. **Kjør Query #2 og #4** (krever header - Query #3 trenger ikke header)
+
+**Eksempel på komplett header:**
 ```json
 {
-  "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBzdHJpeC5ubyIsInJvbGxlciI6WyJBRE1JTklTVFJBVE9SIl0sIm9yZ2FuaXNhc2pvbklkIjpudWxsLCJpYXQiOjE3MjUxMjYyOTAsImV4cCI6MTcyNTEyOTg5MH0.DITT_TOKEN_HER"
+  "Authorization": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJCUlVLRVItQURNSU4iLCJlbWFpbCI6ImFkbWluQHN0cml4Lm5vIiwibmF2biI6IlNhcmEgQWRtaW5pc3RyYXRvciIsInJvbGxlciI6WyJBRE1JTklTVFJBVE9SIl0sImlhdCI6MTc1NjcxNjM3NiwiZXhwIjoxNzU2ODAyNzc2fQ.syhJV-pOwyBvKuik2xTekacRGJlWJC_UClWpPFdaX7VCpjzJG4nNkAPYPzNLPnBqOUXNqUXwiTRN23Nmhids_w"
 }
 ```
 
-**Test-brukere tilgjengelig:**
-- `admin@strix.no` (Administrator) - passord: `test123`
-- `opptaksleder@ntnu.no` (Opptaksleder NTNU) - passord: `test123`  
-- `behandler@uio.no` (Søknadsbehandler UiO) - passord: `test123`
+**Test-brukere (fra Query #3):**
+- `admin@strix.no` (Administrator)
+- `opptaksleder@ntnu.no` (Opptaksleder NTNU)  
+- `behandler@uio.no` (Søknadsbehandler UiO)
+- `soker@student.no` (Søker)
+
+**Alle har passord:** `test123`
 
 ### Andre nyttige queries:
 
